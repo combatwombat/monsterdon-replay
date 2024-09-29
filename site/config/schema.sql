@@ -1,0 +1,40 @@
+# SQL Export
+# Created by Querious (400074)
+# Created: 29. September 2024 at 23:54:06 CEST
+# Encoding: Unicode (UTF-8)
+
+
+SET @ORIG_FOREIGN_KEY_CHECKS = @@FOREIGN_KEY_CHECKS;
+SET FOREIGN_KEY_CHECKS = 0;
+
+SET @ORIG_UNIQUE_CHECKS = @@UNIQUE_CHECKS;
+SET UNIQUE_CHECKS = 0;
+
+SET @ORIG_TIME_ZONE = @@TIME_ZONE;
+SET TIME_ZONE = '+00:00';
+
+
+
+
+CREATE TABLE `toots` (
+  `id` bigint unsigned NOT NULL,
+  `data` json DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+
+
+
+
+SET FOREIGN_KEY_CHECKS = @ORIG_FOREIGN_KEY_CHECKS;
+
+SET UNIQUE_CHECKS = @ORIG_UNIQUE_CHECKS;
+
+SET @ORIG_TIME_ZONE = @@TIME_ZONE;
+SET TIME_ZONE = @ORIG_TIME_ZONE;
+
+
+
+#  Export Finished: 29. September 2024 at 23:54:06 CEST

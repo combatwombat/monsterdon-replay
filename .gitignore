@@ -1,0 +1,7 @@
+config/config.yml
+config/deploy.rb
+config/deploy/production.rb
+log/*
+site/config/config.php
+site/logs/*
+site/uploads/*
