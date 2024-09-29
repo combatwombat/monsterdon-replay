@@ -40,7 +40,7 @@ namespace :deploy do
         execute "chmod +x #{release_path}/worker/worker.php"
 
         # restart supervisor worker inside docker container rait
-        execute "docker exec rait supervisorctl restart worker"
+        execute "docker exec containername supervisorctl restart worker"
         end
     end
 end

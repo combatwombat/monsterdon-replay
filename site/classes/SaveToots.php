@@ -33,7 +33,7 @@ class SaveToots extends Base {
 
         $toots = json_decode($json, true);
 
-
+        $newToots = 0;
         foreach ($toots as $toot) {
             
             // toot exists already?
@@ -54,7 +54,21 @@ class SaveToots extends Base {
             $stmt->execute([$toot['id'], json_encode($toot), $created_at->format('Y-m-d H:i:s')]);
             $this->log("Saved toot " . $toot['id'] . " from " . $toot['account']['username']);
 
+            $newToots++;
 
+        }
+
+        // no new toots? check again in some seconds
+        if ($newToots == 0) {
+            sleep(30);
+
+        // otherwise, check more frequently, depending on number of new toots
+        } else if ($newToots < 5) {
+            sleep(15);
+        } else if ($newToots < 20) {
+            sleep(5);    
+        } else {
+            sleep(3);
         }
 
 
