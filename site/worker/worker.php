@@ -8,5 +8,5 @@ require BASEPATH . '/classes/SaveToots.php';
 $saveToots = new SaveToots($config);
 
 while (true) {
-    $saveToots->run("monsterdon");
+    $saveToots->run($config['mastodon']['hashtag'], $config['mastodon']['startDateTime']);
 }

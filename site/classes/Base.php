@@ -53,6 +53,8 @@ class Base {
 
     public function httpRequest($url, $method = "GET", $payload = null, $headers = null) {
         $ch = curl_init($url);
+
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         if ($payload) {
@@ -65,16 +67,14 @@ class Base {
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
 
-        // check for errors with curl_errno
         if (curl_errno($ch)) {
-            $this->log(curl_error($ch));
-            return false;
+            $this->log(curl_errno($ch) . " " . curl_error($ch));
+            throw new Exception("Curl error");
         }
 
-        // is it not a http code starting with 2? log it
+        // is it not a http code starting with 2? throw exception
         if ($httpCode < 200 || $httpCode >= 300) {
-            $this->log($response);
-            return false;
+            throw new Exception($httpCode);
         }
 
         return $response;

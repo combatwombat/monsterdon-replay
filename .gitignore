@@ -4,4 +4,6 @@ config/deploy/production.rb
 log/*
 site/config/config.php
 site/logs/*
-site/uploads/*
+site/public/media/avatars/*
+site/public/media/previews/*
+site/public/media/originals/*
