@@ -95,15 +95,92 @@ class Base {
 
         if (isset($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW'])) {
             if ($_SERVER['PHP_AUTH_USER'] == $this->config['auth']['user'] && $_SERVER['PHP_AUTH_PW'] == $this->config['auth']['pass']) {
-
-                // set auth session to true
                 $_SESSION['auth'] = true;
                 return true;
             }
         }
         header('WWW-Authenticate: Basic');
         header('HTTP/1.0 401 Unauthorized');
+        echo "nope";
+        sleep(1);
         exit;
     }
+
+    /**
+     * Validate a single field or an array of fields
+     * @param $nameOrFields
+     * @param $data
+     * @param $rules
+     * @return array of errors. Example: ['fieldname1' => ['error 1', 'error 2'], 'fieldname2' => ['error 1']]
+     *
+     * Usage:
+     * // validate a single field
+     * $errors = $this->validate('foo', $_POST['foo'], 'required|min:3|max:10');
+     *
+     * // validate multiple fields
+     * $errors = $this->validate(['foo' => ['data' => $_POST['foo'], 'rules' => 'required|min:3|max:10'], 'bar' => ['data' => $_POST['bar'], 'rules' => 'required|datetime|regex:[a-z0-9\-]']]);
+     */
+    public function validate($nameOrFields, $data = null, $rules = null) {
+        $errors = [];
+
+        // if $nameOrFields is an array, loop through it
+        if (is_array($nameOrFields)) {
+            foreach ($nameOrFields as $name => $field) {
+                $res = $this->validate($name, $field['data'], $field['rules']);
+                if (!empty($res)) {
+                    $errors = array_merge($errors, $res);
+                }
+            }
+        } else {
+            $rules = explode('|', $rules);
+            $data = trim($data);
+            $name = $nameOrFields;
+            $errors[$name] = [];
+
+            foreach ($rules as $rule) {
+                $rule = explode(':', $rule);
+                $ruleName = $rule[0];
+                $ruleValue = isset($rule[1]) ? $rule[1] : null;
+
+                if ($ruleName == 'required' && empty($data)) {
+                    $errors[$name][] = $name . ' is required';
+                }
+
+                if ($ruleName == 'numeric' && !is_numeric($data)) {
+                    $errors[$name][] = $name . ' must be a number';
+                }
+
+                if ($ruleName == 'min' && (int) $data < (int) $ruleValue) {
+                    $errors[$name][] = $name . ' must be at least ' . $ruleValue . ' big';
+                }
+
+                if ($ruleName == 'max' && (int) $data > (int) $ruleValue) {
+                    $errors[$name][] = $name . ' can\'t be bigger than ' . $ruleValue;
+                }
+
+                if ($ruleName == 'datetime' && !strtotime($data)) {
+                    $errors[$name][] = $name . ' must be a valid date and time';
+                }
+
+                if ($ruleName == 'date' && !strtotime($data)) {
+                    $errors[$name][] = $name . ' must be a valid date';
+                }
+
+                if ($ruleName == 'regex' && !preg_match('/' . $ruleValue . '/', $data)) {
+                    $errors[$name][] = $name . ' must match the pattern ' . $ruleValue;
+                }
+
+            }
+
+            if (empty($errors[$name])) {
+                unset($errors[$name]);
+            }
+
+        }
+
+        return $errors;
+    }
+
+
 
 }

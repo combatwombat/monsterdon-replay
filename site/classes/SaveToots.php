@@ -1,7 +1,5 @@
 <?php
 
-require 'Base.php';
-
 // save new toots to db
 class SaveToots extends Base {
 
