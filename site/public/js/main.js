@@ -1,4 +1,3 @@
-// onready
 function ready(fn) {
     if (document.readyState != 'loading') {
         fn();
@@ -8,14 +7,15 @@ function ready(fn) {
 }
 
 /**
- * Simple HTTP request wrapper
- * @param method
+ * Simple HTTP fetch request wrapper for form data
  * @param url
+ * @param method
  * @param data array of key-value pairs
- * @returns {Promise<Response>}
+ * @param responseFormat "text" or "json"
+ * @returns {Promise<string>}
  */
-async function httpRequest(url, method = "GET", data = []) {
-    if (method === "GET") {
+async function request(url, method = "GET", data = [], responseFormat = "text") {
+    if (method === "GET" && data.length > 0) {
         url += "?" + new URLSearchParams(data).toString();
     }
     let res = await fetch(url, {
@@ -23,7 +23,13 @@ async function httpRequest(url, method = "GET", data = []) {
          headers: {
               'Content-Type': 'application/x-www-form-urlencoded',
          },
-         body: method === "POST" ? new URLSearchParams(data) : undefined
+         body: method !== "GET" ? new URLSearchParams(data) : undefined
     });
-    return await res.text()
+    return responseFormat === "json" ? await res.json() : await res.text();
 }
+
+
+Element.prototype.on = Element.prototype.addEventListener;
+
+const find = document.querySelector.bind(document);
+const findAll = document.querySelectorAll.bind(document);

@@ -105,16 +105,6 @@ class Web extends Base {
 
     }
 
-    public function validateMovieFields() {
-        return $this->validate([
-            'title' => ['data' => $_POST['title'], 'rules' => 'required'],
-            'slug' => ['data' => $_POST['slug'], 'rules' => 'required|regex:[a-z0-9\-]+'],
-            'release_date' => ['data' => $_POST['release_date'], 'rules' => 'required|date'],
-            'start_datetime' => ['data' => $_POST['start_datetime'], 'rules' => 'required|datetime'],
-            'duration' => ['data' => $_POST['duration'], 'rules' => 'required|numeric'],
-            'imdb_id' => ['data' => $_POST['imdb_id'], 'rules' => 'required|regex:tt[a-z0-9]+']
-        ]);
-    }
 
     public function pageBackstageMovies() {
         $this->auth(); // members only
@@ -122,7 +112,13 @@ class Web extends Base {
         if (isset($_POST['action'])) {
             if ($_POST['action'] == 'add') {
 
-                $errors = $this->validateMovieFields();
+                $errors = $this->validate([
+                    'slug' => ['data' => $_POST['slug'], 'rules' => 'regex:[a-z0-9\-]+'],
+                    'release_date' => ['data' => $_POST['release_date'], 'rules' => 'date'],
+                    'start_datetime' => ['data' => $_POST['start_datetime'], 'rules' => 'required|datetime'],
+                    'duration' => ['data' => $_POST['duration'], 'rules' => 'numeric'],
+                    'imdb_id' => ['data' => $_POST['imdb_id'], 'rules' => 'required|regex:tt[a-z0-9]+']
+                ]);
 
                 if (!$errors) {
                     // check if slug already exist
@@ -152,7 +148,14 @@ class Web extends Base {
 
             if ($_POST['action'] == 'edit') {
 
-                $errors = $this->validateMovieFields();
+                $errors = $this->validate([
+                    'title' => ['data' => $_POST['title'], 'rules' => 'required'],
+                    'slug' => ['data' => $_POST['slug'], 'rules' => 'required|regex:[a-z0-9\-]+'],
+                    'release_date' => ['data' => $_POST['release_date'], 'rules' => 'required|date'],
+                    'start_datetime' => ['data' => $_POST['start_datetime'], 'rules' => 'required|datetime'],
+                    'duration' => ['data' => $_POST['duration'], 'rules' => 'required|numeric'],
+                    'imdb_id' => ['data' => $_POST['imdb_id'], 'rules' => 'required|regex:tt[a-z0-9]+']
+                ]);
 
                 if (!$errors) {
                     // check if slug already exist on another movie
@@ -212,11 +215,11 @@ class Web extends Base {
                     <th></th>
                 </tr>
                 <tr>
-                    <td><input type="text" name="title" value="<?= h(post('title'));?>" required></td>
-                    <td><input type="text" name="slug" value="<?= h(post('slug'));?>" required pattern="[a-z0-9\-]+"></td>
-                    <td><input type="date" name="release_date" value="<?= h(post('release_date'));?>" required></td>
+                    <td><input type="text" name="title" value="<?= h(post('title'));?>"></td>
+                    <td><input type="text" name="slug" value="<?= h(post('slug'));?>" pattern="[a-z0-9\-]+"></td>
+                    <td><input type="date" name="release_date" value="<?= h(post('release_date'));?>"></td>
                     <td><input type="datetime-local" name="start_datetime" value="<?= h(post('start_datetime'));?>" required></td>
-                    <td><input type="number" name="duration" value="<?= h(post('duration'));?>" required></td>
+                    <td><input type="number" name="duration" value="<?= h(post('duration'));?>"></td>
                     <td><input type="text" name="imdb_id" value="<?= h(post('imdb_id'));?>" required pattern="tt[a-z0-9]+"></td>
                     <td><button type="submit" class="add">add</button></td>
                 </tr>
@@ -236,7 +239,7 @@ class Web extends Base {
                         <td><input type="number" name="duration" value="<?= h($movie['duration']);?>" required></td>
                         <td><input type="text" name="imdb_id" value="<?= h($movie['imdb_id']);?>" required pattern="tt[a-z0-9]+"></td>
                         <td>
-                            <button type="submit" style="display: none;"></button>
+                            <button type="submit" style="display: none;">edit</button>
                             <div class="button delete" data-id="<?= $movie['id'];?>">delete</div>
                         </td>
                     </tr>
@@ -246,11 +249,10 @@ class Web extends Base {
 
         <script>
             ready(() => {
-                // delete ,ovie
-                document.querySelectorAll('.movie-edit .delete').forEach(el => {
-                    el.addEventListener('click', async () => {
+                findAll('.movie-edit .delete').forEach(el => {
+                    el.on('click', async () => {
                         if (confirm('Really?')) {
-                            await httpRequest("/backstage/movies", "POST", {action: "delete", id: el.dataset.id });
+                            await request("/backstage/movies", "POST", {action: "delete", id: el.dataset.id });
                             location.reload();
                         }
                     });
@@ -258,10 +260,8 @@ class Web extends Base {
             });
         </script>
 
-
         <?php
         $this->footer();
-
     }
 
 
