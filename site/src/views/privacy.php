@@ -1,5 +1,5 @@
 <div class="content">
-    <h1>Privacy Policy</h2>
+    <h1>Privacy Policy</h1>
     <h3>Last updated 8. October 2024</h3>
 
     <hr>

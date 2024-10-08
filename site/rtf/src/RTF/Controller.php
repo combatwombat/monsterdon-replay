@@ -26,6 +26,42 @@ class Controller extends Base {
     }
 
     /**
+     * Show $code.php if it exists, send http code
+     * @param $code
+     * @return void
+     */
+    public function error($code) {
+        $viewFile = __SITE__ . "/src/views/$code.php";
+        if (file_exists($viewFile)) {
+
+            switch ($code) {
+                case 404:
+                    header("HTTP/1.0 404 Not Found");
+                    break;
+                case 403:
+                    header("HTTP/1.0 403 Forbidden");
+                    break;
+                case 401:
+                    header("HTTP/1.0 401 Unauthorized");
+                    break;
+                case 418:
+                    header("HTTP/1.0 418 I'm a teapot");
+                    break;
+                case 500:
+                    header("HTTP/1.0 500 Internal Server Error");
+                    break;
+            }
+
+
+            $this->view($code, ['bodyClass' => "error-$code"]);
+        } else {
+            echo "Error $code";
+        }
+        die();
+
+    }
+
+    /**
      * Stream back a file, supports rRange requests for media files
      * @param $path
      * @param $encoding

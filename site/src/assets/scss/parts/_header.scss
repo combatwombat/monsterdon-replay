@@ -15,7 +15,7 @@ header {
           padding-top: 10px;
           img {
             height: 70px;
-            transform: translateY(20px);
+            transform: translate(-15px, 20px);
           }
         }
       }
@@ -39,6 +39,7 @@ header {
             padding-top: 0;
             img {
               height: 60px;
+              transform: translate(-10px, 20px);
             }
           }
         }

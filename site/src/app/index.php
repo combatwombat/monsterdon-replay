@@ -30,6 +30,8 @@ $app->get("/privacy", function() {
     $this->view("privacy", ['bodyClass' => 'page-privacy']);
 });
 
+$app->get("/{slug}", "Movies@show");
+
 $app->onError(404, function() {
     $this->view("404", ['bodyClass' => 'error-404']);
 });

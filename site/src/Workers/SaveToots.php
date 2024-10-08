@@ -14,7 +14,7 @@ class SaveToots extends Base {
 
     public function saveMediaPreviewsForExistingToots() {
         // get all toots with media attachments
-        $toots = $this->db->query("SELECT * FROM toots WHERE JSON_UNQUOTE(JSON_EXTRACT(data, '$.media_attachments')) <> \"[]\";");
+        $toots = $this->db->fetchAll("SELECT * FROM toots WHERE JSON_UNQUOTE(JSON_EXTRACT(data, '$.media_attachments')) <> \"[]\";");
 
 
         $tootCount = count($toots);
@@ -150,10 +150,10 @@ class SaveToots extends Base {
             // set max_id to id of last toot
             $maxId = $toot['id'];
 
-            $this->db->execute("INSERT INTO options (name, value) VALUES ('max_id', ?) ON DUPLICATE KEY UPDATE value = ?", [$maxId, $maxId]);
+            $this->db->execute("INSERT INTO options (name, value) VALUES ('max_id', :max_id) ON DUPLICATE KEY UPDATE value = :value", ["max_id" => $maxId, "value" => $maxId]);
 
 
-            $row = $this->db->query("SELECT COUNT(*) as count FROM toots");
+            $row = $this->db->fetch("SELECT COUNT(*) as count FROM toots");
             $tootCount = $row['count'];
             $this->log("Toot total: " . $tootCount);
 
@@ -226,13 +226,18 @@ class SaveToots extends Base {
     // save original file and preview
     public function saveMedia($media) {
 
-        if (empty($media) || !isset($media['id']) || !isset($media['remote_url']) || !isset($media['preview_url']) || preg_match('/[.\/]/', $media['id'])) {
+        if (empty($media) || !isset($media['id']) || !isset($media['url']) || !isset($media['preview_url']) || preg_match('/[.\/]/', $media['id'])) {
             return;
+        }
+
+        $originalURL = $media['remote_url'];
+        if (!$originalURL) {
+            $originalURL = $media['url'];
         }
 
         $id = $media['id'];
 
-        $fileExtension = pathinfo($media['remote_url'], PATHINFO_EXTENSION);
+        $fileExtension = pathinfo($originalURL, PATHINFO_EXTENSION);
 
         $originalFileName = __SITE__ . '/public/media/originals/' . $id . '.' . $fileExtension;
         $previewFileName = __SITE__ . '/public/media/previews/' . $id . '.jpg';
@@ -248,8 +253,8 @@ class SaveToots extends Base {
 
         } else {
             try {
-                $this->log("Fetching original file for media " . $id . " from " . $media['remote_url']);
-                $originalFile = $this->helper->httpRequest($media['remote_url'], "GET", null, $this->config('http.headers'));
+                $this->log("Fetching original file for media " . $id . " from " . $originalURL);
+                $originalFile = $this->helper->httpRequest($originalURL, "GET", null, $this->config('http.headers'));
             } catch (\Throwable $e) {
                 $httpCode = $e->getMessage();
                 $this->log("Error fetching original file for media " . $id . ": " . $httpCode);
@@ -303,7 +308,7 @@ class SaveToots extends Base {
 
             try {
                 $this->log("Fetching preview file for media " . $id . " from " . $media['preview_url']);
-                $previewImage = $this->helper->httpRequest($media['remote_url'], "GET", null, $this->config('http.headers'));
+                $previewImage = $this->helper->httpRequest($media['preview_url'], "GET", null, $this->config('http.headers'));
             } catch (\Throwable $e) {
                 $httpCode = $e->getMessage();
                 $this->log("Error fetching preview image for media " . $id . ": " . $httpCode);
