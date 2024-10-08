@@ -17,6 +17,7 @@ $app->container->set('tmdb', new TMDB($app->container));
 
 date_default_timezone_set($app->container->get('config')('timezone'));
 
+// Routing
 
 $app->get("/", "Movies@list");
 
@@ -25,7 +26,16 @@ $app->post("/backstage/movies", "BackstageMovies@new");
 $app->delete("/backstage/movies/{id}", "BackstageMovies@delete");
 $app->post("/backstage/movies/{id}", "BackstageMovies@edit");
 
+$app->get("/privacy", function() {
+    $this->view("privacy", ['bodyClass' => 'page-privacy']);
+});
 
+$app->onError(404, function() {
+    $this->view("404", ['bodyClass' => 'error-404']);
+});
+
+
+// CLI commands
 
 // save toot worker. usage:
 // php site/public/index.php save_toots

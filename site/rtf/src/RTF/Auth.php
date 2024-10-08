@@ -13,14 +13,15 @@ class Auth extends Base {
         $this->method = $authMethod;
         $this->redirectIfLoggedOut = $redirectIfLoggedOut;
 
+    }
+
+    public function __invoke() {
         session_start();
 
         if (empty($_SESSION['csrf_token'])) {
             $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
         }
-    }
 
-    public function __invoke() {
         return $this->exitIfNoAccess();
     }
 
@@ -360,7 +361,7 @@ class Auth extends Base {
     }
 
     public function logout() {
-        // destroy session and cookie, logout
+
         session_destroy();
 
         // delete remember cookie
@@ -372,6 +373,7 @@ class Auth extends Base {
             'httponly' => true,
             'samesite' => 'Strict'
         ]);
+
     }
 
 

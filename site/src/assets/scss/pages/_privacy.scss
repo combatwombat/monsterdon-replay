@@ -1,0 +1,26 @@
+.page-privacy {
+  .site {
+    max-width: 800px;
+  }
+  .content {
+    padding-top: 50px;
+  }
+
+  h1 {
+    margin-bottom: 0;
+  }
+  h2 {
+    margin: 40px 0 0 0;
+  }
+  h3 {
+    margin-top: 0;
+    color: $color-text-subtle;
+    font-weight: normal;
+  }
+
+  hr {
+    border: none;
+    height: 1px;
+    background: $color-border;
+  }
+}

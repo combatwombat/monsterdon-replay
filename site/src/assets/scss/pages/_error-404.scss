@@ -1,0 +1,15 @@
+.error-404 {
+  h2, h3 {
+    margin: 0;
+    text-align: center;
+  }
+  h2 {
+    margin: 80px 0 0 0;
+    font-size: 50px;
+  }
+  h3 {
+    color: $color-text-subtle;
+    font-size: 20px;
+    margin-bottom: 50px;
+  }
+}
