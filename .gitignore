@@ -8,3 +8,4 @@ site/public/media/avatars/*
 site/public/media/previews/*
 site/public/media/originals/*
 site/public/media/covers/*
+site/public/tmp/*

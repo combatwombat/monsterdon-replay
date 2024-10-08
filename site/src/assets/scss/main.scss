@@ -1,0 +1,14 @@
+@import 'includes/vars';
+@import 'includes/mixins';
+@import 'includes/fonts';
+@import 'includes/normalize';
+@import 'includes/general';
+
+// Parts
+@import 'parts/header';
+@import 'parts/footer';
+
+// Pages
+@import 'pages/backstage';
+@import 'pages/movies';
+

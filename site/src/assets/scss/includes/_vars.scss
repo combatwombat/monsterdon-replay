@@ -1,0 +1,51 @@
+@use 'sass:color';
+
+// Colors
+$color-red: #d30000;
+$color-green: #00d800;
+$color-blue: #0085ff;
+$color-violet: #7c5fff;
+$color-grey: #444;
+$color-blue-subtle: #131b28;
+
+$color-light: #ccc;
+$color-light-subtle: #888;
+$color-dark: #131415;
+$color-main: $color-violet;
+
+$color-text: $color-light;
+$color-text-subtle: $color-light-subtle;
+$color-bg: $color-dark;
+$color-border: $color-grey;
+
+
+// Font
+$font-family-sans: "Nunito", Helvetica, Arial, sans-serif;
+$font-weight-normal: 600;
+$font-weight-bold: 700;
+
+$font-size-s: 14px;
+$font-size-m: 16px;
+$font-size-l: 20px;
+$font-size-xl: 35px;
+
+// Sizes
+
+$border-radius: 8px;
+$border-radius-small: 3px;
+
+// Durations and easings
+
+$speed-faster: 60ms;
+$speed-fast: 100ms;
+$speed-normal: 300ms;
+$speed-slowish: 600ms;
+$speed-slow: 1s;
+$speed-slower: 1.5s;
+
+$easingOutQuad: cubic-bezier(0.5, 1, 0.89, 1);
+$easingOutBack: cubic-bezier(0.34, 1.56, 0.64, 1);
+$easingOutExpo: cubic-bezier(0.16, 1, 0.3, 1);
+$easing: $easingOutQuad; // default easing
+
+

@@ -1,0 +1,101 @@
+// Layout
+
+@mixin display-table() {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+@mixin display-table-row() {
+  display: table-row;
+}
+@mixin display-table-cell() {
+  display: table-cell;
+  vertical-align: top;
+}
+
+@mixin flex-container($gutter) {
+  display: flex;
+  flex-flow: row wrap;
+  margin: 0 (-$gutter);
+}
+@mixin flex-col($gutter) {
+  display: block;
+  flex: 1 1 0%;
+  margin: 0;
+  padding: 0 $gutter $gutter*2;
+}
+@mixin flex-width($width) {
+  flex-basis: $width;
+  max-width: $width;
+}
+
+// Transitions & Animations
+
+@mixin hyphens($value) {
+  -webkit-hyphens: $value;
+  -ms-hyphens: $value;
+  hyphens: $value;
+}
+
+@mixin transition($attr) {
+  -o-transition: $attr;
+  -moz-transition: $attr;
+  -webkit-transition: $attr;
+  transition: $attr;
+}
+
+@mixin transition-normal($what) {
+  @include transition($what $speed-normal $easing);
+}
+
+
+
+
+
+
+// Selectors
+@mixin input-element-text-like {
+  input[type=url],
+  input[type=email],
+  input[type=text],
+  input[type=tel],
+  input[type=number],
+  input[type=password],
+  textarea {
+    @content;
+  }
+}
+@mixin input-element-box-like {
+  select,
+  input[type=url],
+  input[type=email],
+  input[type=text],
+  input[type=tel],
+  input[type=number],
+  input[type=password],
+  textarea {
+    @content;
+  }
+}
+
+// Hacks
+
+@mixin ie11-only {
+  @media only screen and (-ms-high-contrast:active), (-ms-high-contrast:none) {
+    @content;
+  }
+}
+
+@mixin moz-only {
+  @-moz-document url-prefix() {
+    @content;
+  }
+}
+
+// thx to https://stackoverflow.com/a/25975282/1191375
+@mixin safari-only {
+  @media not all and (min-resolution:.001dpcm)
+  { @supports (-webkit-appearance:none) {
+    @content;
+  }}
+}

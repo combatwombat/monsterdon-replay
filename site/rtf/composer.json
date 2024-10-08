@@ -1,0 +1,21 @@
+{
+    "name": "combatwombat/rtf",
+    "description": "Robs Tiny Framework",
+    "type": "library",
+    "version": "0.1",
+    "authors": [
+        {
+            "name": "Robert Gerlach",
+            "email": "info@robertgerlach.net"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "RTF\\": "src/RTF"
+        },
+        "files": [
+            "src/functions.php"
+        ]
+    }
+}

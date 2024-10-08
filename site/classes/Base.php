@@ -32,7 +32,6 @@ class Base {
 
         $fileName = "default.log";
 
-        // filename contains double dots? bail
         if (strpos($fileName, '..') !== false) {
             return;
         }
