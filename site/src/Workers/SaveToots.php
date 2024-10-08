@@ -16,6 +16,7 @@ class SaveToots extends Base {
         // get all toots with media attachments
         $toots = $this->db->query("SELECT * FROM toots WHERE JSON_UNQUOTE(JSON_EXTRACT(data, '$.media_attachments')) <> \"[]\";");
 
+
         $tootCount = count($toots);
         $this->log("Saving media for " . $tootCount . " toots");
 
@@ -102,6 +103,12 @@ class SaveToots extends Base {
             }
 
             foreach ($toots as $toot) {
+
+                // toot not public? skip
+                if ($toot['visibility'] !== 'public') {
+                    $this->log("Toot " . $toot['id'] . " is not public");
+                    continue;
+                }
 
                 $createdAt = \DateTime::createFromFormat('Y-m-d\TH:i:s.u\Z', $toot['created_at']);
 
