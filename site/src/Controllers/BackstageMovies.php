@@ -23,9 +23,9 @@ class BackstageMovies extends \RTF\Controller {
         $errors = $this->db->validate([
             'slug' => ['data' => $_POST['slug'], 'rules' => 'regex:[a-z0-9\-]+'],
             'release_date' => ['data' => $_POST['release_date'], 'rules' => 'date'],
-            'start_datetime' => ['data' => $_POST['start_datetime'], 'rules' => 'required:datetime'],
+            'start_datetime' => ['data' => $_POST['start_datetime'], 'rules' => 'required|datetime'],
             'duration' => ['data' => $_POST['duration'], 'rules' => 'numeric'],
-            'imdb_id' => ['data' => $_POST['imdb_id'], 'rules' => 'required:regex:tt[a-z0-9]+']
+            'imdb_id' => ['data' => $_POST['imdb_id'], 'rules' => 'required|regex:tt[a-z0-9]+']
         ]);
 
 

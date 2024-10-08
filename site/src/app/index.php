@@ -39,7 +39,8 @@ $app->onError(404, function() {
 
 // CLI commands
 
-// save toot worker. usage:
+// save toot worker.
+// usage:
 // php site/public/index.php save_toots
 $app->cli("save_toots", function() {
     $saveToots = new Workers\SaveToots($this->container);
