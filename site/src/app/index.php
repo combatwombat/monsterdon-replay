@@ -30,6 +30,8 @@ $app->get("/privacy", function() {
     $this->view("privacy", ['bodyClass' => 'page-privacy']);
 });
 
+$app->get("/api/toots/{slug}", "Movies@tootsJSON");
+
 $app->get("/{slug}", "Movies@show");
 
 $app->onError(404, function() {

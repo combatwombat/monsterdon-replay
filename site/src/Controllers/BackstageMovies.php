@@ -12,7 +12,7 @@ class BackstageMovies extends \RTF\Controller {
     public function list() {
         $this->auth();
 
-        $movies = $this->db->fetchAll("SELECT * FROM movies ORDER BY start_datetime ASC");
+        $movies = $this->db->fetchAll("SELECT * FROM movies ORDER BY start_datetime DESC");
         $data = ['bodyClass' => "page-backstage", "movies" => $movies];
         $this->view("backstage/movies/list", $data);
     }

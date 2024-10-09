@@ -101,12 +101,40 @@ class DB {
     }
 
     /**
+     * Delete a cache entry by its prefix.
+     * @param string $prefix The prefix.
+     * @return int Number of affected rows.
+     */
+    public function deleteCacheByPrefix($prefix) {
+        return $this->execute("DELETE FROM cache WHERE name LIKE :prefix", ["prefix" => $prefix . '%']);
+    }
+
+
+    /**
      * Select data, return first element.
      * @param string $query Query String with ? placeholders
      * @param array|null $vars Array of values for placeholders
+     * @param bool|string $cache Whether to cache the result and load it from cache table if available. If it's a string, it's used as cache key prefix.
+     * @param bool $all Whether to return all results with fetchAll
      * @return array The first result.
      */
-    public function fetch($query, $vars = null) {
+    public function fetch($query, $vars = null, $cache = false, $all = false) {
+
+        if ($cache) {
+            // first 220 characters of query, sanitized, to identify the cache entry at least somewhat in the cache table
+            $queryPart = strtolower(substr(preg_replace('/[^a-zA-Z0-9_]/', '', str_replace(" ", "_", $query)), 0, 220));
+            $cacheKey = $queryPart . "-" . md5($query . json_encode($vars));
+
+            if (is_string($cache)) {
+                $cacheKey = $cache . "-" . $cacheKey;
+            }
+
+            $res = $this->getByName("cache", $cacheKey);
+            if ($res) {
+                return unserialize($res['value']);
+            }
+        }
+
         $st = $this->pdo->prepare($query);
 
         if (is_array($vars)) {
@@ -127,41 +155,32 @@ class DB {
         }
 
         $st->execute();
-        return $st->fetch();
+
+        if ($all) {
+            $ret = $st->fetchAll();
+        } else {
+            $ret = $st->fetch();
+        }
+
+        if ($cache) {
+            $this->insert("cache", [
+                'name' => $cacheKey,
+                'value' => serialize($ret)
+            ]);
+        }
+
+        return $ret;
     }
 
     /**
      * Select data, return array.
      * @param string $query Query String with ? placeholders.
      * @param array|null $vars Array of values for placeholders.
+     * @param bool $cache Whether to cache the result and load it from cache table if available.
      * @return array Array of results.
      */
-    public function fetchAll($query, $vars = null) {
-        $st = $this->pdo->prepare($query);
-
-        if (is_array($vars)) {
-            foreach ($vars as $key => $val) {
-
-                if (substr($key, 0, 1) != ':') {
-                    $key = ':' . $key;
-                }
-
-                if (is_numeric($val)) {
-                    $st->bindValue($key, (int)$val, PDO::PARAM_INT);
-                } else if (is_bool($val)) {
-                    $st->bindValue($key, (bool)$val, PDO::PARAM_BOOL);
-                } else if (is_null($val)) {
-                    $st->bindValue($key, null, PDO::PARAM_NULL);
-                } else {
-                    $st->bindValue($key, $val);
-                }
-            }
-        }
-
-
-
-        $st->execute();
-        return $st->fetchAll();
+    public function fetchAll($query, $vars = null, $cache = false) {
+        return $this->fetch($query, $vars, $cache, true);
     }
 
 

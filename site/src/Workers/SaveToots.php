@@ -7,6 +7,7 @@ use RTF\Base;
 class SaveToots extends Base {
 
     public $imageDownloadWaitTime = 2;
+    public $movies;
 
     public function __construct($container) {
         parent::setContainer($container);
@@ -57,6 +58,9 @@ class SaveToots extends Base {
             $this->log("No hashtag provided");
             return;
         }
+
+        // get movies
+        $this->movies = $this->db->getAll("movies");
 
         if ($startDateTime) {
             $startDateTime = \DateTime::createFromFormat('Y-m-d H:i:s', $startDateTime);
@@ -139,10 +143,17 @@ class SaveToots extends Base {
                     }
                 }
 
-
                 // save avatar image of account
                 $this->saveAvatarImage($toot['account']['id'], $toot['account']['avatar']);
 
+                // delete cache entries with name "toots-{slug}" for movies that take place during the toots time
+                $movieSlugs = $this->getMovieSlugsForToot($toot);
+                foreach ($movieSlugs as $slug) {
+                    print_r($slug);
+                    $this->db->execute("DELETE FROM cache WHERE name LIKE :prefix", ["prefix" => "toots-" . $slug . "%"]);
+                    $this->log("Deleted cache entries for movie " . $slug);
+                }
+                
                 $newTootCount++;
 
             }
@@ -151,7 +162,6 @@ class SaveToots extends Base {
             $maxId = $toot['id'];
 
             $this->db->execute("INSERT INTO options (name, value) VALUES ('max_id', :max_id) ON DUPLICATE KEY UPDATE value = :value", ["max_id" => $maxId, "value" => $maxId]);
-
 
             $row = $this->db->fetch("SELECT COUNT(*) as count FROM toots");
             $tootCount = $row['count'];
@@ -179,6 +189,33 @@ class SaveToots extends Base {
         }
 
 
+    }
+
+    /**
+     * Return list of movie slugs for movies that take place during the toots time
+     * @param $toot
+     * @return array movies that match the toots time
+     */
+    public function getMovieSlugsForToot($toot) {
+
+        $movies = [];
+
+        foreach ($this->movies as $movie) {
+            $startDateTime = new \DateTime($movie['start_datetime']);
+
+            // add some seconds for aftershow toots
+            $endDateTime = clone $startDateTime;
+            $endDateTime->add(new \DateInterval('PT' . $movie['duration'] . 'S'));
+            $endDateTime->add(new \DateInterval('PT' . $this->config("aftershowDuration") . 'S'));
+
+            $tootTime = new \DateTime($toot['created_at']);
+
+            if ($tootTime >= $startDateTime && $tootTime <= $endDateTime) {
+                $movies[] = $movie['slug'];
+            }
+        }
+
+        return $movies;
     }
 
     public function saveAvatarImage($id, $url) {
