@@ -5,8 +5,12 @@
 
   .site {
     max-width: 800px;
-
   }
+
+  footer {
+    display: none;
+  }
+
   .movie {
     padding-top: 30px;
   }
@@ -112,4 +116,53 @@
       margin: 0;
     }
   }
+
+  .toots {
+    display: none;
+    padding-top: 10px;
+  }
+
+  .toot {
+    border-bottom: 1px solid $color-border;
+    padding-top: 20px;
+    .toot-header {
+      display: grid;
+      grid-template-columns: 40px 1fr 100px;
+      grid-gap: 10px;
+
+      .col-image {
+        img {
+          width: 40px;
+          height: 40px;
+          border-radius: $border-radius-small;
+        }
+      }
+
+      .col-name {
+        .display-name {
+            color: $color-light;
+        }
+        .acct {
+          color: $color-light-subtle;
+          font-weight: normal;
+        }
+      }
+      .col-created_at {
+        color: $color-text-subtle;
+        text-align: right;
+      }
+    }
+    .toot-body {
+
+    }
+  }
+}
+
+.toots-loaded {
+    .toots {
+        display: block;
+    }
+    .toots-loading {
+        display: none;
+    }
 }

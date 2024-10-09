@@ -97,6 +97,8 @@ class Movies extends Controller {
                 'account' => [
                     'id' => $data['account']['id'],
                     'display_name' => $data['account']['display_name'],
+                    'acct' => $data['account']['acct'],
+                    'url' => $data['account']['url']
                 ],
                 'content' => $data['content'],
                 'sensitive' => $data['sensitive'],

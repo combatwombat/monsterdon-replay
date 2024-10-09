@@ -42,10 +42,13 @@ use App\Helpers\ViewHelper;
         <?= icon('loader-2-line');?>
         <p>Loading toots...</p>
     </div>
-    <div class="toots" style="height: 4000px;">
 
-    </div>
+    <div class="toots"></div>
+
 </div>
+<script>
+    TootPlayer('<?= $movie['slug'];?>');
+</script>
 
 
 
