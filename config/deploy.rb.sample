@@ -34,13 +34,11 @@ set :ssh_options, {
 }
 
 namespace :deploy do
-    desc 'Run chmod +x on worker/worker.php and restart it'
+    desc 'restart worker'
     task :restart_worker do
         on roles(:app) do
-        execute "chmod +x #{release_path}/worker/worker.php"
-
-        # restart supervisor worker inside docker container rait
-        execute "docker exec containername supervisorctl restart worker"
+        # restart supervisor worker inside docker container
+        execute "docker exec monsterdon-replay supervisorctl restart worker"
         end
     end
 end

@@ -3,7 +3,7 @@
 # Defines a single server with a list of roles and multiple properties.
 # You can define all roles on a single server, or split them:
 
-server 'domain.com', user: 'user', roles: %w{app}, port: 1313
+server 'domain.com', user: 'user', roles: %w{app}, port: 12345
 
 set :branch, 'main'
 
@@ -47,11 +47,11 @@ set :ssh_options, {
     port: 12345
 }
 
-SSHKit.config.command_map[:git] = "GIT_SSH_COMMAND='ssh -i ~/.ssh/id_rait -o IdentitiesOnly=yes' git"
+SSHKit.config.command_map[:git] = "GIT_SSH_COMMAND='ssh -i ~/.ssh/id_deploykey -o IdentitiesOnly=yes' git"
 
 
 #  set :ssh_options, {
-#    keys: %w(/home/rlisowski/.ssh/id_rsa),
+#    keys: %w(/home/user/.ssh/id_rsa),
 #    forward_agent: false,
 #    auth_methods: %w(password)
 #  }
@@ -68,17 +68,6 @@ SSHKit.config.command_map[:git] = "GIT_SSH_COMMAND='ssh -i ~/.ssh/id_rait -o Ide
 #     auth_methods: %w(publickey password)
 #     # password: 'please use keys'
 #   }
-
-#namespace :deploy do
-#  desc 'Restart transcript_job_runner in Docker container'
-#  task :restart_transcript_job_runner do
-#    on roles(:app) do
-#      execute "docker exec stenobot supervisorctl restart transcript_job_runner"
-#    end
-#  end
-#end
-
-#after 'deploy:finished', 'deploy:restart_transcript_job_runner'
 
 # run chmod +x on worker/worker.php after deploy is finished
 after 'deploy:finished', 'deploy:restart_worker'
