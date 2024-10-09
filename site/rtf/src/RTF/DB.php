@@ -60,8 +60,8 @@ class DB {
      * @return array|null The result.
      */
     public function get($table, $id) {
-        $sql = "SELECT * FROM `" . $table . "` WHERE id = ?";
-        $ret = $this->fetch($sql, [$id]);
+        $sql = "SELECT * FROM `" . $table . "` WHERE id = :id";
+        $ret = $this->fetch($sql, ["id" => $id]);
         return $ret ? $ret : null;
     }
 
@@ -96,8 +96,8 @@ class DB {
      * @return array Array of results.
      */
     public function getAllBy($table, $column, $value) {
-        $sql = "SELECT * FROM `" . $table . "` WHERE `" . $column . "` = ?";
-        return $this->fetchAll($sql, [$value]);
+        $sql = "SELECT * FROM `" . $table . "` WHERE `" . $column . "` = :value";
+        return $this->fetchAll($sql, ["value" => $value]);
     }
 
     /**

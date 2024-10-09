@@ -80,7 +80,15 @@ class BackstageMovies extends \RTF\Controller {
 
     public function delete($id) {
         $this->auth();
-        $this->db->delete("movies", ["id" => $id]);
+
+        $movie = $this->db->get("movies", $id);
+
+        if ($movie) {
+            $this->db->delete("movies", ["id" => $id]);
+
+            // delete cache entries with name = "toots-{$movie['slug']}"
+            $this->db->execute("DELETE FROM cache WHERE name LIKE :prefix", ["prefix" => "toots-" . $movie['slug'] . "%"]);
+        }
     }
 
     public function edit($id) {

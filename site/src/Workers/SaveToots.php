@@ -149,11 +149,10 @@ class SaveToots extends Base {
                 // delete cache entries with name "toots-{slug}" for movies that take place during the toots time
                 $movieSlugs = $this->getMovieSlugsForToot($toot);
                 foreach ($movieSlugs as $slug) {
-                    print_r($slug);
                     $this->db->execute("DELETE FROM cache WHERE name LIKE :prefix", ["prefix" => "toots-" . $slug . "%"]);
                     $this->log("Deleted cache entries for movie " . $slug);
                 }
-                
+
                 $newTootCount++;
 
             }
