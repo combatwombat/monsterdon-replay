@@ -12,9 +12,10 @@ function ready(fn) {
  * @param method
  * @param data array of key-value pairs
  * @param responseFormat "text" or "json"
+ * @param headers object of additional headers
  * @returns {Promise<string>}
  */
-async function request(url, method = "GET", data = [], responseFormat = "text") {
+async function request(url, method = "GET", data = [], responseFormat = "text", headers = {}) {
     if (method === "GET" && data.length > 0) {
         url += "?" + new URLSearchParams(data).toString();
     }
@@ -22,6 +23,7 @@ async function request(url, method = "GET", data = [], responseFormat = "text") 
         method: method,
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
+            ...headers
         },
         body: method !== "GET" ? new URLSearchParams(data) : undefined
     });
@@ -37,8 +39,8 @@ const findAll = document.querySelectorAll.bind(document);
 Element.prototype.find = Element.prototype.querySelector;
 Element.prototype.findAll = Element.prototype.querySelectorAll;
 
-Element.prototype.show = function (display = "block") {
-    this.style.display = this.dataset._display || display;
+Element.prototype.show = function () {
+    this.style.display = this.dataset._display || 'block';
 }
 
 Element.prototype.hide = function () {
