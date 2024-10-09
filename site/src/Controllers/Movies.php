@@ -45,9 +45,12 @@ class Movies extends Controller {
 
         $data = [
             'bodyClass' => 'page-movie',
+            'backLink' => '/',
+            'backgroundImage' => 'url(/media/covers/' . $movie['imdb_id'] . '.jpg)',
             'movie' => $movie,
             'tootCount' => $tootCount
         ];
+
 
         $this->view("movies/show", $data);
     }

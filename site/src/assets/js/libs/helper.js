@@ -31,12 +31,20 @@ async function request(url, method = "GET", data = [], responseFormat = "text") 
 
 Element.prototype.on = Element.prototype.addEventListener;
 
-
 const find = document.querySelector.bind(document);
 const findAll = document.querySelectorAll.bind(document);
 
 Element.prototype.find = Element.prototype.querySelector;
 Element.prototype.findAll = Element.prototype.querySelectorAll;
+
+Element.prototype.show = function (display = "block") {
+    this.style.display = this.dataset._display || display;
+}
+
+Element.prototype.hide = function () {
+    this.dataset._display = window.getComputedStyle(this, null).display; // remember original display
+    this.style.display = 'none';
+}
 
 
 /*

@@ -1,3 +1,115 @@
 .page-movie {
-  background: red;
+
+  background: linear-gradient(rgba($color-bg, 0.97), rgba($color-bg, 0.97)), var(--background-image) repeat-y center 0;
+  background-size: 100%;
+  
+  .site {
+    max-width: 800px;
+
+  }
+  .movie {
+    padding-top: 30px;
+  }
+
+  .info {
+    display: grid;
+    grid-template-columns: 90px 1fr;
+    grid-gap: 10px;
+    color: $color-text;
+    font-weight: normal;
+    padding: 10px;
+    background: $color-blue-subtle;
+
+    border-radius: $border-radius + 10px;
+    backdrop-filter: blur(7px);
+
+    .top {
+      position: relative;
+      padding-right: 40px;
+
+      .close {
+        position: absolute;
+        display: grid;
+        place-items: center;
+        top: -10px;
+        right: -10px;
+        width: 40px;
+        height: 40px;
+        border-radius: $border-radius + 10px;
+        color: $color-light;
+        @include transition(all $speed-slowish $easing);
+
+        svg {
+          width: 20px;
+        }
+
+        &:hover {
+          color: $color-main;
+          @include transition(all $speed-faster $easing);
+        }
+      }
+    }
+
+    .col {
+      &.col-cover {
+        img {
+          display: block;
+          width: 100%;
+          height: auto;
+          border-radius: $border-radius;
+        }
+      }
+      &.col-content {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+
+        .title {
+          margin: 0 0 10px 0;
+          white-space: nowrap;
+          .name {
+            white-space: normal;
+            font-size: 26px;
+            font-weight: bold;
+            color: $color-light;
+          }
+          .release-date {
+            font-size: 16px;
+            color: $color-text-subtle;
+            font-weight: normal;
+
+          }
+        }
+        .duration {
+          font-size: 16px;
+          margin-bottom: 10px;
+        }
+
+        .meta {
+          a {
+            display: inline-block;
+          }
+        }
+        .start_datetime {
+
+
+        }
+      }
+    }
+  }
+
+
+  .toots-loading {
+    text-align: center;
+    padding-top: 40px;
+
+    svg {
+      width: 20px;
+      display: inline-block;
+      animation: rotate 2s linear infinite;
+    }
+    p {
+      margin: 0;
+    }
+  }
 }

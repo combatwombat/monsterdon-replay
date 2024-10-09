@@ -33,9 +33,7 @@ body {
   -webkit-font-feature-settings:"liga", "kern";
   font-feature-settings: "liga", "kern";
 }
-body.ready {
-  font-weight: $font-weight-normal;
-}
+
 
 .site {
   position: relative;
@@ -50,3 +48,16 @@ a {
   font-weight: $font-weight-bold;
 }
 
+@view-transition {
+  navigation: auto;
+}
+
+// css keyframes rotate
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

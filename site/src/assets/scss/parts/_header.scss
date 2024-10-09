@@ -23,16 +23,55 @@ header {
     }
 
 
+    &.col-left,
+    &.col-right {
+      a {
+        display: grid;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        color: $color-light;
+        @include transition(all $speed-slowish $easing);
+
+        svg {
+          display: block;
+          width: 35px;
+          transform: translate(-13px, 2px);
+        }
+
+        &:hover {
+          color: $color-main;
+          @include transition(all $speed-faster $easing);
+        }
+      }
+    }
+
     &.col-left {
       justify-content: flex-start;
     }
     &.col-right {
       justify-content: flex-end;
+
+      a {
+        svg {
+          width: 30px;
+          transform: translate(13px, 2px);
+        }
+      }
     }
+
   }
 
   @media (max-width: 420px) {
     .col {
+      &.col-left {
+        a {
+          svg {
+            transform: translate(-13px, 0);
+          }
+        }
+      }
       &.col-middle {
         h1 {
           a {
@@ -49,6 +88,13 @@ header {
 
   @media (max-width: 360px) {
     .col {
+      &.col-left {
+        a {
+          svg {
+            transform: translate(-13px, 2px);
+          }
+        }
+      }
       &.col-middle {
         h1 {
           a {
