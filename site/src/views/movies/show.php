@@ -50,7 +50,7 @@ use App\Helpers\ViewHelper;
     <div class="toots-start">
         <a href="#" class="toots-start-button">
             <?= icon('play-circle-fill');?>
-            <span>Play</span>
+            <span>Start</span>
         </a>
     </div>
 

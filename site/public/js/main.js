@@ -134,6 +134,7 @@ async function TootPlayer(slug) {
         openSettings: find('.open-settings'),
         inputSettingCompact: find('#setting-compact'),
         inputSettingHideHashtags: find('#setting-hide-hashtags'),
+        tootsStartButton: find('.toots-start-button'),
     }
 
     const overallCurrentTime = els.inputCurrentTime.getAttribute('max');
@@ -144,7 +145,7 @@ async function TootPlayer(slug) {
 
     let startTime = 0; // when did we press play?
     let startCurrentTime = 0; // what was the time when we pressed play?
-    let oldCurrentTime = 0; // what was the last time we updated the display?
+    let oldCurrentTime = -1; // what was the last time we updated the display?
 
     updateDisplay();
 
@@ -155,7 +156,7 @@ async function TootPlayer(slug) {
 
         startTime = performance.now() / 1000;
         startCurrentTime = currentTime;
-        oldCurrentTime = currentTime;
+        oldCurrentTime = currentTime - 1;
         advanceTime();
     }
 
@@ -228,8 +229,7 @@ async function TootPlayer(slug) {
     toots.forEach( (toot, index) => {
 
         // create toot element with string literals
-        let tootHTML = `
-        <div class="toot" data-id="${toot.id}" style="display: none;">
+        let tootHTML = `<div class="toot" style="display: none;">
             <div class="toot-header">
                 <a href="${toot.account.url}" target="_blank" class="col col-image">
                     <img src="/media/avatars/${toot.account.id}.jpg" alt="${toot.account.display_name}" loading="lazy">
@@ -245,8 +245,8 @@ async function TootPlayer(slug) {
             <div class="toot-body">
                 ${toot.content}
             </div>
-        </div>
-        `;
+        </div>`;
+
 
         // create dom element from tootHTML
         let tootElement = document.createElement('div');
@@ -264,6 +264,7 @@ async function TootPlayer(slug) {
     // scrub on timeline
     els.inputCurrentTime.on('input', (e) => {
         onTimeScrub(parseInt(e.target.value));
+        els.body.classList.add("playing-started");
     });
 
     // play / pause
@@ -273,6 +274,7 @@ async function TootPlayer(slug) {
             stopPlaying();
         } else {
             startPlaying();
+            els.body.classList.add("playing-started");
         }
     });
 
@@ -315,6 +317,12 @@ async function TootPlayer(slug) {
         } else {
             els.body.classList.remove("style-hide-hashtags");
         }
+    });
+
+    els.tootsStartButton.on('click', (e) => {
+        e.preventDefault();
+        els.body.classList.add("playing-started");
+        startPlaying();
     });
 
 

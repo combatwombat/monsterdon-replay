@@ -124,7 +124,7 @@
   }
 
   .toots-start {
-    display: grid;
+    display: none;
     justify-content: center;
     padding-top: 100px;
 
@@ -133,10 +133,10 @@
       display: grid;
       grid-template-columns: 45px 1fr;
       align-items: center;
-      width: 145px;
+      width: 155px;
       height: 70px;
       padding: 0 15px;
-      background: $color-main;
+      background: $color-blue;
       color: $color-light;
       border-radius: 100px;
       font-size: 30px;
@@ -158,6 +158,10 @@
       }
 
     }
+  }
+
+  &.playing-started .toots-start {
+    display: none;
   }
 
   .toots {
@@ -252,6 +256,9 @@
 
 
 .toots-loaded {
+  .toots-start {
+    display: grid;
+  }
   .toots {
     display: block;
   }
