@@ -149,8 +149,41 @@ async function TootPlayer(slug) {
             </div>
             <div class="toot-body">
                 ${toot.content}
-            </div>
-        </div>`;
+            </div>`
+
+        if (toot.media_attachments.length > 0) {
+
+            tootHTML += `<div class="toot-media-attachments">`;
+
+            toot.media_attachments.forEach( (media) => {
+
+                if (media.type === "image") {
+                    tootHTML += `<div class="media media-image"><a href="/media/originals/${media.id}.${media.extension}" target="_blank"><img src="/media/previews/${media.id}.jpg" alt="${media.description}" loading="lazy"></a></div>`;
+
+                } else if (media.type === "video") {
+                    tootHTML += `<div class="media media-video"><video controls>
+                        <source src="/media/originals/${media.id}.${media.extension}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video></div>`;
+
+                } else if (media.type === "gifv") {
+                    tootHTML += `<div class="media media-gifv">
+                        <video autoplay loop muted playsinline>
+                            <source src="/media/originals/${media.id}.${media.extension}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>`;
+
+                } else {
+                    tootHTML += `<div class="media media-misc">
+                        <div style="height: 400px; background: red;">${media.type}</div>
+                    </div>`;
+                }
+            });
+            tootHTML += `</div>`;
+        }
+
+        tootHTML += `</div>`;
 
 
         // create dom element from tootHTML

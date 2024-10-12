@@ -243,9 +243,10 @@ class SaveToots extends Base {
             return;
         }
 
-        // convert to jpg
+        // convert to jpg and resize to 120x120 (40@3x)
         if ($mime !== 'image/jpeg') {
             $image = imagecreatefromstring($data);
+            $image = imagescale($image, 120);
             ob_start();
             imagejpeg($image);
             $data = ob_get_clean();
