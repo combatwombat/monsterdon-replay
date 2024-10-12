@@ -47,17 +47,24 @@ use App\Helpers\ViewHelper;
         <p>Loading toots...</p>
     </div>
 
+    <div class="toots-start">
+        <a href="#" class="toots-start-button">
+            <?= icon('play-circle-fill');?>
+            <span>Play</span>
+        </a>
+    </div>
+
     <div class="toots"></div>
 
     <div class="player">
         <div class="settings">
             <div class="row setting-checkbox">
                 <div class="col col-label">
-                    Simple Header
+                    Compact View
                 </div>
                 <div class="col col-checkbox">
-                    <input type="checkbox" class="checkbox" id="simpleHeader">
-                    <label for="simpleHeader" class="switch"></label>
+                    <input type="checkbox" class="checkbox" id="setting-compact">
+                    <label for="setting-compact" class="switch"></label>
                 </div>
             </div>
             <div class="row setting-checkbox">
@@ -65,8 +72,8 @@ use App\Helpers\ViewHelper;
                     Hide Hashtags
                 </div>
                 <div class="col col-checkbox">
-                    <input type="checkbox" class="checkbox" id="hideHashtags">
-                    <label for="hideHashtags" class="switch"></label>
+                    <input type="checkbox" class="checkbox" id="setting-hide-hashtags">
+                    <label for="setting-hide-hashtags" class="switch"></label>
                 </div>
             </div>
         </div>

@@ -51,6 +51,7 @@ class Movies extends Controller {
             'header' => [
                 'title' => $movie['title'],
                 'bodyClass' => 'page-movie',
+                'headerClass' => 'small',
                 'backLink' => '/',
                 'backgroundImage' => 'url(/media/covers/' . $movie['imdb_id'] . '.jpg)',
             ],

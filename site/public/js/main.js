@@ -103,13 +103,11 @@ ready(() => {
         find('.open-movie-info').on('click', (e) => {
             e.preventDefault();
             body.classList.toggle("movie-info-closed");
-            header.classList.toggle("small");
         });
 
         find('.movie-info .close').on('click', (e) => {
             e.preventDefault();
             body.classList.add("movie-info-closed");
-            header.classList.add("small");
         });
 
     }
@@ -134,6 +132,8 @@ async function TootPlayer(slug) {
         playPauseButton: find('.play-pause-button'),
         inputCurrentTime: find('.input-current-time'),
         openSettings: find('.open-settings'),
+        inputSettingCompact: find('#setting-compact'),
+        inputSettingHideHashtags: find('#setting-hide-hashtags'),
     }
 
     const overallCurrentTime = els.inputCurrentTime.getAttribute('max');
@@ -298,6 +298,23 @@ async function TootPlayer(slug) {
     on("click", ".settings .col-label", (e) => {
        // parent.{.col-checkbox}.input.click
          e.target.parentElement.find('.col-checkbox input').click();
+    });
+
+    // settings input
+    els.inputSettingCompact.on("change", (e) => {
+        if (e.target.checked) {
+            els.body.classList.add("style-compact");
+        } else {
+            els.body.classList.remove("style-compact");
+        }
+    });
+
+    els.inputSettingHideHashtags.on("change", (e) => {
+        if (e.target.checked) {
+            els.body.classList.add("style-hide-hashtags");
+        } else {
+            els.body.classList.remove("style-hide-hashtags");
+        }
     });
 
 

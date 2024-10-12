@@ -84,7 +84,7 @@ header {
         a {
           svg {
             width: 30px;
-            transform: translate(-13px, -8px);
+            transform: translate(-13px, 0);
             @include transition-normal(all);
           }
         }
@@ -93,7 +93,7 @@ header {
         a {
           svg {
             width: 25px;
-            transform: translate(7px, -8px);
+            transform: translate(7px, 0);
             @include transition-normal(all);
           }
         }
@@ -102,14 +102,14 @@ header {
         h1 {
           a {
             padding-top: 0;
-            height: 50px;
+            height: 40px;
             aspect-ratio: 176 / 50;
             @include transition-normal(all);
 
             img {
-              height: 50px;
+              height: 40px;
               top: 10px;
-              transform: translate(-10px, 0);
+              transform: translate(-7px, 0);
               @include transition-normal(all);
 
             }
@@ -148,15 +148,11 @@ header {
 
     &.small {
       .col {
+
         &.col-middle {
           h1 {
             a {
               padding-top: 0;
-              height: 40px;
-              img {
-                height: 40px;
-                transform: translate(-10px, 0);
-              }
             }
           }
         }

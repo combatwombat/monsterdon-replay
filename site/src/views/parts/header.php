@@ -5,7 +5,7 @@
     <?= !empty($backgroundImage) ? 'style="--background-image: ' . $backgroundImage . '"' : '';?>
 >
 <div class="site">
-    <header>
+    <header <?= !empty($headerClass) ? ' class="'.$headerClass.'"' : '';?>>
         <div class="col col-left">
             <?php if (!empty($backLink)) { ?>
                 <a href="<?php echo $backLink;?>" class="back">
