@@ -42,13 +42,16 @@ class Movies extends Controller {
 
         $tootCount = $res['count'];
 
+        $overallDuration = $movie['duration'] + $this->config("aftershowDuration");
+
 
         $data = [
             'bodyClass' => 'page-movie',
             'backLink' => '/',
             'backgroundImage' => 'url(/media/covers/' . $movie['imdb_id'] . '.jpg)',
             'movie' => $movie,
-            'tootCount' => $tootCount
+            'tootCount' => $tootCount,
+            'overallDuration' => $overallDuration
         ];
 
 
@@ -82,7 +85,7 @@ class Movies extends Controller {
         $endDateTime->add(new \DateInterval('PT' . $movie['duration'] . 'S'));
         $endDateTime->add(new \DateInterval('PT' . $this->config("aftershowDuration") . 'S'));
 
-        $dbToots = $this->db->fetchAll("SELECT * FROM toots WHERE created_at >= :start AND created_at <= :end ORDER BY created_at ASC", ["start" => $startDateTime->format("Y-m-d H:i:s"), "end" => $endDateTime->format("Y-m-d H:i:s")]);
+        $dbToots = $this->db->fetchAll("SELECT * FROM toots WHERE created_at >= :start AND created_at <= :end ORDER BY created_at DESC", ["start" => $startDateTime->format("Y-m-d H:i:s"), "end" => $endDateTime->format("Y-m-d H:i:s")]);
 
 
         $toots = [];
@@ -90,26 +93,29 @@ class Movies extends Controller {
         foreach ($dbToots as $dbToot) {
             $data = json_decode($dbToot['data'], true);
 
+            $timeDelta = strtotime($dbToot['created_at']) - strtotime($startDateTime->format("Y-m-d H:i:s"));
+
             // only return necessary data
             $toot = [
-                'id' => $data['id'],
-                'url' => $data['url'],
+                'id' => h($data['id']),
+                'url' => h($data['url']),
                 'account' => [
-                    'id' => $data['account']['id'],
-                    'display_name' => $data['account']['display_name'],
-                    'acct' => $data['account']['acct'],
-                    'url' => $data['account']['url']
+                    'id' => h($data['account']['id']),
+                    'display_name' => h($data['account']['display_name']),
+                    'acct' => h($data['account']['acct']),
+                    'url' => h($data['account']['url'])
                 ],
-                'content' => $data['content'],
-                'sensitive' => $data['sensitive'],
-                'created_at' => $data['created_at'],
+                'content' => strip_tags($data['content'], '<p><a><span><br>'),
+                'sensitive' => $data['sensitive'] ? true : false,
+                'created_at' => h($data['created_at']),
+                'time_delta' => $timeDelta,
                 'media_attachments' => []
             ];
 
             foreach ($data['media_attachments'] as $media) {
                 $toot['media_attachments'][] = [
-                    'id' => $media['id'],
-                    'type' => $media['type'],
+                    'id' => h($media['id']),
+                    'type' => h($media['type']),
                     'extension' => pathinfo($media['url'], PATHINFO_EXTENSION)
                 ];
             }

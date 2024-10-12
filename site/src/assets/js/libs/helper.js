@@ -48,48 +48,23 @@ Element.prototype.hide = function () {
     this.style.display = 'none';
 }
 
+/**
+ * Format seconds to MM:SS or H:MM:SS if it's over an hour
+ * @param seconds
+ * @returns {string}
+ */
+function formatTime(seconds) {
+    let hours = Math.floor(seconds / 3600);
+    let minutes = Math.floor(seconds % 3600 / 60);
+    let secs = Math.floor(seconds % 60);
 
-/*
-// stuff for alpine state merge
-
-// thx to Salakar https://stackoverflow.com/a/34749873/1191375
-function isObject(item) {
-    return (item && typeof item === 'object' && !Array.isArray(item));
-}
-
-function deepMerge(target, ...sources) {
-    if (!sources.length) return target;
-    const source = sources.shift();
-
-    if (isObject(target) && isObject(source)) {
-        for (const key in source) {
-            if (isObject(source[key])) {
-                if (!target[key]) Object.assign(target, { [key]: {} });
-                deepMerge(target[key], source[key]);
-            } else {
-                Object.assign(target, { [key]: source[key] });
-            }
-        }
+    let timeString = "";
+    if (hours > 0) {
+        timeString += hours + ":";
     }
-
-    return deepMerge(target, ...sources);
+    timeString += (minutes < 10 ? "0" : "") + minutes + ":";
+    timeString += (secs < 10 ? "0" : "") + secs;
+    return timeString;
 }
-
-// change alpine state in a global store
-function changeState(changedState, store = "app") {
-    if (typeof Alpine === "undefined") {
-        document.addEventListener('alpine:init', () => {
-            deepMerge(Alpine.store(store).state, changedState);
-        });
-    } else {
-        deepMerge(Alpine.store(store).state, changedState);
-    }
-}
-
-// send header("HX-Trigger: refresh") to refresh the page
-document.body.addEventListener("refresh", () => {
-    window.location.href = window.location.href;
-});
-*/
 
 

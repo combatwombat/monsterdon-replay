@@ -13,15 +13,22 @@ function build_js {
       #"js/libs/htmx.js"
       #"js/libs/htmx.preload.js"
       #"js/libs/alpine.collapse.js"
-      #"js/libs/alpine.js"
+      #"js/libs/alpine.min.js"
       "js/libs/helper.js"
       "js/main.js"
   )
 
   output_file="../../public/js/main.js"
+  output_file_compressed="../../public/js/main.min.js"
 
   echo -n "building js... "
-  time terser --source-map "filename='main.js.map'" --compress --output $output_file "${input_files[@]}"
+
+  # compressed, minified
+  time terser --source-map "filename='main.js.map'" --compress --output $output_file_compressed "${input_files[@]}"
+
+  # uncompressed, pretty printed. just concatenate them
+  time cat "${input_files[@]}" > $output_file
+
 }
 
 if [ "$1" == "sass" ]; then

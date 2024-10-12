@@ -1,1 +1,264 @@
-function ready(fn){"loading"!=document.readyState?fn():document.addEventListener("DOMContentLoaded",fn)}async function request(url,method="GET",data=[],responseFormat="text",headers={}){"GET"===method&&data.length>0&&(url+="?"+new URLSearchParams(data).toString());let res=await fetch(url,{method:method,headers:{"Content-Type":"application/x-www-form-urlencoded",...headers},body:"GET"!==method?new URLSearchParams(data):void 0});return"json"===responseFormat?await res.json():await res.text()}Element.prototype.on=Element.prototype.addEventListener;const find=document.querySelector.bind(document),findAll=document.querySelectorAll.bind(document);async function TootPlayer(slug){const body=find("body"),tootsContainer=find(".toots");let toots=await request("/api/toots/"+slug,"GET",[],"json");toots&&(toots.forEach(((toot,index)=>{let tootHTML=`\n            <div class="toot" data-id="${toot.id}">\n                <div class="toot-header">\n                    <a href="${toot.account.url}" target="_blank" class="col col-image">\n                        <img src="/media/avatars/${toot.account.id}.jpg" alt="${toot.account.display_name}" loading="lazy">\n                    </a>\n                    <a href="${toot.account.url}" target="_blank" class="col col-name">\n                        <div class="display-name">${toot.account.display_name}</div>\n                        <div class="acct">${toot.account.acct}</div>\n                    </a>\n                    <div class="col col-created_at">\n                        date\n                    </div>\n                </div>\n                <div class="toot-body">\n                    ${toot.content}\n                </div>\n            </div>\n            `,tootElement=document.createElement("div");tootElement.innerHTML=tootHTML.trim(),tootElement=tootElement.firstChild,toots[index].el=tootElement,tootsContainer.append(tootElement)})),body.classList.add("toots-loaded"))}Element.prototype.find=Element.prototype.querySelector,Element.prototype.findAll=Element.prototype.querySelectorAll,Element.prototype.show=function(){this.style.display=this.dataset._display||"block"},Element.prototype.hide=function(){this.dataset._display=window.getComputedStyle(this,null).display,this.style.display="none"},ready((()=>{if(find(".page-movie")){const movieInfo=find(".movie .info"),openMovieInfo=find(".movie-info"),closeMovieInfo=movieInfo.find(".close");openMovieInfo.on("click",(e=>{e.preventDefault(),movieInfo.show(),openMovieInfo.hide()})),closeMovieInfo.on("click",(e=>{e.preventDefault(),movieInfo.hide(),openMovieInfo.show()}))}}));
+function ready(fn) {
+    if (document.readyState != 'loading') {
+        fn();
+    } else {
+        document.addEventListener('DOMContentLoaded', fn);
+    }
+}
+
+/**
+ * Simple HTTP fetch request wrapper for form data
+ * @param url
+ * @param method
+ * @param data array of key-value pairs
+ * @param responseFormat "text" or "json"
+ * @param headers object of additional headers
+ * @returns {Promise<string>}
+ */
+async function request(url, method = "GET", data = [], responseFormat = "text", headers = {}) {
+    if (method === "GET" && data.length > 0) {
+        url += "?" + new URLSearchParams(data).toString();
+    }
+    let res = await fetch(url, {
+        method: method,
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            ...headers
+        },
+        body: method !== "GET" ? new URLSearchParams(data) : undefined
+    });
+    return responseFormat === "json" ? await res.json() : await res.text();
+}
+
+
+Element.prototype.on = Element.prototype.addEventListener;
+
+const find = document.querySelector.bind(document);
+const findAll = document.querySelectorAll.bind(document);
+
+Element.prototype.find = Element.prototype.querySelector;
+Element.prototype.findAll = Element.prototype.querySelectorAll;
+
+Element.prototype.show = function () {
+    this.style.display = this.dataset._display || 'block';
+}
+
+Element.prototype.hide = function () {
+    this.dataset._display = window.getComputedStyle(this, null).display; // remember original display
+    this.style.display = 'none';
+}
+
+/**
+ * Format seconds to MM:SS or H:MM:SS if it's over an hour
+ * @param seconds
+ * @returns {string}
+ */
+function formatTime(seconds) {
+    let hours = Math.floor(seconds / 3600);
+    let minutes = Math.floor(seconds % 3600 / 60);
+    let secs = Math.floor(seconds % 60);
+
+    let timeString = "";
+    if (hours > 0) {
+        timeString += hours + ":";
+    }
+    timeString += (minutes < 10 ? "0" : "") + minutes + ":";
+    timeString += (secs < 10 ? "0" : "") + secs;
+    return timeString;
+}
+
+
+ready(() => {
+
+    if (find('.page-movie')) {
+
+        // show / hide info box
+
+        const movieInfo = find('.movie .info');
+        const openMovieInfo = find('.movie-info');
+        const closeMovieInfo = movieInfo.find('.close');
+
+        openMovieInfo.on('click', (e) => {
+            e.preventDefault();
+            movieInfo.show();
+            openMovieInfo.hide();
+        });
+
+        closeMovieInfo.on('click', (e) => {
+            e.preventDefault();
+            movieInfo.hide();
+            openMovieInfo.show();
+        });
+
+
+    }
+
+});
+
+
+async function TootPlayer(slug) {
+
+    let toots = await request("/api/toots/" + slug, "GET", [], "json");
+
+    if (!toots) {
+        return;
+    }
+
+    const els = {
+        body: find('body'),
+        player: find('.player'),
+        tootsContainer: find('.toots'),
+        currentTime: find('.current-time'),
+        overallTime: find('.overall-time'),
+        playPauseButton: find('.play-pause-button'),
+        inputCurrentTime: find('.input-current-time')
+    }
+
+    const overallCurrentTime = els.inputCurrentTime.getAttribute('max');
+
+    let currentTime = 0.0;
+    let playing = false;
+    let showTimeLeft = true;
+
+    let startTime = 0; // when did we press play?
+    let startCurrentTime = 0; // what was the time when we pressed play?
+    let oldCurrentTime = 0; // what was the last time we updated the display?
+
+    updateDisplay();
+
+    // if playing, call function repeatedly with requestAnimationFrame
+    function startPlaying() {
+        playing = true;
+        els.player.classList.add("playing");
+
+        startTime = performance.now() / 1000;
+        startCurrentTime = currentTime;
+        oldCurrentTime = currentTime;
+        advanceTime();
+    }
+
+    function stopPlaying() {
+        playing = false;
+        els.player.classList.remove("playing");
+    }
+
+
+    function advanceTime(timestamp) {
+
+        let elapsedTime = (performance.now() / 1000) - startTime;
+
+        currentTime = startCurrentTime + elapsedTime;
+
+        if (currentTime > overallCurrentTime) {
+            currentTime = overallCurrentTime;
+            stopPlaying();
+        }
+        if (Math.floor(oldCurrentTime) !== Math.floor(currentTime)) {
+            updateDisplay();
+            showTootsBeforeTime(currentTime);
+        }
+
+        oldCurrentTime = currentTime;
+
+        if (playing) {
+            requestAnimationFrame(advanceTime);
+        }
+
+    }
+
+
+    // display all toots that have a time_delta before the given time
+    function showTootsBeforeTime(seconds) {
+        toots.forEach( (toot) => {
+            if (toot.time_delta <= seconds) {
+                toot.el.style.display = 'block';
+            } else {
+                toot.el.style.display = 'none';
+            }
+        });
+    }
+
+    function onTimeScrub(seconds) {
+        startTime = performance.now() / 1000;
+        currentTime = seconds;
+        startCurrentTime = currentTime;
+        updateDisplay();
+        showTootsBeforeTime(seconds);
+    }
+
+    function updateDisplay() {
+        els.currentTime.innerText = formatTime(currentTime);
+        els.inputCurrentTime.value = currentTime;
+
+        if (showTimeLeft) {
+            const timeLeft = overallCurrentTime - currentTime;
+            els.overallTime.innerText = "-" + formatTime(timeLeft);
+
+        } else {
+            els.overallTime.innerText = formatTime(overallCurrentTime);
+        }
+
+    }
+
+
+    // build html elements for each toot
+
+    toots.forEach( (toot, index) => {
+
+        // create toot element with string literals
+        let tootHTML = `
+        <div class="toot" data-id="${toot.id}" style="display: none;">
+            <div class="toot-header">
+                <a href="${toot.account.url}" target="_blank" class="col col-image">
+                    <img src="/media/avatars/${toot.account.id}.jpg" alt="${toot.account.display_name}" loading="lazy">
+                </a>
+                <a href="${toot.account.url}" target="_blank" class="col col-name">
+                    <div class="display-name">${toot.account.display_name}</div>
+                    <div class="acct">${toot.account.acct}</div>
+                </a>
+                <div class="col col-created_at">
+                    ${formatTime(toot.time_delta)}
+                </div>
+            </div>
+            <div class="toot-body">
+                ${toot.content}
+            </div>
+        </div>
+        `;
+
+        // create dom element from tootHTML
+        let tootElement = document.createElement('div');
+        tootElement.innerHTML = tootHTML.trim();
+        tootElement = tootElement.firstChild;
+
+        toots[index].el = tootElement;
+
+        els.tootsContainer.append(tootElement);
+
+    });
+
+    els.body.classList.add("toots-loaded");
+
+    // scrub on timeline
+    els.inputCurrentTime.on('input', (e) => {
+        onTimeScrub(parseInt(e.target.value));
+    });
+
+    // play / pause
+    els.playPauseButton.on('click', (e) => {
+        e.preventDefault();
+        if (playing) {
+            stopPlaying();
+        } else {
+            startPlaying();
+        }
+    });
+
+    // toggle between showing the time left and overall time
+    els.overallTime.on('click', (e) => {
+        showTimeLeft = !showTimeLeft;
+        updateDisplay();
+    });
+
+
+}

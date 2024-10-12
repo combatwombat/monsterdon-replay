@@ -3,8 +3,11 @@
   background: linear-gradient(rgba($color-bg, 0.97), rgba($color-bg, 0.97)), var(--background-image) repeat-y center 0;
   background-size: 100%;
 
+  --site-width: 800px;
+
   .site {
-    max-width: 800px;
+    max-width: var(--site-width);
+    padding-bottom: 100px;
   }
 
   footer {
@@ -12,7 +15,7 @@
   }
 
   .movie {
-    padding-top: 30px;
+
   }
 
   .info {
@@ -22,10 +25,11 @@
     color: $color-text;
     font-weight: normal;
     padding: 10px;
+    margin-top: 30px;
     background: $color-blue-subtle;
 
     border-radius: $border-radius + 10px;
-    backdrop-filter: blur(7px);
+    backdrop-filter: $backdrop-filter;
 
     .top {
       position: relative;
@@ -125,6 +129,7 @@
   .toot {
     border-bottom: 1px solid $color-border;
     padding-top: 20px;
+
     .toot-header {
       display: grid;
       grid-template-columns: 40px 1fr 100px;
@@ -139,6 +144,7 @@
       }
 
       .col-name {
+        word-break: break-word;
         .display-name {
             color: $color-light;
         }
@@ -153,16 +159,197 @@
       }
     }
     .toot-body {
-
+      word-break: break-word;
     }
   }
 }
 
-.toots-loaded {
-    .toots {
-        display: block;
+
+.style-hide-hashtags {
+  .toot .toot-body a.hashtag {
+    display: none;
+  }
+}
+.style-simple-header {
+  .toot .toot-header {
+    grid-template-columns: 1fr 100px;
+    .col-image {
+      display: none;
     }
-    .toots-loading {
+    .col-name {
+      .acct {
         display: none;
+      }
     }
+  }
+}
+
+
+// Player
+
+.player {
+  display: none;
+  position: fixed;
+  grid-template-columns: 57px 1fr 55px;
+  bottom: 20px;
+
+  width: calc(100% + 22px);
+  max-width: calc(min(var(--site-width), 100%) - 20px);
+
+  margin: 0 -11px;
+
+  height: 60px;
+  background: rgba(20,37,68,0.8);
+  backdrop-filter: $backdrop-filter;
+  border-radius: 30px;
+
+  box-shadow: rgba(0,0,0,0.3) 0 4px 8px;
+  border-top: 1px solid rgba(255,255,255,0.05);
+  border-bottom: 1px solid rgba(0,0,0,0.2);
+
+  > .col {
+    display: block;
+
+  }
+
+  .col-play-pause {
+    display: grid;
+    place-items: center;
+    color: $color-light;
+
+    justify-content: flex-start;
+    padding-left: 7px;
+
+    .icon {
+      svg {
+        display: block;
+        width: 48px;
+        height: 48px;
+      }
+    }
+    .icon-pause {
+      display: none;
+    }
+  }
+
+  .col-timeline {
+    display: grid;
+    grid-template-columns: 60px 1fr 60px;
+    align-items: center;
+    font-size: 14px;
+
+    .current-time {
+      text-align: right;
+      padding-right: 10px;
+    }
+    .timeline-wrap {
+      input {
+        width: 100%;
+        @include range();
+        transform: translateY(2px);
+
+      }
+    }
+    .overall-time {
+      text-align: left;
+      padding-left: 10px;
+      cursor: pointer;
+    }
+
+  }
+
+  .col-settings {
+    display: grid;
+    align-items: center;
+    color: $color-light;
+
+    justify-content: flex-end;
+    padding-right: 20px;
+
+    .icon {
+      svg {
+        display: block;
+        width: 22px;
+        height: 22px;
+      }
+
+    }
+
+  }
+
+  &.playing {
+    .col-play-pause {
+      .icon-play {
+        display: none;
+      }
+      .icon-pause {
+        display: block;
+      }
+    }
+  }
+
+  @media (max-width: 450px) {
+    width: calc(100% + 20px);
+    margin: 0 -10px;
+
+    grid-template-columns: 41px 1fr 40px;
+
+    height: 50px;
+
+    bottom: 10px;
+
+    .col-play-pause {
+      justify-content: flex-start;
+      padding-left: 5px;
+
+      .icon {
+        svg {
+          display: block;
+          width: 38px;
+          height: 38px;
+        }
+      }
+      .icon-pause {
+        display: none;
+      }
+    }
+
+    .col-timeline {
+      font-size: 13px;
+
+      .current-time {
+        padding-right: 7px;
+      }
+
+      .overall-time {
+        padding-left: 7px;
+      }
+    }
+
+    .col-settings {
+      justify-content: flex-end;
+      .icon {
+        svg {
+          width: 20px;
+          height: 20px;
+        }
+      }
+    }
+
+
+  }
+
+
+}
+
+.toots-loaded {
+  .toots {
+    display: block;
+  }
+  .toots-loading {
+    display: none;
+  }
+  .player {
+    display: grid;
+  }
 }

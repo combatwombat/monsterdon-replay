@@ -128,10 +128,13 @@ class BackstageMovies extends \RTF\Controller {
                 'imdb_id' => $_POST['imdb_id']
             ], ['id' => $id]);
 
-            if (!$res) {
+            if ($res) {
+                // delete cache entries with name = "toots-{$movie['slug']}"
+                $this->db->execute("DELETE FROM cache WHERE name LIKE :prefix", ["prefix" => "toots-" . $movie['slug'] . "%"]);
+            } else {
                 $errors['general'][] = 'error updating movie';
             }
-
+            
         }
 
         $ret = [
