@@ -1,4 +1,7 @@
-<div class="content">
+<?php $this->include("parts/header", $header); ?>
+
+
+    <div class="content">
     <h1>Privacy Policy</h1>
     <h3>Last updated 8. October 2024</h3>
 
@@ -60,4 +63,11 @@
         <a href="mailto:<?= h($this->config('contact.email'));?>?subject=Mastodon+Replay"><?= h($this->config('contact.email'));?></a>
     </p>
 
+    <h2>Info</h2>
+    <p>
+        Icons by <a href="https://remixicon.com/" target="_blank">Remix Icon</a> under Apache License.
+    </p>
+
 </div>
+
+<?php $this->include("parts/footer"); ?>

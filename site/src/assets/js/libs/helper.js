@@ -31,13 +31,37 @@ async function request(url, method = "GET", data = [], responseFormat = "text", 
 }
 
 
-Element.prototype.on = Element.prototype.addEventListener;
-
-const find = document.querySelector.bind(document);
-const findAll = document.querySelectorAll.bind(document);
+globalThis.find = document.querySelector.bind(document);
+globalThis.findAll = document.querySelectorAll.bind(document);
 
 Element.prototype.find = Element.prototype.querySelector;
 Element.prototype.findAll = Element.prototype.querySelectorAll;
+
+// shortcut for addEventListener: find('.movie-info').on('click', (e) => { ....
+Element.prototype.on = Element.prototype.addEventListener;
+
+function delegate(selector, eventType, handler) {
+    document.addEventListener(eventType, function(event) {
+        const targets = document.querySelectorAll(selector);
+        const target = event.target;
+
+        for (let i = 0; i < targets.length; i++) {
+            let el = target;
+            while (el && el !== this) {
+                if (el === targets[i]) {
+                    handler.call(el, event);
+                    return;
+                }
+                el = el.parentNode;
+            }
+        }
+    }, true);
+}
+
+// event handling for possibly live changing elements: on('.list-item', 'click', (e) => { ...
+globalThis.on = delegate;
+
+
 
 Element.prototype.show = function () {
     this.style.display = this.dataset._display || 'block';

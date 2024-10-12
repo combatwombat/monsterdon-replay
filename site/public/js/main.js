@@ -31,13 +31,37 @@ async function request(url, method = "GET", data = [], responseFormat = "text", 
 }
 
 
-Element.prototype.on = Element.prototype.addEventListener;
-
-const find = document.querySelector.bind(document);
-const findAll = document.querySelectorAll.bind(document);
+globalThis.find = document.querySelector.bind(document);
+globalThis.findAll = document.querySelectorAll.bind(document);
 
 Element.prototype.find = Element.prototype.querySelector;
 Element.prototype.findAll = Element.prototype.querySelectorAll;
+
+// shortcut for addEventListener: find('.movie-info').on('click', (e) => { ....
+Element.prototype.on = Element.prototype.addEventListener;
+
+function delegate(selector, eventType, handler) {
+    document.addEventListener(eventType, function(event) {
+        const targets = document.querySelectorAll(selector);
+        const target = event.target;
+
+        for (let i = 0; i < targets.length; i++) {
+            let el = target;
+            while (el && el !== this) {
+                if (el === targets[i]) {
+                    handler.call(el, event);
+                    return;
+                }
+                el = el.parentNode;
+            }
+        }
+    }, true);
+}
+
+// event handling for possibly live changing elements: on('.list-item', 'click', (e) => { ...
+globalThis.on = delegate;
+
+
 
 Element.prototype.show = function () {
     this.style.display = this.dataset._display || 'block';
@@ -73,23 +97,16 @@ ready(() => {
     if (find('.page-movie')) {
 
         // show / hide info box
-
-        const movieInfo = find('.movie .info');
-        const openMovieInfo = find('.movie-info');
-        const closeMovieInfo = movieInfo.find('.close');
-
-        openMovieInfo.on('click', (e) => {
+        const body = find('body');
+        find('.open-movie-info').on('click', (e) => {
             e.preventDefault();
-            movieInfo.show();
-            openMovieInfo.hide();
+            body.classList.add("movie-info-open");
         });
 
-        closeMovieInfo.on('click', (e) => {
+        find('.movie-info .close').on('click', (e) => {
             e.preventDefault();
-            movieInfo.hide();
-            openMovieInfo.show();
+            body.classList.remove("movie-info-open");
         });
-
 
     }
 

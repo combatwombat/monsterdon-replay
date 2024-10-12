@@ -15,7 +15,9 @@ class Movies extends Controller {
         $movies = $this->db->fetchAll("SELECT * FROM movies ORDER BY start_datetime DESC");
 
         $data = [
-            'bodyClass' => 'page-movies',
+            'header' => [
+                'bodyClass' => 'page-movies',
+            ],
             'movies' => $movies
         ];
 
@@ -46,9 +48,12 @@ class Movies extends Controller {
 
 
         $data = [
-            'bodyClass' => 'page-movie',
-            'backLink' => '/',
-            'backgroundImage' => 'url(/media/covers/' . $movie['imdb_id'] . '.jpg)',
+            'header' => [
+                'title' => $movie['title'],
+                'bodyClass' => 'page-movie movie-info-open',
+                'backLink' => '/',
+                'backgroundImage' => 'url(/media/covers/' . $movie['imdb_id'] . '.jpg)',
+            ],
             'movie' => $movie,
             'tootCount' => $tootCount,
             'overallDuration' => $overallDuration

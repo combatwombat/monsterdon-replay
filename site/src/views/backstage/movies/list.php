@@ -1,3 +1,5 @@
+<?php $this->include("parts/header", $header); ?>
+
 <h1>Backstage &gt; Movies</h1>
 
 <table class="movies">
@@ -41,8 +43,6 @@
 
 
 </table>
-
-
 
 <script>
     ready(() => {
@@ -107,3 +107,5 @@
         })
     });
 </script>
+
+<?php $this->include("parts/footer"); ?>

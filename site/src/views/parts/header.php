@@ -1,4 +1,4 @@
-<?php $this->include("parts/html-header", ["title" => $title]); ?>
+<?php $this->include("parts/html-header", ["title" => isset($title) ? $title : '']); ?>
 
 <body
     <?= !empty($bodyClass) ? ' class="'.$bodyClass.'"' : '';?>
@@ -22,7 +22,7 @@
         </div>
         <div class="col col-right">
             <?php if (!empty($backLink)) { ?>
-                <a href="#" class="movie-info" style="display: none;">
+                <a href="#" class="open-movie-info">
                     <?= icon('information-2-line');?>
                 </a>
             <?php } ?>

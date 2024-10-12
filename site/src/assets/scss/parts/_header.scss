@@ -63,6 +63,7 @@ header {
 
   }
 
+
   @media (max-width: 420px) {
     .col {
       &.col-left {
@@ -107,4 +108,9 @@ header {
       }
     }
   }
+}
+
+
+.movie-info-open header .col.col-right a.open-movie-info {
+  display: none;
 }

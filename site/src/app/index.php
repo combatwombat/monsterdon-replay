@@ -26,8 +26,8 @@ $app->post("/backstage/movies", "BackstageMovies@new");
 $app->delete("/backstage/movies/{id}", "BackstageMovies@delete");
 $app->post("/backstage/movies/{id}", "BackstageMovies@edit");
 
-$app->get("/privacy", function() {
-    $this->view("privacy", ['bodyClass' => 'page-privacy']);
+$app->get("/privacy-info", function() {
+    $this->view("privacy-info", ['header' => ['bodyClass' => 'page-privacy', 'title' => 'Privacy Policy & Info']]);
 });
 
 $app->get("/api/toots/{slug}", "Movies@tootsJSON");
@@ -35,7 +35,7 @@ $app->get("/api/toots/{slug}", "Movies@tootsJSON");
 $app->get("/{slug}", "Movies@show");
 
 $app->onError(404, function() {
-    $this->view("404", ['bodyClass' => 'error-404']);
+    $this->view("404", ['header' => ['bodyClass' => 'error-404', 'title' => 'Movie not found']]);
 });
 
 

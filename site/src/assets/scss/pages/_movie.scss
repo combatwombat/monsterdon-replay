@@ -18,8 +18,10 @@
 
   }
 
-  .info {
-    display: grid;
+  .movie-info {
+    //display: grid;
+    display: none;
+
     grid-template-columns: 90px 1fr;
     grid-gap: 10px;
     color: $color-text;
@@ -182,6 +184,10 @@
       }
     }
   }
+}
+
+.movie-info-open .movie-info {
+  display: grid;
 }
 
 

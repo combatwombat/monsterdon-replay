@@ -2,9 +2,12 @@
 use App\Helpers\ViewHelper;
 ?>
 
+<?php $this->include("parts/header", $header); ?>
+
+
 <div class="movie">
 
-    <div class="info">
+    <div class="movie-info">
         <div class="col col-cover">
             <img src="/media/covers/<?= $movie['imdb_id'];?>.jpg" alt="Cover for <?= h($movie['title']);?>" loading="lazy" width="100" height="150">
         </div>
@@ -77,7 +80,7 @@ use App\Helpers\ViewHelper;
     TootPlayer('<?= $movie['slug'];?>');
 </script>
 
-
+<?php $this->include("parts/footer"); ?>
 
 
 

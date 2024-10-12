@@ -1,6 +1,4 @@
-<?php
-use App\Helpers\ViewHelper;
-?>
+<?php $this->include("parts/header", $header); ?>
 
 <div class="content">
     <div class="info">
@@ -48,3 +46,4 @@ use App\Helpers\ViewHelper;
     </ul>
 </div>
 
+<?php $this->include("parts/footer"); ?>

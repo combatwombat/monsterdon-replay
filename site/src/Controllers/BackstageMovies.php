@@ -13,7 +13,13 @@ class BackstageMovies extends \RTF\Controller {
         $this->auth();
 
         $movies = $this->db->fetchAll("SELECT * FROM movies ORDER BY start_datetime DESC");
-        $data = ['bodyClass' => "page-backstage", "movies" => $movies];
+        $data = [
+            'header' => [
+                'title' => 'Backstage > Movies',
+                'bodyClass' => 'page-backstage'
+            ],
+            "movies" => $movies
+        ];
         $this->view("backstage/movies/list", $data);
     }
 
@@ -134,7 +140,7 @@ class BackstageMovies extends \RTF\Controller {
             } else {
                 $errors['general'][] = 'error updating movie';
             }
-            
+
         }
 
         $ret = [

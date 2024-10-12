@@ -3,23 +3,16 @@ ready(() => {
     if (find('.page-movie')) {
 
         // show / hide info box
-
-        const movieInfo = find('.movie .info');
-        const openMovieInfo = find('.movie-info');
-        const closeMovieInfo = movieInfo.find('.close');
-
-        openMovieInfo.on('click', (e) => {
+        const body = find('body');
+        find('.open-movie-info').on('click', (e) => {
             e.preventDefault();
-            movieInfo.show();
-            openMovieInfo.hide();
+            body.classList.add("movie-info-open");
         });
 
-        closeMovieInfo.on('click', (e) => {
+        find('.movie-info .close').on('click', (e) => {
             e.preventDefault();
-            movieInfo.hide();
-            openMovieInfo.show();
+            body.classList.remove("movie-info-open");
         });
-
 
     }
 
