@@ -53,6 +53,7 @@
 @mixin floating-bg() {
   background: rgba(20,37,68,0.8);
   backdrop-filter: $backdrop-filter;
+  -webkit-backdrop-filter: $backdrop-filter;
 
   box-shadow: rgba(0,0,0,0.3) 0 4px 8px;
   border-top: 1px solid rgba(255,255,255,0.05);
