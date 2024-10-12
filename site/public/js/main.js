@@ -229,7 +229,7 @@ async function TootPlayer(slug) {
     toots.forEach( (toot, index) => {
 
         // create toot element with string literals
-        let tootHTML = `<div class="toot" style="display: none;">
+        let tootHTML = `<div class="toot" style="display: none;" data-id="${toot.id}">
             <a href="${toot.url}" target="_blank" class="toot-header">
                 <div class="col col-image">
                     <img src="/media/avatars/${toot.account.id}.jpg" alt="${toot.account.display_name}" loading="lazy">
