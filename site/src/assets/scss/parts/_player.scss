@@ -106,6 +106,8 @@
     @include user-select(none);
     @include floating-bg;
 
+    box-shadow: none;
+
 
 
     transform-origin: 0 100%;
