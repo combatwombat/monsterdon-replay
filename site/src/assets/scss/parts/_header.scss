@@ -11,11 +11,21 @@ header {
       h1 {
         margin: 0;
         a {
-          display: block;
+          display: inline-block;
+          position: relative;
           padding-top: 10px;
+          height: 70px;
+          aspect-ratio: 246 / 70;
+
+          @include transition-normal(all);
           img {
+            display: block;
+            position: absolute;
+            left: 0;
+            top: 0;
             height: 70px;
             transform: translate(-15px, 20px);
+            @include transition-normal(all);
           }
         }
       }
@@ -38,6 +48,7 @@ header {
           display: block;
           width: 35px;
           transform: translate(-13px, 2px);
+          @include transition-normal(all);
         }
 
         &:hover {
@@ -56,10 +67,58 @@ header {
       a {
         svg {
           width: 30px;
-          transform: translate(13px, 2px);
+          transform: translate(7px, 2px);
+          @include transition-normal(all);
         }
       }
     }
+
+  }
+
+
+  // Less height, for when movie is playing
+
+  &.small {
+    .col {
+      &.col-left {
+        a {
+          svg {
+            width: 30px;
+            transform: translate(-13px, -8px);
+            @include transition-normal(all);
+          }
+        }
+      }
+      &.col-right {
+        a {
+          svg {
+            width: 25px;
+            transform: translate(7px, -8px);
+            @include transition-normal(all);
+          }
+        }
+      }
+      &.col-middle {
+        h1 {
+          a {
+            padding-top: 0;
+            height: 50px;
+            aspect-ratio: 176 / 50;
+            @include transition-normal(all);
+
+            img {
+              height: 50px;
+              top: 10px;
+              transform: translate(-10px, 0);
+              @include transition-normal(all);
+
+            }
+          }
+        }
+      }
+    }
+
+
 
   }
 
@@ -77,9 +136,27 @@ header {
         h1 {
           a {
             padding-top: 0;
+            height: 60px;
             img {
               height: 60px;
               transform: translate(-10px, 20px);
+            }
+          }
+        }
+      }
+    }
+
+    &.small {
+      .col {
+        &.col-middle {
+          h1 {
+            a {
+              padding-top: 0;
+              height: 40px;
+              img {
+                height: 40px;
+                transform: translate(-10px, 0);
+              }
             }
           }
         }
@@ -100,6 +177,7 @@ header {
         h1 {
           a {
             padding-top: 0;
+            height: 50px;
             img {
               height: 50px;
             }
@@ -108,9 +186,7 @@ header {
       }
     }
   }
+
 }
 
 
-.movie-info-open header .col.col-right a.open-movie-info {
-  display: none;
-}

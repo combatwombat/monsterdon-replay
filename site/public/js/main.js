@@ -39,8 +39,9 @@ Element.prototype.findAll = Element.prototype.querySelectorAll;
 
 // shortcut for addEventListener: find('.movie-info').on('click', (e) => { ....
 Element.prototype.on = Element.prototype.addEventListener;
+document.on = document.addEventListener;
 
-function delegate(selector, eventType, handler) {
+function delegate(eventType, selector, handler) {
     document.addEventListener(eventType, function(event) {
         const targets = document.querySelectorAll(selector);
         const target = event.target;
@@ -98,14 +99,17 @@ ready(() => {
 
         // show / hide info box
         const body = find('body');
+        const header = find('header');
         find('.open-movie-info').on('click', (e) => {
             e.preventDefault();
-            body.classList.add("movie-info-open");
+            body.classList.toggle("movie-info-closed");
+            header.classList.toggle("small");
         });
 
         find('.movie-info .close').on('click', (e) => {
             e.preventDefault();
-            body.classList.remove("movie-info-open");
+            body.classList.add("movie-info-closed");
+            header.classList.add("small");
         });
 
     }
@@ -128,7 +132,8 @@ async function TootPlayer(slug) {
         currentTime: find('.current-time'),
         overallTime: find('.overall-time'),
         playPauseButton: find('.play-pause-button'),
-        inputCurrentTime: find('.input-current-time')
+        inputCurrentTime: find('.input-current-time'),
+        openSettings: find('.open-settings'),
     }
 
     const overallCurrentTime = els.inputCurrentTime.getAttribute('max');
@@ -276,6 +281,26 @@ async function TootPlayer(slug) {
         showTimeLeft = !showTimeLeft;
         updateDisplay();
     });
+
+    // open settings
+    els.openSettings.on('click', (e) => {
+        e.preventDefault();
+        els.player.classList.toggle("settings-open");
+    });
+
+    // click anywhere outside player: close settings
+    document.on('click', (e) => {
+        if (!els.player.contains(e.target)) {
+            els.player.classList.remove("settings-open");
+        }
+    });
+
+    on("click", ".settings .col-label", (e) => {
+       // parent.{.col-checkbox}.input.click
+         e.target.parentElement.find('.col-checkbox input').click();
+    });
+
+
 
 
 }

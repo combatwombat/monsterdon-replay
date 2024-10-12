@@ -39,8 +39,9 @@ Element.prototype.findAll = Element.prototype.querySelectorAll;
 
 // shortcut for addEventListener: find('.movie-info').on('click', (e) => { ....
 Element.prototype.on = Element.prototype.addEventListener;
+document.on = document.addEventListener;
 
-function delegate(selector, eventType, handler) {
+function delegate(eventType, selector, handler) {
     document.addEventListener(eventType, function(event) {
         const targets = document.querySelectorAll(selector);
         const target = event.target;

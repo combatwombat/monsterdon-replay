@@ -19,8 +19,7 @@
   }
 
   .movie-info {
-    //display: grid;
-    display: none;
+    display: grid;
 
     grid-template-columns: 90px 1fr;
     grid-gap: 10px;
@@ -28,6 +27,7 @@
     font-weight: normal;
     padding: 10px;
     margin-top: 30px;
+    margin-bottom: 10px;
     background: $color-blue-subtle;
 
     border-radius: $border-radius + 10px;
@@ -125,7 +125,7 @@
 
   .toots {
     display: none;
-    padding-top: 10px;
+    @include transition-normal(margin-top);
   }
 
   .toot {
@@ -134,7 +134,7 @@
 
     .toot-header {
       display: grid;
-      grid-template-columns: 40px 1fr 100px;
+      grid-template-columns: 40px 1fr 60px;
       grid-gap: 10px;
 
       .col-image {
@@ -164,31 +164,38 @@
       word-break: break-word;
     }
   }
-}
 
-
-.style-hide-hashtags {
-  .toot .toot-body a.hashtag {
-    display: none;
-  }
-}
-.style-simple-header {
-  .toot .toot-header {
-    grid-template-columns: 1fr 100px;
-    .col-image {
+  &.movie-info-closed {
+    .movie-info {
       display: none;
     }
-    .col-name {
-      .acct {
+    .toots {
+      margin-top: -10px;
+      @include transition-normal(margin-top);
+    }
+  }
+
+  &.style-hide-hashtags {
+    .toot .toot-body a.hashtag {
+      display: none;
+    }
+  }
+  &.style-simple-header {
+    .toot .toot-header {
+      grid-template-columns: 1fr 100px;
+      .col-image {
         display: none;
+      }
+      .col-name {
+        .acct {
+          display: none;
+        }
       }
     }
   }
 }
 
-.movie-info-open .movie-info {
-  display: grid;
-}
+
 
 
 // Player
@@ -196,7 +203,7 @@
 .player {
   display: none;
   position: fixed;
-  grid-template-columns: 57px 1fr 55px;
+
   bottom: 20px;
 
   width: calc(100% + 22px);
@@ -204,93 +211,209 @@
 
   margin: 0 -11px;
 
-  height: 60px;
-  background: rgba(20,37,68,0.8);
-  backdrop-filter: $backdrop-filter;
-  border-radius: 30px;
 
-  box-shadow: rgba(0,0,0,0.3) 0 4px 8px;
-  border-top: 1px solid rgba(255,255,255,0.05);
-  border-bottom: 1px solid rgba(0,0,0,0.2);
 
-  > .col {
+  @include user-select(none);
+
+  .columns {
+    display: grid;
+    height: 60px;
+    grid-template-columns: 57px 1fr 55px;
+    z-index: 10;
+
+    border-radius: 30px;
+
+    @include floating-bg;
+    @include transition(border-radius $speed-fast $easing);
+
+    > .col {
+      display: block;
+
+      &.col-play-pause {
+        display: grid;
+        place-items: center;
+        color: $color-light;
+
+        justify-content: flex-start;
+        padding-left: 6px;
+
+        .icon {
+          svg {
+            display: block;
+            width: 48px;
+            height: 48px;
+          }
+        }
+        .icon-pause {
+          display: none;
+        }
+      }
+
+      &.col-timeline {
+        display: grid;
+        grid-template-columns: 60px 1fr 60px;
+        align-items: center;
+        font-size: 14px;
+
+        .current-time {
+          text-align: right;
+          padding-right: 10px;
+        }
+        .timeline-wrap {
+          input {
+            width: 100%;
+            @include range();
+            transform: translateY(2px);
+
+          }
+        }
+        .overall-time {
+          text-align: left;
+          padding-left: 10px;
+          cursor: pointer;
+        }
+
+      }
+
+      &.col-settings {
+        display: grid;
+        align-items: center;
+        color: $color-light;
+
+        justify-content: flex-end;
+        padding-right: 20px;
+
+        .icon {
+          svg {
+            display: block;
+            width: 22px;
+            height: 22px;
+          }
+
+        }
+
+      }
+    }
+  }
+
+
+  .settings {
     display: block;
-
-  }
-
-  .col-play-pause {
-    display: grid;
-    place-items: center;
-    color: $color-light;
-
-    justify-content: flex-start;
-    padding-left: 7px;
-
-    .icon {
-      svg {
-        display: block;
-        width: 48px;
-        height: 48px;
-      }
-    }
-    .icon-pause {
-      display: none;
-    }
-  }
-
-  .col-timeline {
-    display: grid;
-    grid-template-columns: 60px 1fr 60px;
-    align-items: center;
+    position: absolute;
+    right: 0;
+    top: calc(-100% - 12px);
+    padding: 10px 10px 10px 15px;
+    border-top-right-radius: 20px;
+    border-top-left-radius: 20px;
     font-size: 14px;
+    pointer-events: none;
 
-    .current-time {
-      text-align: right;
-      padding-right: 10px;
-    }
-    .timeline-wrap {
-      input {
-        width: 100%;
-        @include range();
-        transform: translateY(2px);
+    @include user-select(none);
+    @include floating-bg;
 
+
+
+    transform-origin: 0 100%;
+    transform: translateY(100%);
+    opacity: 0;
+    @include transition(all $speed-fast $easing);
+
+
+
+    .row {
+      padding-bottom: 10px;
+      &:last-child {
+        padding-bottom: 0;
       }
     }
-    .overall-time {
-      text-align: left;
-      padding-left: 10px;
+
+    .setting-checkbox {
+      display: grid;
+      grid-template-columns: 1fr 40px;
+      grid-gap: 10px;
+      align-items: center;
       cursor: pointer;
-    }
 
-  }
-
-  .col-settings {
-    display: grid;
-    align-items: center;
-    color: $color-light;
-
-    justify-content: flex-end;
-    padding-right: 20px;
-
-    .icon {
-      svg {
-        display: block;
-        width: 22px;
-        height: 22px;
+      > .col {
+        &.col-label {
+          svg {
+            display: inline-block;
+            transform: translateY(1.5px);
+            margin-right: 3px;
+          }
+          span {
+            display: inline-block;
+          }
+        }
+        &.col-checkbox {
+          line-height: 0;
+        }
       }
 
+      .switch {
+        position : relative ;
+        display : inline-block;
+        width : 40px;
+        height : 20px;
+        background-color: $color-light;
+        border-radius: 20px;
+        cursor: pointer;
+        @include transition(all $speed-fast $easing);
+      }
+
+      .switch::after {
+        content: '';
+        position: absolute;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background-color: #fff;
+        top: 1px;
+        left: 1px;
+        @include transition(all $speed-fast $easing);
+      }
+      .checkbox:checked + .switch::after {
+        left : 21px;
+      }
+      .checkbox:checked + .switch {
+        background-color: $color-main;
+        @include transition(all $speed-fast $easing);
+      }
+      .checkbox {
+        display : none;
+      }
     }
 
   }
 
   &.playing {
-    .col-play-pause {
-      .icon-play {
-        display: none;
+    .columns {
+      > .col {
+        &.col-play-pause {
+          .icon-play {
+            display: none;
+          }
+          .icon-pause {
+            display: block;
+          }
+        }
       }
-      .icon-pause {
-        display: block;
-      }
+    }
+
+  }
+
+  &.settings-open {
+    .columns {
+      border-top-right-radius: 0;
+      @include transition(border-radius $speed-fast $easing);
+    }
+
+
+    .settings {
+      transform: translateY(0);
+      opacity: 1;
+      pointer-events: all;
+      @include transition(all $speed-fast $easing);
     }
   }
 
@@ -298,49 +421,58 @@
     width: calc(100% + 20px);
     margin: 0 -10px;
 
-    grid-template-columns: 41px 1fr 40px;
+    > .columns {
+      grid-template-columns: 41px 1fr 40px;
 
-    height: 50px;
+      height: 50px;
 
-    bottom: 10px;
+      bottom: 10px;
 
-    .col-play-pause {
-      justify-content: flex-start;
-      padding-left: 5px;
+      > .col {
+        &.col-play-pause {
+          justify-content: flex-start;
+          padding-left: 5px;
 
-      .icon {
-        svg {
-          display: block;
-          width: 38px;
-          height: 38px;
+          .icon {
+            svg {
+              display: block;
+              width: 38px;
+              height: 38px;
+            }
+          }
+          .icon-pause {
+            display: none;
+          }
+        }
+
+        &.col-timeline {
+          font-size: 13px;
+
+          .current-time {
+            padding-right: 7px;
+          }
+
+          .overall-time {
+            padding-left: 7px;
+          }
+        }
+
+        &.col-settings {
+          justify-content: flex-end;
+          padding-right: 15px;
+          .icon {
+            svg {
+              width: 20px;
+              height: 20px;
+            }
+          }
         }
       }
-      .icon-pause {
-        display: none;
-      }
     }
 
-    .col-timeline {
-      font-size: 13px;
 
-      .current-time {
-        padding-right: 7px;
-      }
 
-      .overall-time {
-        padding-left: 7px;
-      }
-    }
 
-    .col-settings {
-      justify-content: flex-end;
-      .icon {
-        svg {
-          width: 20px;
-          height: 20px;
-        }
-      }
-    }
 
 
   }
@@ -356,6 +488,6 @@
     display: none;
   }
   .player {
-    display: grid;
+    display: block;
   }
 }

@@ -50,34 +50,58 @@ use App\Helpers\ViewHelper;
     <div class="toots"></div>
 
     <div class="player">
-        <a href="#" class="col col-play-pause play-pause-button">
-            <div class="icon icon-play">
-                <?= icon('play-circle-fill');?>
+        <div class="settings">
+            <div class="row setting-checkbox">
+                <div class="col col-label">
+                    Simple Header
+                </div>
+                <div class="col col-checkbox">
+                    <input type="checkbox" class="checkbox" id="simpleHeader">
+                    <label for="simpleHeader" class="switch"></label>
+                </div>
             </div>
-            <div class="icon icon-pause">
-                <?= icon('pause-circle-fill');?>
-            </div>
-        </a>
-        <div class="col col-timeline">
-            <div class="current-time">
-                2:03:26
-            </div>
-            <div class="timeline-wrap">
-                <input type="range" name="current-time" class="input-current-time" value="0" min="0" max="<?= $overallDuration;?>" step="1">
-            </div>
-            <div class="overall-time">
-                2:33:07
+            <div class="row setting-checkbox">
+                <div class="col col-label">
+                    Hide Hashtags
+                </div>
+                <div class="col col-checkbox">
+                    <input type="checkbox" class="checkbox" id="hideHashtags">
+                    <label for="hideHashtags" class="switch"></label>
+                </div>
             </div>
         </div>
-        <a href="#" class="col col-settings">
-            <div class="icon">
-                <?= icon("equalizer-line"); ?>
+        <div class="columns">
+            <a href="#" class="col col-play-pause play-pause-button">
+                <div class="icon icon-play">
+                    <?= icon('play-circle-fill');?>
+                </div>
+                <div class="icon icon-pause">
+                    <?= icon('pause-circle-fill');?>
+                </div>
+            </a>
+            <div class="col col-timeline">
+                <div class="current-time">
+                    2:03:26
+                </div>
+                <div class="timeline-wrap">
+                    <input type="range" name="current-time" class="input-current-time" value="0" min="0" max="<?= $overallDuration;?>" step="1">
+                </div>
+                <div class="overall-time">
+                    2:33:07
+                </div>
             </div>
-        </a>
+            <a href="#" class="col col-settings open-settings">
+                <div class="icon">
+                    <?= icon("equalizer-line"); ?>
+                </div>
+            </a>
+        </div>
     </div>
 </div>
 <script>
-    TootPlayer('<?= $movie['slug'];?>');
+    ready(() => {
+        TootPlayer('<?= $movie['slug'];?>');
+    });
 </script>
 
 <?php $this->include("parts/footer"); ?>

@@ -48,6 +48,25 @@
   @include transition($what $speed-normal $easing);
 }
 
+// Styles
+
+@mixin floating-bg() {
+  background: rgba(20,37,68,0.8);
+  backdrop-filter: $backdrop-filter;
+
+  box-shadow: rgba(0,0,0,0.3) 0 4px 8px;
+  border-top: 1px solid rgba(255,255,255,0.05);
+  border-bottom: 1px solid rgba(0,0,0,0.2);
+}
+
+@mixin user-select($value) {
+    -webkit-user-select: $value;
+    -khtml-user-select: $value;
+    -moz-user-select: $value;
+    -ms-user-select: $value;
+    user-select: $value;
+
+}
 
 // Elements
 
