@@ -135,18 +135,18 @@ async function TootPlayer(slug) {
 
         // create toot element with string literals
         let tootHTML = `<div class="toot" style="display: none;">
-            <div class="toot-header">
-                <a href="${toot.account.url}" target="_blank" class="col col-image">
+            <a href="${toot.url}" target="_blank" class="toot-header">
+                <div class="col col-image">
                     <img src="/media/avatars/${toot.account.id}.jpg" alt="${toot.account.display_name}" loading="lazy">
-                </a>
-                <a href="${toot.account.url}" target="_blank" class="col col-name">
+                </div>
+                <div class="col col-name">
                     <div class="display-name">${toot.account.display_name}</div>
                     <div class="acct">${toot.account.acct}</div>
-                </a>
+                </div>
                 <div class="col col-created_at">
                     ${formatTime(toot.time_delta)}
                 </div>
-            </div>
+            </a>
             <div class="toot-body">
                 ${toot.content}
             </div>`
