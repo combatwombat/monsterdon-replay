@@ -25,9 +25,9 @@ use App\Helpers\ViewHelper;
                     <span><?= formatDuration($movie['duration']); ?></span>
                 </div>
                 <div class="meta">
+                    <!--<a href="https://www.justwatch.com/us/search?sort_by=random&sort_asc=true&q=<?= urlencode($movie['title'] . " " . substr($movie['release_date'], 0, 4))?>" target="_blank">Where to watch</a> &middot;-->
                     <a href="https://letterboxd.com/imdb/<?= $movie['imdb_id'];?>" target="_blank">Letterboxd</a> &middot;
-                    <a href="https://www.imdb.com/title/<?= $movie['imdb_id'];?>" target="_blank">IMDb</a><!--&middot;
-                    <a href="#" target="_blank">Watch on archive.org</a>-->
+                    <a href="https://www.imdb.com/title/<?= $movie['imdb_id'];?>" target="_blank">IMDb</a>
                 </div>
                 <a href="#" class="close">
                     <?= icon('close-line');?>
@@ -91,7 +91,7 @@ use App\Helpers\ViewHelper;
                     2:03:26
                 </div>
                 <div class="timeline-wrap">
-                    <x-timeline class="input-current-time" value="0" min="0" max="5000" step="1"></x-timeline>
+                    <x-timeline class="input-current-time" value="0" min="0" max="<?= $overallDuration;?>" step="1"></x-timeline>
                 </div>
                 <div class="overall-time">
                     2:33:07
