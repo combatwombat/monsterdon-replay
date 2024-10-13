@@ -119,10 +119,21 @@ class Movies extends Controller {
             ];
 
             foreach ($data['media_attachments'] as $media) {
+                $extension = trim(pathinfo($media['url'], PATHINFO_EXTENSION));
+                if (empty($extension)) {
+                    $extension = trim(pathinfo($media['remote_url'], PATHINFO_EXTENSION));
+                }
+                if (empty($extension)) {
+                    if ($media['type'] == 'video') {
+                        $extension = "mp4";
+                    } else {
+                        $extension = "jpg";
+                    }
+                }
                 $toot['media_attachments'][] = [
                     'id' => h($media['id']),
                     'type' => h($media['type']),
-                    'extension' => pathinfo($media['url'], PATHINFO_EXTENSION)
+                    'extension' => $extension
                 ];
             }
 
