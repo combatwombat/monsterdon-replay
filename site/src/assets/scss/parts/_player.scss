@@ -99,7 +99,7 @@
     display: block;
     position: absolute;
     right: 0;
-    top: calc(-100% - 21.5px);
+    top: calc(-100% - 22px);
     padding: 10px 10px 10px 12px;
     border-top-right-radius: 20px;
     border-top-left-radius: 20px;
@@ -185,7 +185,7 @@
     }
 
     @media (max-width: #{$small-player-breakpoint}) {
-      top: calc(-100% - 31.5px);
+      top: calc(-100% - 32px);
     }
 
   }
