@@ -172,7 +172,8 @@
   }
 
   .toot {
-    border-bottom: 1px solid $color-border;
+    border-bottom: 0.5px solid $color-border;
+
     padding-top: 20px;
 
     .toot-header {
