@@ -205,9 +205,16 @@
         font-weight: normal;
       }
     }
+
     .toot-body {
       word-break: break-word;
+      margin-top: -4px;
+
+      p {
+        margin: 13px 0;
+      }
     }
+
     .toot-media-attachments {
 
       display: grid;
@@ -273,9 +280,7 @@
   &.style-compact {
     .toot {
       padding-top: 5px;
-      p {
-        margin: 5px 0;
-      }
+
 
       .toot-header {
         grid-template-columns: 16px 1fr 100px;
@@ -293,10 +298,19 @@
         .col-name {
           .display-name {
             color: $color-light-subtle;
+            font-size: 14px;
           }
           .acct {
             display: none;
           }
+        }
+      }
+
+      .toot-body {
+        margin-top: -2px;
+
+        p {
+          margin: 5px 0;
         }
       }
 
