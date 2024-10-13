@@ -14,6 +14,7 @@ function build_js {
       #"js/libs/htmx.preload.js"
       #"js/libs/alpine.collapse.js"
       #"js/libs/alpine.min.js"
+      "js/web-components/x-timeline.js"
       "js/libs/helper.js"
       "js/main.js"
   )

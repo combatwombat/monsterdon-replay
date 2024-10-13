@@ -91,7 +91,7 @@ use App\Helpers\ViewHelper;
                     2:03:26
                 </div>
                 <div class="timeline-wrap">
-                    <input type="range" name="current-time" class="input-current-time" value="0" min="0" max="<?= $overallDuration;?>" step="1">
+                    <x-timeline class="input-current-time" value="0" min="0" max="5000" step="1"></x-timeline>
                 </div>
                 <div class="overall-time">
                     2:33:07

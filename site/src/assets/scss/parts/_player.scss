@@ -47,6 +47,7 @@
       &.col-timeline {
         display: grid;
         grid-template-columns: 60px 1fr 60px;
+        grid-gap: 2px;
         align-items: center;
         font-size: 14px;
 
@@ -55,11 +56,8 @@
           padding-right: 10px;
         }
         .timeline-wrap {
-          input {
-            width: 100%;
-            @include range();
-            transform: translateY(2px);
-
+          .input-current-time {
+            height: 58px;
           }
         }
         .overall-time {
@@ -277,3 +275,4 @@
   }
 
 }
+
