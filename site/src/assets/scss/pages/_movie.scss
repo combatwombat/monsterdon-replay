@@ -202,6 +202,7 @@
         color: $color-text-subtle;
         text-align: right;
         font-size: 14px;
+        font-weight: normal;
       }
     }
     .toot-body {
@@ -277,9 +278,17 @@
       }
 
       .toot-header {
-        grid-template-columns: 1fr 100px;
+        grid-template-columns: 16px 1fr 100px;
+        grid-gap: 7px;
         .col-image {
-          display: none;
+          display: grid;
+          align-items: center;
+          img {
+            width: 16px;
+            height: 16px;
+            transform: translateY(-1px);
+            border-radius: 2px;
+          }
         }
         .col-name {
           .display-name {
