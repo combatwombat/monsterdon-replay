@@ -305,7 +305,7 @@ async function TootPlayer(slug) {
         playing = true;
         els.player.classList.add("playing");
 
-        startTime = performance.now() / 1000;
+        startTime = Date.now() / 1000;
         startCurrentTime = currentTime;
         oldCurrentTime = currentTime - 1;
         advanceTime();
@@ -319,7 +319,7 @@ async function TootPlayer(slug) {
 
     function advanceTime(timestamp) {
 
-        let elapsedTime = (performance.now() / 1000) - startTime;
+        let elapsedTime = (Date.now() / 1000) - startTime;
 
         currentTime = startCurrentTime + elapsedTime;
 
@@ -353,7 +353,7 @@ async function TootPlayer(slug) {
     }
 
     function onTimeScrub(seconds) {
-        startTime = performance.now() / 1000;
+        startTime = Date.now() / 1000;
         currentTime = seconds;
         startCurrentTime = currentTime;
         updateDisplay();
