@@ -60,6 +60,10 @@
       }
     }
 
+    .bottom {
+      padding-top: 5px;
+    }
+
     .col {
       &.col-cover {
         img {
@@ -100,12 +104,38 @@
           a {
             display: inline-block;
           }
+
         }
         .start_datetime {
 
 
         }
       }
+    }
+
+    @media (max-width: 433px) {
+      .col {
+        &.col-content {
+          .title {
+            .name {
+              font-size: 24px;
+            }
+            .release-date {
+              font-size: 14px;
+            }
+          }
+          .duration {
+            font-size: 14px;
+          }
+          .meta {
+            font-size: 14px;
+          }
+        }
+      }
+      .bottom {
+        font-size: 14px;
+      }
+
     }
   }
 
