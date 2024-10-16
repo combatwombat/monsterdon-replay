@@ -17,7 +17,7 @@
             <li class="movie">
                 <a href="/<?= h($movie['slug']); ?>">
                     <div class="col col-cover">
-                        <img src="/media/covers/<?= $movie['imdb_id'];?>.jpg" alt="Cover for <?= h($movie['title']);?>" loading="lazy" width="100" height="150">
+                        <img src="/media/covers/<?= $movie['imdb_id'];?>_thumb.jpg" alt="Cover for <?= h($movie['title']);?>" loading="lazy" width="100" height="150">
                     </div>
                     <div class="col col-content">
                         <div class="top">

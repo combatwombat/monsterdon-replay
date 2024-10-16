@@ -51,4 +51,10 @@ $app->cli("save_toots", function() {
     }
 });
 
+// go through all toots and save media
+$app->cli("save_toot_media", function() {
+    $saveToots = new Workers\SaveToots($this->container);
+    $saveToots->saveMediaForExistingToots();
+});
+
 $app->run();

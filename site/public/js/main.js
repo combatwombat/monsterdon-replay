@@ -301,7 +301,6 @@ async function TootPlayer(slug) {
 
     updateDisplay();
 
-    // if playing, call function repeatedly with requestAnimationFrame
     function startPlaying() {
         playing = true;
         els.player.classList.add("playing");
@@ -377,7 +376,6 @@ async function TootPlayer(slug) {
 
 
     // build html elements for each toot
-
     toots.forEach( (toot, index) => {
 
         // create toot element with string literals
@@ -433,7 +431,6 @@ async function TootPlayer(slug) {
         tootHTML += `</div>`;
 
 
-        // create dom element from tootHTML
         let tootElement = document.createElement('div');
         tootElement.innerHTML = tootHTML.trim();
         tootElement = tootElement.firstChild;
@@ -483,7 +480,6 @@ async function TootPlayer(slug) {
     });
 
     on("click", ".settings .col-label", (e) => {
-       // parent.{.col-checkbox}.input.click
          e.target.parentElement.find('.col-checkbox input').click();
     });
 

@@ -57,12 +57,12 @@ class Helper extends Base {
 
         if (curl_errno($ch)) {
             $this->log(curl_errno($ch) . " " . curl_error($ch));
-            throw new Exception("Curl error");
+            throw new \Exception("Curl error");
         }
 
         // is it not a http code starting with 2? throw exception
         if ($httpCode < 200 || $httpCode >= 300) {
-            throw new Exception($httpCode);
+            throw new \Exception($httpCode);
         }
 
         return $response;

@@ -28,11 +28,12 @@ class TMDB extends \RTF\Base {
 
     /**
      * Get movie/episode cover image from TMDB and save it to public/media/covers/{imdbId}.jpg
+     * Also resize to thumbnail.
      * @param $imdbId
      * @return void
      * @throws Exception
      */
-    public function saveImage($imdbId) {
+    public function saveImage($imdbId, $thumbWidth = 270) {
 
         if (file_exists(__SITE__ . "/public/media/covers/" . $imdbId . ".jpg")) {
             return;
@@ -44,10 +45,27 @@ class TMDB extends \RTF\Base {
             $url = "https://api.themoviedb.org/3/movie/" . $tmdbId . "?api_key=" . $this->config('apiKeys.tmdb');
             $response = $this->helper->httpRequest($url);
             $json = json_decode($response, true);
+
+            if (!$json) {
+                return;
+            }
             $posterPath = $json['poster_path'];
             $posterUrl = "https://image.tmdb.org/t/p/w500" . $posterPath;
             $poster = $this->helper->httpRequest($posterUrl);
-            file_put_contents(__SITE__ . "/public/media/covers/" . $imdbId . ".jpg", $poster);
+            $res = file_put_contents(__SITE__ . "/public/media/covers/" . $imdbId . ".jpg", $poster);
+
+            if ($res) {
+
+                // create thumbnail
+                $image = imagecreatefromjpeg(__SITE__ . "/public/media/covers/" . $imdbId . ".jpg");
+                $width = imagesx($image);
+                $height = imagesy($image);
+                $newWidth = $thumbWidth;
+                $newHeight = $height * ($newWidth / $width);
+                $newImage = imagecreatetruecolor($newWidth, $newHeight);
+                imagecopyresampled($newImage, $image, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
+                imagejpeg($newImage, __SITE__ . "/public/media/covers/" . $imdbId . "_thumb.jpg");
+            }
         }
 
     }

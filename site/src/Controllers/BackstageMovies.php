@@ -94,6 +94,16 @@ class BackstageMovies extends \RTF\Controller {
 
             // delete cache entries with name = "toots-{$movie['slug']}"
             $this->db->execute("DELETE FROM cache WHERE name LIKE :prefix", ["prefix" => "toots-" . $movie['slug'] . "%"]);
+
+            // delete cover images in
+            $cover = __SITE__ . "/public/media/covers/" . $movie['imdb_id'] . ".jpg";
+            $thumb = __SITE__ . "/public/media/covers/" . $movie['imdb_id'] . "_thumb.jpg";
+            if (file_exists($cover)) {
+                unlink($cover);
+            }
+            if (file_exists($thumb)) {
+                unlink($thumb);
+            }
         }
     }
 

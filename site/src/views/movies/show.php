@@ -9,7 +9,7 @@ use App\Helpers\ViewHelper;
 
     <div class="movie-info">
         <div class="col col-cover">
-            <img src="/media/covers/<?= $movie['imdb_id'];?>.jpg" alt="Cover for <?= h($movie['title']);?>" loading="lazy" width="100" height="150">
+            <img src="/media/covers/<?= $movie['imdb_id'];?>.jpg" alt="Cover for <?= h($movie['title']);?>" width="100" height="150">
         </div>
         <div class="col col-content">
             <div class="top">
