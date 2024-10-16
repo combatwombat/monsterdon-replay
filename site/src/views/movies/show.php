@@ -25,9 +25,9 @@ use App\Helpers\ViewHelper;
                     <span><?= formatDuration($movie['duration']); ?></span>
                 </div>
                 <div class="meta">
-                    <!--<a href="https://www.justwatch.com/us/search?sort_by=random&sort_asc=true&q=<?= urlencode($movie['title'] . " " . substr($movie['release_date'], 0, 4))?>" target="_blank">Where to watch</a> &middot;-->
                     <a href="https://letterboxd.com/imdb/<?= $movie['imdb_id'];?>" target="_blank">Letterboxd</a> &middot;
-                    <a href="https://www.imdb.com/title/<?= $movie['imdb_id'];?>" target="_blank">IMDb</a>
+                    <a href="https://www.imdb.com/title/<?= $movie['imdb_id'];?>" target="_blank">IMDb</a> &middot;
+                    <a href="https://www.themoviedb.org/movie/<?= $movie['tmdb_id'];?>/watch" target="_blank">Where to watch</a>
                 </div>
                 <a href="#" class="close">
                     <?= icon('close-line');?>
