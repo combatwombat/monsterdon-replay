@@ -36,7 +36,6 @@
 
     .top {
       position: relative;
-      padding-right: 40px;
 
       .close {
         position: absolute;
@@ -78,6 +77,7 @@
         .title {
           margin: 0 0 10px 0;
           white-space: nowrap;
+          padding-right: 30px;
           .name {
             white-space: normal;
             font-size: 26px;
