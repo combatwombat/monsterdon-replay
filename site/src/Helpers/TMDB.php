@@ -27,6 +27,23 @@ class TMDB extends \RTF\Base {
     }
 
     /**
+     * Get IMDB id for a given TMDB id.
+     * @param $tmdbId
+     * @return false|mixed
+     * @throws Exception
+     */
+    public function getIMDBIdFromTMDBId($tmdbId) {
+        $url = "https://api.themoviedb.org/3/movie/" . $tmdbId . "?api_key=" . $this->config('apiKeys.tmdb');
+        $response = $this->helper->httpRequest($url);
+        $json = json_decode($response, true);
+        if (isset($json['imdb_id'])) {
+            return $json['imdb_id'];
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * Get movie/episode cover image from TMDB and save it to public/media/covers/{imdbId}.jpg
      * Also resize to thumbnail.
      * @param $imdbId

@@ -31,15 +31,21 @@ class BackstageMovies extends \RTF\Controller {
             'release_date' => ['data' => $_POST['release_date'], 'rules' => 'date'],
             'start_datetime' => ['data' => $_POST['start_datetime'], 'rules' => 'required|datetime'],
             'duration' => ['data' => $_POST['duration'], 'rules' => 'numeric'],
-            'imdb_id' => ['data' => $_POST['imdb_id'], 'rules' => 'required|regex:tt[a-z0-9]+']
+            'imdb_id' => ['data' => $_POST['imdb_id'], 'rules' => 'required|regex:tt[a-z0-9]+'],
+            'tmdb_id' => ['data' => $_POST['tmdb_id'], 'rules' => 'numeric']
         ]);
 
 
         if (empty($errors)) {
 
-            // if title, slug, release_date or duration are empty, get them from tmdb
+
+            // if tmdb_id, title, slug, release_date or duration are empty, get them from tmdb
             if (empty($_POST['title']) || empty($_POST['slug']) || empty($_POST['release_date']) || empty($_POST['duration'])) {
                 $movieInfo = $this->tmdb->getInfo($_POST['imdb_id']);
+
+                if (empty($_POST['tmdb_id'])) {
+                    $_POST['tmdb_id'] = $this->tmdb->getTMDBIdFromIMDBId($_POST['imdb_id']);
+                }
 
                 if (empty($_POST['title'])) {
                     $_POST['title'] = $movieInfo['title'];
@@ -67,7 +73,8 @@ class BackstageMovies extends \RTF\Controller {
                 'release_date' => $_POST['release_date'],
                 'start_datetime' => $_POST['start_datetime'],
                 'duration' => $_POST['duration'],
-                'imdb_id' => $_POST['imdb_id']
+                'imdb_id' => $_POST['imdb_id'],
+                'tmdb_id' => $_POST['tmdb_id']
             ]);
 
             $this->tmdb->saveImage($_POST['imdb_id']);
@@ -95,15 +102,23 @@ class BackstageMovies extends \RTF\Controller {
             // delete cache entries with name = "toots-{$movie['slug']}"
             $this->db->execute("DELETE FROM cache WHERE name LIKE :prefix", ["prefix" => "toots-" . $movie['slug'] . "%"]);
 
-            // delete cover images in
-            $cover = __SITE__ . "/public/media/covers/" . $movie['imdb_id'] . ".jpg";
-            $thumb = __SITE__ . "/public/media/covers/" . $movie['imdb_id'] . "_thumb.jpg";
-            if (file_exists($cover)) {
-                unlink($cover);
+
+            // if there are no other movies with this imdb_id...
+            $otherMovies = $this->db->fetchAll("SELECT * FROM movies WHERE imdb_id = :imdb_id", ["imdb_id" => $movie['imdb_id']]);
+            if (empty($otherMovies)) {
+
+                // ... delete cover images
+                $cover = __SITE__ . "/public/media/covers/" . $movie['imdb_id'] . ".jpg";
+                $thumb = __SITE__ . "/public/media/covers/" . $movie['imdb_id'] . "_thumb.jpg";
+                if (file_exists($cover)) {
+                    unlink($cover);
+                }
+                if (file_exists($thumb)) {
+                    unlink($thumb);
+                }
             }
-            if (file_exists($thumb)) {
-                unlink($thumb);
-            }
+
+
         }
     }
 
@@ -116,7 +131,8 @@ class BackstageMovies extends \RTF\Controller {
             'release_date' => ['data' => $_POST['release_date'], 'rules' => 'required|date'],
             'start_datetime' => ['data' => $_POST['start_datetime'], 'rules' => 'required|datetime'],
             'duration' => ['data' => $_POST['duration'], 'rules' => 'required|numeric'],
-            'imdb_id' => ['data' => $_POST['imdb_id'], 'rules' => 'required|regex:tt[a-z0-9]+']
+            'imdb_id' => ['data' => $_POST['imdb_id'], 'rules' => 'required|regex:tt[a-z0-9]+'],
+            'tmdb_id' => ['data' => $_POST['tmdb_id'], 'rules' => 'numeric']
         ]);
 
         if (!$errors) {
@@ -135,13 +151,19 @@ class BackstageMovies extends \RTF\Controller {
                 $this->tmdb->saveImage($_POST['imdb_id']);
             }
 
+            // tmdb id empty (since it was added later)? get it from imdb id
+            if (empty($_POST['tmdb_id'])) {
+                $_POST['tmdb_id'] = $this->tmdb->getTMDBIdFromIMDBId($_POST['imdb_id']);
+            }
+
             $res = $this->db->update("movies", [
                 'title' => $_POST['title'],
                 'slug' => $_POST['slug'],
                 'release_date' => $_POST['release_date'],
                 'start_datetime' => $_POST['start_datetime'],
                 'duration' => $_POST['duration'],
-                'imdb_id' => $_POST['imdb_id']
+                'imdb_id' => $_POST['imdb_id'],
+                'tmdb_id' => $_POST['tmdb_id']
             ], ['id' => $id]);
 
             if ($res) {

@@ -10,6 +10,7 @@
         <th>Start Datetime</th>
         <th>Duration in s</th>
         <th>IMDb id</th>
+        <th>TMDB id</th>
         <th></th>
     </tr>
     <tr class="new">
@@ -19,6 +20,7 @@
         <td><input type="datetime-local" name="start_datetime" value="<?= h(post('start_datetime'));?>" required></td>
         <td><input type="number" name="duration" value="<?= h(post('duration'));?>" placeholder="0"></td>
         <td><input type="text" name="imdb_id" value="<?= h(post('imdb_id'));?>" required pattern="tt[a-z0-9]+"></td>
+        <td><input type="number" name="tmdb_id" value="<?= h(post('tmdb_id'));?>" placeholder="optional"></td>
         <td><button type="submit" class="add">add</button></td>
     </tr>
 
@@ -34,6 +36,7 @@
             <td><input type="datetime-local" name="start_datetime" value="<?= h($movie['start_datetime']);?>" required></td>
             <td><input type="number" name="duration" value="<?= h($movie['duration']);?>" required></td>
             <td><input type="text" name="imdb_id" value="<?= h($movie['imdb_id']);?>" required pattern="tt[a-z0-9]+"></td>
+            <td><input type="number" name="tmdb_id" value="<?= h($movie['tmdb_id']);?>" required></td>
             <td>
                 <button type="submit" style="display: none;">edit</button>
                 <div class="button delete">delete</div>
@@ -56,7 +59,8 @@
                 release_date: tr.find('[name=release_date]').value,
                 start_datetime: tr.find('[name=start_datetime]').value,
                 duration: tr.find('[name=duration]').value,
-                imdb_id: tr.find('[name=imdb_id]').value
+                imdb_id: tr.find('[name=imdb_id]').value,
+                tmdb_id: tr.find('[name=tmdb_id]').value
             }, "json");
 
             if (result.status === 'error') {
@@ -91,7 +95,8 @@
                     release_date: tr.find('[name=release_date]').value,
                     start_datetime: tr.find('[name=start_datetime]').value,
                     duration: tr.find('[name=duration]').value,
-                    imdb_id: tr.find('[name=imdb_id]').value
+                    imdb_id: tr.find('[name=imdb_id]').value,
+                    tmdb_id: tr.find('[name=tmdb_id]').value
                 }, "json");
 
                 // example: {"status":"error","errors":{"foo":["bar"],"bar":["baakjhsjh"]}}
