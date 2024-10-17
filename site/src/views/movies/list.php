@@ -22,14 +22,15 @@
                     <div class="col col-content">
                         <div class="top">
                             <h2 class="title">
-                            <span class="name">
-                                <?= h($movie['title']);?>
-                            </span>
+                                <span class="name">
+                                    <?= h($movie['title']);?>
+                                </span>
+                            </h2>
+                            <div class="meta">
                                 <span class="release-date" title="<?= h($movie['release_date']);?>">
                                 <?= h(substr($movie['release_date'], 0, 4));?>
-                            </span>
-                            </h2>
-                            <div class="duration">
+                                </span>
+                                &middot;
                                 <span><?= formatDuration($movie['duration']); ?></span>
                             </div>
                         </div>

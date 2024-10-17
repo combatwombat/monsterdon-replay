@@ -5,7 +5,7 @@ $filemtimeCSS = ViewHelper::filemtime('css/main.css');
 $filemtimeJS = ViewHelper::filemtime('js/main.js');
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <title>#monsterdon replay <?= $title ? '&middot; ' . h($title) : '';?></title>
     <link rel="stylesheet" type="text/css" href="/css/main.css?v=<?php echo $filemtimeCSS;?>">
