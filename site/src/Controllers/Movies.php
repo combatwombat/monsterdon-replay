@@ -12,7 +12,33 @@ class Movies extends Controller {
 
     public function list() {
 
-        $movies = $this->db->fetchAll("SELECT * FROM movies ORDER BY start_datetime DESC");
+        $allMovies = $this->db->fetchAll("SELECT * FROM movies ORDER BY start_datetime DESC");
+
+        $isLoggedIn = $this->auth->isLoggedIn();
+
+        $movies = [];
+
+        $now = new \DateTime();
+
+        foreach ($allMovies as $movie) {
+
+            $movieEndTime = new \DateTime($movie['start_datetime']);
+            $movieEndTime->add(new \DateInterval('PT' . $movie['duration'] . 'S'));
+            $movieEndTime->add(new \DateInterval('PT' . $this->config("aftershowDuration") . 'S'));
+
+            $movie['is_in_future'] = $movieEndTime >= $now;
+
+            // show all movies for logged in users, show only past movies for guests
+            if ($isLoggedIn) {
+                $movies[] = $movie;
+
+            } else {
+                if (!$movie['is_in_future']) {
+                    $movies[] = $movie;
+                }
+            }
+
+        }
 
         $data = [
             'header' => [
@@ -32,20 +58,7 @@ class Movies extends Controller {
             $this->error(404);
         }
 
-        $startDateTime = new \DateTime($movie['start_datetime']);
-
-        // add some seconds for aftershow toots
-        $endDateTime = clone $startDateTime;
-        $endDateTime->add(new \DateInterval('PT' . $movie['duration'] . 'S'));
-        $endDateTime->add(new \DateInterval('PT' . $this->config("aftershowDuration") . 'S'));
-
-        // get count of all toots between start and end time
-        $res = $this->db->fetch("SELECT COUNT(*) AS count FROM toots WHERE created_at >= :start AND created_at <= :end ORDER BY created_at ASC", ["start" => $startDateTime->format("Y-m-d H:i:s"), "end" => $endDateTime->format("Y-m-d H:i:s")], 'toots-' . $movie['slug']);
-
-        $tootCount = $res['count'];
-
         $overallDuration = $movie['duration'] + $this->config("aftershowDuration");
-
 
         $data = [
             'header' => [
@@ -56,7 +69,6 @@ class Movies extends Controller {
                 'backgroundImage' => 'url(/media/covers/' . $movie['imdb_id'] . '.jpg)',
             ],
             'movie' => $movie,
-            'tootCount' => $tootCount,
             'overallDuration' => $overallDuration
         ];
 

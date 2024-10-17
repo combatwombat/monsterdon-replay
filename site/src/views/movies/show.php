@@ -23,7 +23,8 @@ use App\Helpers\ViewHelper;
                     <span class="release-date" title="<?= h($movie['release_date']);?>">
                         <?= h(substr($movie['release_date'], 0, 4));?>
                     </span> &middot;
-                    <span><?= formatDuration($movie['duration']); ?></span>
+                    <span><?= formatDuration($movie['duration']); ?></span> &middot;
+                    <span><?= $movie['toot_count'];?> toots</span>
                 </div>
                 <div class="meta">
                     <a href="https://letterboxd.com/imdb/<?= $movie['imdb_id'];?>" target="_blank">Letterboxd</a> &middot;
@@ -36,8 +37,7 @@ use App\Helpers\ViewHelper;
             </div>
             <div class="bottom">
                 <div class="start_datetime">
-                    Watched on <?= formatDateTime($movie['start_datetime'], "d. MMMM YYYY"); ?> &middot;
-                    <?= $tootCount;?> toots
+                    Watched on <?= formatDateTime($movie['start_datetime'], "d MMMM YYYY"); ?>
                 </div>
             </div>
         </div>

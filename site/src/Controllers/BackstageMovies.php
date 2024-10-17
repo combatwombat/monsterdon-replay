@@ -156,6 +156,24 @@ class BackstageMovies extends \RTF\Controller {
                 $_POST['tmdb_id'] = $this->tmdb->getTMDBIdFromIMDBId($_POST['imdb_id']);
             }
 
+            // movie has 0 toots? update toot_count
+            // (that's the case when we just added the field and it's 0. otherwise it gets filled in the SaveToots worker)
+            if ($movie['toot_count'] == 0) {
+
+                $startDateTime = new \DateTime($movie['start_datetime']);
+
+                // add some seconds for aftershow toots
+                $endDateTime = clone $startDateTime;
+                $endDateTime->add(new \DateInterval('PT' . $movie['duration'] . 'S'));
+                $endDateTime->add(new \DateInterval('PT' . $this->config("aftershowDuration") . 'S'));
+
+                $res = $this->db->fetch("SELECT COUNT(*) AS count FROM toots WHERE created_at >= :start AND created_at <= :end ORDER BY created_at ASC", ["start" => $startDateTime->format("Y-m-d H:i:s"), "end" => $endDateTime->format("Y-m-d H:i:s")], 'toots-' . $movie['slug']);
+
+                $tootCount = $res['count'];
+
+                $this->db->update("movies", ['toot_count' => $tootCount], ['id' => $id]);
+            }
+
             $res = $this->db->update("movies", [
                 'title' => $_POST['title'],
                 'slug' => $_POST['slug'],

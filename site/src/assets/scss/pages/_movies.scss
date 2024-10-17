@@ -36,7 +36,6 @@
 
         @include transition(all $speed-slowish $easing);
 
-
         &:hover {
           background: $color-blue-subtle;
           transform: scale(1.02);
@@ -46,6 +45,13 @@
         @media (max-width: 370px) {
           grid-template-columns: 80px 1fr;
         }
+      }
+
+      &.is-in-future {
+        a {
+          border: 1px solid rgba(255,0,0,0.4);
+        }
+
       }
 
 

@@ -14,7 +14,7 @@
             $movie['start_datetime'] = $startDatetime->format('Y-m-d H:i:s');
 
             ?>
-            <li class="movie">
+            <li class="movie<?= $movie['is_in_future'] ? ' is-in-future' : '';?>">
                 <a href="/<?= h($movie['slug']); ?>">
                     <div class="col col-cover">
                         <img src="/media/covers/<?= $movie['imdb_id'];?>_thumb.jpg" alt="Cover for <?= h($movie['title']);?>" loading="lazy" width="100" height="150">
@@ -31,12 +31,13 @@
                                 <?= h(substr($movie['release_date'], 0, 4));?>
                                 </span>
                                 &middot;
-                                <span><?= formatDuration($movie['duration']); ?></span>
+                                <span><?= formatDuration($movie['duration']); ?></span> &middot;
+                                <span><?= $movie['toot_count'];?> toots</span>
                             </div>
                         </div>
                         <div class="bottom">
                             <div class="start_datetime">
-                                Watched on <?= formatDateTime($movie['start_datetime'], "d. MMMM YYYY"); ?>
+                                Watched on <?= formatDateTime($movie['start_datetime'], "d MMMM YYYY"); ?>
                             </div>
                         </div>
                     </div>

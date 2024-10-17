@@ -45,7 +45,16 @@ class Auth extends Base {
                     $_SESSION['redirect_after_login'] = $_SERVER['REQUEST_URI'];
                     $this->container->router->redirect($this->redirectIfLoggedOut, 302);
                 } else {
-                    http_response_code(401);
+
+                    if ($this->method == 'http') {
+                        header('WWW-Authenticate: Basic');
+                        header('HTTP/1.0 401 Unauthorized');
+                        echo "nope";
+                        sleep(1); // to annoy bots a bit
+                    } else {
+                        http_response_code(401);
+                    }
+
                     die();
 
                 }
@@ -61,7 +70,8 @@ class Auth extends Base {
     public function isLoggedIn() {
         switch ($this->method) {
             case 'http':
-                return $this->checkHTTPLogin();
+                $res = $this->checkHTTPLogin();
+                return $res;
 
             case 'session':
 
@@ -294,11 +304,7 @@ class Auth extends Base {
 
         }
 
-        header('WWW-Authenticate: Basic');
-        header('HTTP/1.0 401 Unauthorized');
-        echo "nope";
-        sleep(1); // to annoy bots a bit
-        die();
+      return false;
 
     }
 
