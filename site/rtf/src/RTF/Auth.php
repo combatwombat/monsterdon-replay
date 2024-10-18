@@ -72,7 +72,7 @@ class Auth extends Base {
         if (session_status() == PHP_SESSION_NONE) {
             session_start();
         }
-        
+
         switch ($this->method) {
             case 'http':
                 $res = $this->checkHTTPLogin();
