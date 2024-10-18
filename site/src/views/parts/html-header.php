@@ -3,6 +3,10 @@ use App\Helpers\ViewHelper;
 
 $filemtimeCSS = ViewHelper::filemtime('css/main.css');
 $filemtimeJS = ViewHelper::filemtime('js/main.js');
+
+if (empty($ogImage)) {
+    $ogImage = "https://monsterdon-replay.gerlach.dev/img/og-image.png";
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -15,7 +19,7 @@ $filemtimeJS = ViewHelper::filemtime('js/main.js');
     <meta name="theme-color" content="#131415"/>
     <meta name="description" content="Missed the #monsterdon watch party on Mastodon? Replay the toots here.">
 
-    <meta property="og:image" content="https://monsterdon-replay.gerlach.dev/img/og-image.png" />
+    <meta property="og:image" content="<?= $ogImage; ?>" />
 
     <link rel="icon" type="image/x-icon" href="/img/favicon.ico">
     <link rel="apple-touch-icon" sizes="256x256" href="/img/icon.png">

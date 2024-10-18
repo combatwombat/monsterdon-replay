@@ -1,4 +1,4 @@
-<?php $this->include("parts/html-header", ["title" => isset($title) ? $title : '']); ?>
+<?php $this->include("parts/html-header", ["title" => isset($title) ? $title : "", "ogImage" => isset($ogImage) ? $ogImage : ""]); ?>
 
 <body
     <?= !empty($bodyClass) ? ' class="'.$bodyClass.'"' : '';?>

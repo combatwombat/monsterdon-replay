@@ -67,6 +67,7 @@ class Movies extends Controller {
                 'headerClass' => 'small',
                 'backLink' => '/',
                 'backgroundImage' => 'url(/media/covers/' . $movie['imdb_id'] . '.jpg)',
+                'ogImage' => "https://" . $this->config("domain") . '/media/covers/' . $movie['imdb_id'] . '_ogimage.png'
             ],
             'movie' => $movie,
             'overallDuration' => $overallDuration
