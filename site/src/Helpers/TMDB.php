@@ -50,7 +50,7 @@ class TMDB extends \RTF\Base {
      * @return void
      * @throws Exception
      */
-    public function saveImage($imdbId, $thumbWidth = 270) {
+    public function saveImage($imdbId, $thumbWidth = 270, $ogImageCoverOffset = 50) {
 
         if (file_exists(__SITE__ . "/public/media/covers/" . $imdbId . ".jpg")) {
             return;
@@ -82,8 +82,67 @@ class TMDB extends \RTF\Base {
                 $newImage = imagecreatetruecolor($newWidth, $newHeight);
                 imagecopyresampled($newImage, $image, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
                 imagejpeg($newImage, __SITE__ . "/public/media/covers/" . $imdbId . "_thumb.jpg");
+
+
+                // create og:image
+                $this->createOGImage($imdbId, $ogImageCoverOffset);
             }
         }
+
+    }
+
+    /**
+     * Combine templates and movie cover image to create og:image for a movie
+     * @param $movie
+     * @return void
+     */
+    public function createOGImage($imdbId, $ogImageCoverOffset) {
+
+        $fgImagePath = __SITE__ . "/public/img/og-image_fg.png";
+        $coverPath = __SITE__ . "/public/media/covers/" . $imdbId . ".jpg";
+        $bgImagePath = __SITE__ . "/public/img/og-image_bg.png";
+        $ogImagePath = __SITE__ . "/public/media/covers/" . $imdbId . "_ogimage.png";
+
+        $fgImage = imagecreatefrompng($fgImagePath);
+        $coverImage = imagecreatefromjpeg($coverPath);
+        $bgImage = imagecreatefrompng($bgImagePath);
+
+        $width = imagesx($fgImage);
+        $height = imagesy($fgImage);
+
+        $newImage = imagecreatetruecolor($width, $height);
+
+        // Copy background
+        imagecopy($newImage, $bgImage, 0, 0, 0, 0, $width, $height);
+
+        // Calculate new dimensions for cover image
+        $coverWidth = imagesx($coverImage);
+        $coverHeight = imagesy($coverImage);
+        $newCoverWidth = $width;
+        $newCoverHeight = ($coverHeight / $coverWidth) * $newCoverWidth;
+
+        // Calculate vertical position based on $ogImageCoverOffset
+        $yOffset = round(($newCoverHeight - $height) * ($ogImageCoverOffset / 100)) * -1;
+
+        // Create a new image for the resized cover
+        $resizedCover = imagecreatetruecolor($newCoverWidth, $newCoverHeight);
+        imagecopyresampled($resizedCover, $coverImage, 0, 0, 0, 0, $newCoverWidth, $newCoverHeight, $coverWidth, $coverHeight);
+
+        // Apply the resized cover to the new image with 6% opacity
+        imagecopymerge($newImage, $resizedCover, 0, $yOffset, 0, 0, $newCoverWidth, $newCoverHeight, 6);
+
+        // Copy foreground
+        imagecopy($newImage, $fgImage, 0, 0, 0, 0, $width, $height);
+
+        // Save the final image
+        imagepng($newImage, $ogImagePath);
+
+        // Free up memory
+        imagedestroy($fgImage);
+        imagedestroy($coverImage);
+        imagedestroy($bgImage);
+        imagedestroy($newImage);
+        imagedestroy($resizedCover);
 
     }
 

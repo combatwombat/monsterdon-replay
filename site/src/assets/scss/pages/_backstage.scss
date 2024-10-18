@@ -30,7 +30,7 @@
   }
 
   .site {
-    max-width: 1200px;
+    max-width: 1500px;
 
     table {
       width: 100%;
@@ -67,6 +67,26 @@
           color: $color-green;
         }
       }
+
+      .og-image-cover-offset {
+        white-space: nowrap;
+        input {
+          width: calc(100% - 23px);
+        }
+
+        .og-image-link {
+          display: inline-block;
+          margin-left: 5px;
+          vertical-align: middle;
+          transform: translateY(2px);
+          svg {
+            width: 16px;
+          }
+        }
+      }
+
+
+
     }
   }
 

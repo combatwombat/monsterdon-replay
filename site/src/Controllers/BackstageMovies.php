@@ -12,6 +12,8 @@ class BackstageMovies extends \RTF\Controller {
     public function list() {
         $this->auth();
 
+        $this->tmdb->createOGImage("tt0044121", 30);
+
         $movies = $this->db->fetchAll("SELECT * FROM movies ORDER BY start_datetime DESC");
         $data = [
             'header' => [
@@ -32,7 +34,8 @@ class BackstageMovies extends \RTF\Controller {
             'start_datetime' => ['data' => $_POST['start_datetime'], 'rules' => 'required|datetime'],
             'duration' => ['data' => $_POST['duration'], 'rules' => 'numeric'],
             'imdb_id' => ['data' => $_POST['imdb_id'], 'rules' => 'required|regex:tt[a-z0-9]+'],
-            'tmdb_id' => ['data' => $_POST['tmdb_id'], 'rules' => 'numeric']
+            'tmdb_id' => ['data' => $_POST['tmdb_id'], 'rules' => 'numeric'],
+            'og_image_cover_offset' => ['data' => $_POST['og_image_cover_offset'], 'rules' => 'numeric|min:0|max:100']
         ]);
 
 
@@ -74,7 +77,8 @@ class BackstageMovies extends \RTF\Controller {
                 'start_datetime' => $_POST['start_datetime'],
                 'duration' => $_POST['duration'],
                 'imdb_id' => $_POST['imdb_id'],
-                'tmdb_id' => $_POST['tmdb_id']
+                'tmdb_id' => $_POST['tmdb_id'],
+                'og_image_cover_offset' => $_POST['og_image_cover_offset']
             ]);
 
             $this->tmdb->saveImage($_POST['imdb_id']);
@@ -107,14 +111,18 @@ class BackstageMovies extends \RTF\Controller {
             $otherMovies = $this->db->fetchAll("SELECT * FROM movies WHERE imdb_id = :imdb_id", ["imdb_id" => $movie['imdb_id']]);
             if (empty($otherMovies)) {
 
-                // ... delete cover images
+                // ... delete movie images
                 $cover = __SITE__ . "/public/media/covers/" . $movie['imdb_id'] . ".jpg";
                 $thumb = __SITE__ . "/public/media/covers/" . $movie['imdb_id'] . "_thumb.jpg";
+                $ogImage = __SITE__ . "/public/media/covers/" . $movie['imdb_id'] . "_ogimage.png";
                 if (file_exists($cover)) {
                     unlink($cover);
                 }
                 if (file_exists($thumb)) {
                     unlink($thumb);
+                }
+                if (file_exists($ogImage)) {
+                    unlink($ogImage);
                 }
             }
 
@@ -132,7 +140,8 @@ class BackstageMovies extends \RTF\Controller {
             'start_datetime' => ['data' => $_POST['start_datetime'], 'rules' => 'required|datetime'],
             'duration' => ['data' => $_POST['duration'], 'rules' => 'required|numeric'],
             'imdb_id' => ['data' => $_POST['imdb_id'], 'rules' => 'required|regex:tt[a-z0-9]+'],
-            'tmdb_id' => ['data' => $_POST['tmdb_id'], 'rules' => 'numeric']
+            'tmdb_id' => ['data' => $_POST['tmdb_id'], 'rules' => 'required|numeric'],
+            'og_image_cover_offset' => ['data' => $_POST['og_image_cover_offset'], 'rules' => 'required|numeric|min:0|max:100']
         ]);
 
         if (!$errors) {
@@ -145,10 +154,17 @@ class BackstageMovies extends \RTF\Controller {
 
         if (empty($errors) && !empty($id)) {
 
-            // save new cover image if imdb id changes
+            // save new movie images if imdb id changes
             $movie = $this->db->getById("movies", $id);
             if ($movie['imdb_id'] !== $_POST['imdb_id']) {
                 $this->tmdb->saveImage($_POST['imdb_id']);
+            } else {
+
+                // different og_image_cover_offset? create new og:image
+                if ($movie['og_image_cover_offset'] !== $_POST['og_image_cover_offset']) {
+                    $this->tmdb->createOGImage($_POST['imdb_id'], $_POST['og_image_cover_offset']);
+                }
+
             }
 
             // tmdb id empty (since it was added later)? get it from imdb id
@@ -181,7 +197,8 @@ class BackstageMovies extends \RTF\Controller {
                 'start_datetime' => $_POST['start_datetime'],
                 'duration' => $_POST['duration'],
                 'imdb_id' => $_POST['imdb_id'],
-                'tmdb_id' => $_POST['tmdb_id']
+                'tmdb_id' => $_POST['tmdb_id'],
+                'og_image_cover_offset' => $_POST['og_image_cover_offset']
             ], ['id' => $id]);
 
             if ($res) {

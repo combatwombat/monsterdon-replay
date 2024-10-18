@@ -459,31 +459,31 @@ class DB {
                 $ruleName = $rule[0];
                 $ruleValue = isset($rule[1]) ? $rule[1] : null;
 
-                if ($ruleName == 'required' && empty($data)) {
+                if ($ruleName == 'required' && ($data === null || $data === '')) {
                     $errors[$name][] = $name . ' is required';
                 }
 
-                if ($ruleName == 'numeric' && !is_numeric($data) && !empty($data)) {
+                if ($ruleName == 'numeric' && !is_numeric($data) && $data !== null && $data !== '') {
                     $errors[$name][] = $name . ' must be a number';
                 }
 
-                if ($ruleName == 'min' && (int) $data < (int) $ruleValue && !empty($data)) {
+                if ($ruleName == 'min' && (float) $data < (float) $ruleValue && $data !== null && $data !== '') {
                     $errors[$name][] = $name . ' must be at least ' . $ruleValue . ' big';
                 }
 
-                if ($ruleName == 'max' && (int) $data > (int) $ruleValue && !empty($data)) {
+                if ($ruleName == 'max' && (float) $data > (float) $ruleValue && $data !== null && $data !== '') {
                     $errors[$name][] = $name . ' can\'t be bigger than ' . $ruleValue;
                 }
 
-                if ($ruleName == 'datetime' && !strtotime($data) && !empty($data)) {
+                if ($ruleName == 'datetime' && !strtotime($data) && $data !== null && $data !== '') {
                     $errors[$name][] = $name . ' must be a valid date and time';
                 }
 
-                if ($ruleName == 'date' && !strtotime($data) && !empty($data)) {
+                if ($ruleName == 'date' && !strtotime($data) && $data !== null && $data !== '') {
                     $errors[$name][] = $name . ' must be a valid date';
                 }
 
-                if ($ruleName == 'regex' && !preg_match('/' . $ruleValue . '/', $data) && !empty($data)) {
+                if ($ruleName == 'regex' && !preg_match('/' . $ruleValue . '/', $data) && $data !== null && $data !== '') {
                     $errors[$name][] = $name . ' must match the pattern ' . $ruleValue;
                 }
 

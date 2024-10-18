@@ -11,6 +11,7 @@
         <th>Duration in s</th>
         <th>IMDb id</th>
         <th>TMDB id</th>
+        <th>og:i cover offset</th>
         <th></th>
     </tr>
     <tr class="new">
@@ -21,11 +22,12 @@
         <td><input type="number" name="duration" value="<?= h(post('duration'));?>" placeholder="0"></td>
         <td><input type="text" name="imdb_id" value="<?= h(post('imdb_id'));?>" required pattern="tt[a-z0-9]+"></td>
         <td><input type="number" name="tmdb_id" value="<?= h(post('tmdb_id'));?>" placeholder="optional"></td>
+        <td><input type="number" name="og_image_cover_offset" value="<?= h(isset($_POST['og_image_cover_offset']) ? $_POST['og_image_cover_offset'] : 50);?>" placeholder="optional" min="0" max="100"></td>
         <td><button type="submit" class="add">add</button></td>
     </tr>
 
     <tr>
-        <td colspan="7"><hr></td>
+        <td colspan="9"><hr></td>
     </tr>
 
     <?php foreach ($movies as $movie) { ?>
@@ -37,6 +39,12 @@
             <td><input type="number" name="duration" value="<?= h($movie['duration']);?>" required></td>
             <td><input type="text" name="imdb_id" value="<?= h($movie['imdb_id']);?>" required pattern="tt[a-z0-9]+"></td>
             <td><input type="number" name="tmdb_id" value="<?= h($movie['tmdb_id']);?>" required></td>
+            <td class="og-image-cover-offset">
+                <input type="number" name="og_image_cover_offset" value="<?= h($movie['og_image_cover_offset']);?>" min="0" max="100" required>
+                <a href="/media/covers/<?= $movie['imdb_id'];?>_ogimage.png" class="og-image-link">
+                    <?= icon("image-line");?>
+                </a>
+            </td>
             <td>
                 <button type="submit" style="display: none;">edit</button>
                 <div class="button delete">delete</div>
@@ -60,7 +68,8 @@
                 start_datetime: tr.find('[name=start_datetime]').value,
                 duration: tr.find('[name=duration]').value,
                 imdb_id: tr.find('[name=imdb_id]').value,
-                tmdb_id: tr.find('[name=tmdb_id]').value
+                tmdb_id: tr.find('[name=tmdb_id]').value,
+                og_image_cover_offset: tr.find('[name=og_image_cover_offset]').value
             }, "json");
 
             if (result.status === 'error') {
@@ -87,7 +96,6 @@
         // edit
         findAll('.edit input').forEach(el => {
             el.on('change', async () => {
-                console.log("chaaange");
                 const tr = el.closest('tr');
                 const result = await request("/backstage/movies/" + tr.dataset.id, "POST", {
                     title: tr.find('[name=title]').value,
@@ -96,7 +104,8 @@
                     start_datetime: tr.find('[name=start_datetime]').value,
                     duration: tr.find('[name=duration]').value,
                     imdb_id: tr.find('[name=imdb_id]').value,
-                    tmdb_id: tr.find('[name=tmdb_id]').value
+                    tmdb_id: tr.find('[name=tmdb_id]').value,
+                    og_image_cover_offset: tr.find('[name=og_image_cover_offset]').value
                 }, "json");
 
                 // example: {"status":"error","errors":{"foo":["bar"],"bar":["baakjhsjh"]}}
