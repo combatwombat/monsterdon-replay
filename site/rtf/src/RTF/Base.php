@@ -6,7 +6,7 @@ class Base {
 
     public $container;
 
-    protected $logLength = 10000; // prune log if it gets too long
+    protected $logLength = 100000; // prune log if it gets too long in lines
 
     public function setContainer($container) {
         $this->container = $container;
