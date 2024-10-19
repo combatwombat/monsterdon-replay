@@ -447,7 +447,7 @@ async function TootPlayer(slug) {
     els.tootsContainer.append(tootsWrapper);
 
     els.body.classList.add("toots-loaded");
-    
+
 
     // scrub on timeline
     els.inputCurrentTime.on('input', (e) => {
