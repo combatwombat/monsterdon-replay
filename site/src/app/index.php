@@ -45,7 +45,7 @@ $app->onError(404, function() {
 // usage:
 // php site/public/index.php save_toots // fetch all toots up until oldTootDateTime or an existing toot. occasionally catch up on older toots
 // php site/public/index.php save_toots -catchup 6 // start with catching up. fetch toots until the given time
-$app->cli("save_toots {catchup}", function($catchup = 6) {
+$app->cli("save_toots {catchup}", function($catchup = false) {
     $saveToots = new Workers\SaveToots($this->container);
 
     // re-fetch older toots every x seconds
