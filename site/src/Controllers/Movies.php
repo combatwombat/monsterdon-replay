@@ -47,6 +47,9 @@ class Movies extends Controller {
             'movies' => $movies
         ];
 
+        # cache for 1 hour
+        header("Cache-Control: max-age=3600");
+
         $this->view("movies/list", $data);
     }
 
@@ -73,14 +76,13 @@ class Movies extends Controller {
             'overallDuration' => $overallDuration
         ];
 
+        header("Cache-Control: max-age=3600");
 
         $this->view("movies/show", $data);
     }
 
     // get toots for a movie by its slug
     public function tootsJSON($slug) {
-
-        header('Content-Type: application/json');
 
         $movie = $this->db->getBySlug("movies", $slug);
 
@@ -158,6 +160,9 @@ class Movies extends Controller {
             'name' => $cacheKey,
             'value' => serialize($toots)
         ]);
+
+        header('Content-Type: application/json');
+        header("Cache-Control: max-age=3600");
 
         echo json_encode($toots);
     }
