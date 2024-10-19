@@ -70,6 +70,8 @@ $app->cli("save_toots {catchup}", function($catchup = true) {
             $catchup = false;
         } else {
 
+            $this->log("not catching up");
+
             // download all toots until we reach an existing one or the config.mastodon.oldTootDateTime
             $ret = $saveToots->run();
         }
