@@ -43,27 +43,29 @@ $app->onError(404, function() {
 
 // save toot worker.
 // usage:
-// php site/public/index.php save_toots
-$app->cli("save_toots", function() {
+// php site/public/index.php save_toots // fetch all toots up until oldTootDateTime or an existing toot. occasionally catch up on older toots
+// php site/public/index.php save_toots -catchup 1 // start with catching up
+$app->cli("save_toots {catchup}", function($catchup = true) {
     $saveToots = new Workers\SaveToots($this->container);
-
-    // timestamp. when did we last re-fetch older toots?
-    $lastCatchUpDateTime = time();
 
     // re-fetch older toots every x seconds
     $catchUpInterval = 3600 * 6;
+
+    // timestamp. when did we last re-fetch older toots?
+    $lastCatchUpDateTime = time();
 
     while (true) {
 
         // every $catchUpInterval seconds, fetch all toots from now until last week and don't
         // stop at existing ones. that way we catch some stragglers that where federated late.
-        if (time() - $lastCatchUpDateTime > $catchUpInterval) {
+        if ($catchup || time() - $lastCatchUpDateTime > $catchUpInterval) {
 
             $now = new \DateTime();
-            $now->sub(new \DateInterval('P1D'));
+            $now->sub(new \DateInterval('P6D'));
             $now = $now->format('Y-m-d H:i:s');
 
             $ret = $saveToots->run(false, $now);
+            $catchup = false;
         } else {
 
             // download all toots until we reach an existing one or the config.mastodon.oldTootDateTime

@@ -87,7 +87,6 @@ class SaveToots extends Base {
 
         $newTootCount = 0;
         $error = false;
-        $allMovieSlugs = []; // remember all movies for which toots where added
 
         while (true) {
 
@@ -166,11 +165,31 @@ class SaveToots extends Base {
                 $this->saveAvatarImage($toot['account']['id'], $toot['account']['avatar']);
 
                 // delete cache entries with name "toots-{slug}" for movies that take place during the toots time
+                // also update toot_count
                 $movieSlugs = $this->getMovieSlugsForToot($toot);
-                $allMovieSlugs = array_merge($allMovieSlugs, $movieSlugs);
                 foreach ($movieSlugs as $slug) {
+
+                    $movie = $this->db->getBySlug("movies", $slug);
+
                     $this->db->execute("DELETE FROM cache WHERE name LIKE :prefix", ["prefix" => "toots-" . $slug . "%"]);
                     $this->log("Deleted cache entries for movie " . $slug);
+
+
+                    // update toot_count
+                    $startDateTime = new \DateTime($movie['start_datetime']);
+
+                    // add some seconds for aftershow toots
+                    $endDateTime = clone $startDateTime;
+                    $endDateTime->add(new \DateInterval('PT' . $movie['duration'] . 'S'));
+                    $endDateTime->add(new \DateInterval('PT' . $this->config("aftershowDuration") . 'S'));
+
+                    $res = $this->db->fetch("SELECT COUNT(*) AS count FROM toots WHERE created_at >= :start AND created_at <= :end ORDER BY created_at ASC", ["start" => $startDateTime->format("Y-m-d H:i:s"), "end" => $endDateTime->format("Y-m-d H:i:s")], 'toots-' . $movie['slug']);
+
+                    $tootCount = $res['count'];
+
+                    $this->db->update("movies", ['toot_count' => $tootCount], ['id' => $movie['id']]);
+
+                    $this->log("Updated toot_count for movie " . $movie['slug'] . " to " . $tootCount);
                 }
 
                 $newTootCount++;
@@ -200,28 +219,6 @@ class SaveToots extends Base {
 
         // reload movies (maybe a movie was added or changed while toots where fetched)
         $this->movies = $this->db->getAll("movies");
-
-        // update toot_count for affected  movies
-        foreach ($this->movies as $movie) {
-            if (!in_array($movie['slug'], $allMovieSlugs)) {
-                continue;
-            }
-
-            $startDateTime = new \DateTime($movie['start_datetime']);
-
-            // add some seconds for aftershow toots
-            $endDateTime = clone $startDateTime;
-            $endDateTime->add(new \DateInterval('PT' . $movie['duration'] . 'S'));
-            $endDateTime->add(new \DateInterval('PT' . $this->config("aftershowDuration") . 'S'));
-
-            $res = $this->db->fetch("SELECT COUNT(*) AS count FROM toots WHERE created_at >= :start AND created_at <= :end ORDER BY created_at ASC", ["start" => $startDateTime->format("Y-m-d H:i:s"), "end" => $endDateTime->format("Y-m-d H:i:s")], 'toots-' . $movie['slug']);
-
-            $tootCount = $res['count'];
-
-            $this->db->update("movies", ['toot_count' => $tootCount], ['id' => $movie['id']]);
-
-            $this->log("Updated toot_count for movie " . $movie['slug'] . " to " . $tootCount);
-        }
 
         return [
             'newTootCount' => $newTootCount,
