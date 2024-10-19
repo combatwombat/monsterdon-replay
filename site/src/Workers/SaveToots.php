@@ -409,5 +409,5 @@ class SaveToots extends Base {
 
         sleep($this->imageDownloadWaitTime);
     }
-    
+
 }
