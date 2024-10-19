@@ -49,13 +49,13 @@ class SaveToots extends Base {
      * Fetch toots from Mastodon and save them to the database.
      * The Mastodon API only provides a list opf toots ordered by date, newest first, or all toots that come after
      * a specific toot id (max_id). So, we can only work ourselves backwards until we reach a stop criterion.
-     * @param $stopAtExisting boolean fetching toots if we reach one we already have in the database
-     * @param $oldestTootDateTime string datetime at which to stop fetching toots
-     * @return void
+     * @param $stopAtExistingToot boolean stop fetching toots if we reach one we already have in the database
+     * @param $oldestTootDateTime string toot-datetime at which to stop fetching toots
+     * @return array with 'newTootCount' (int), 'error' (bool)
      * @throws \DateMalformedIntervalStringException
      * @throws \DateMalformedStringException
      */
-    public function run($stopAtExisting = true, $oldestTootDateTime = null) {
+    public function run($stopAtExistingToot = true, $oldestTootDateTime = null) {
 
 
         $hashtag = $this->config('mastodon.hashtag');
@@ -64,6 +64,7 @@ class SaveToots extends Base {
             $oldestTootDateTime = $this->config('mastodon.oldestTootDateTime');
         }
 
+        $this->log("Fetching toots. Stop at existing toot: " . ($stopAtExistingToot ? "yes" : "no") . ", oldest toot datetime: " . $oldestTootDateTime);
 
         if (empty($hashtag)) {
             $this->log("No hashtag provided");
@@ -138,7 +139,12 @@ class SaveToots extends Base {
                 // toot already exists? exit
                 if ($this->db->getById("toots", $toot['id'])) {
                     $this->log("Toot " . $toot['id'] . " already exists");
-                    break 2;
+
+                    if ($stopAtExistingToot) {
+                        break 2;
+                    } else {
+                        continue;
+                    }
                 }
 
                 // toot not too old and not existing yet: save it
@@ -217,16 +223,10 @@ class SaveToots extends Base {
             $this->log("Updated toot_count for movie " . $movie['slug'] . " to " . $tootCount);
         }
 
-        if ($newTootCount > 0) {
-            sleep(5);
-        } else {
-            if ($error) {
-                sleep(10);
-            } else {
-                sleep(60);
-            }
-        }
-
+        return [
+            'newTootCount' => $newTootCount,
+            'error' => $error
+        ];
 
     }
 

@@ -46,8 +46,37 @@ $app->onError(404, function() {
 // php site/public/index.php save_toots
 $app->cli("save_toots", function() {
     $saveToots = new Workers\SaveToots($this->container);
+    $c = 1;
     while (true) {
-        $saveToots->run();
+
+        // every 5 to 60 minutes (depending on wait time below), fetch all toots from now 'till yesterday and don't
+        // stop at existing ones. that way we catch some stragglers that where federated late.
+        if ($c % 60 === 0) {
+
+            $now = new \DateTime();
+            $now->sub(new \DateInterval('P1D'));
+            $now = $now->format('Y-m-d H:i:s');
+
+            $ret = $saveToots->run(false, $now);
+
+            $c = 1;
+        } else {
+
+            // download all toots until we reach an existing one or the config.mastodon.oldTootDateTime
+            $ret = $saveToots->run();
+            $c++;
+        }
+
+
+        if ($ret['newTootCount'] > 0) {
+            sleep(5);
+        } else {
+            if ($ret['error']) {
+                sleep(10);
+            } else {
+                sleep(60);
+            }
+        }
     }
 });
 
