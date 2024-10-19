@@ -44,8 +44,8 @@ $app->onError(404, function() {
 // save toot worker.
 // usage:
 // php site/public/index.php save_toots // fetch all toots up until oldTootDateTime or an existing toot. occasionally catch up on older toots
-// php site/public/index.php save_toots -catchup 1 // start with catching up
-$app->cli("save_toots {catchup}", function($catchup = true) {
+// php site/public/index.php save_toots -catchup 6 // start with catching up. fetch toots until the given time
+$app->cli("save_toots {catchup}", function($catchup = 6) {
     $saveToots = new Workers\SaveToots($this->container);
 
     // re-fetch older toots every x seconds
@@ -54,19 +54,20 @@ $app->cli("save_toots {catchup}", function($catchup = true) {
     // timestamp. when did we last re-fetch older toots?
     $lastCatchUpDateTime = time();
 
+    // when catching up, how many days to fetch back?
+    $catchUpDays = $catchup ? (int)$catchup : 6;
 
     while (true) {
-        sleep(10);
-        continue;
+
 
         // every $catchUpInterval seconds, fetch all toots from now until last week and don't
         // stop at existing ones. that way we catch some stragglers that where federated late.
         if ($catchup || time() - $lastCatchUpDateTime > $catchUpInterval) {
 
-            $this->log("catching up");
+            $this->log("catching up until ".$catchUpDays." days ago");
 
             $now = new \DateTime();
-            $now->sub(new \DateInterval('P6D'));
+            $now->sub(new \DateInterval('P'.((string)$catchUpDays).'D'));
             $now = $now->format('Y-m-d H:i:s');
 
             $ret = $saveToots->run(false, $now);
