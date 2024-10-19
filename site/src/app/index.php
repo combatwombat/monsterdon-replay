@@ -111,6 +111,8 @@ $app->cli("rebuild_movie_cache", function() {
 
         $this->log("rebuilding cache for movie " . $c . "/" . $movieCount . ": " . $movie['slug']);
 
+        $this->db->execute("DELETE FROM cache WHERE name LIKE :prefix", ["prefix" => "toots-" . $movie['slug'] . "%"]);
+
         $url = $baseURL . $movie['slug'];
         file_get_contents($url);
         $c++;
