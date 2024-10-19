@@ -48,7 +48,7 @@ class Movies extends Controller {
         ];
 
         # cache for 1 hour
-        header("Cache-Control: max-age=3600");
+        header("Cache-Control: max-age=3600, public");
 
         $this->view("movies/list", $data);
     }
@@ -76,7 +76,7 @@ class Movies extends Controller {
             'overallDuration' => $overallDuration
         ];
 
-        header("Cache-Control: max-age=3600");
+        header("Cache-Control: max-age=3600, public");
 
         $this->view("movies/show", $data);
     }
@@ -162,7 +162,7 @@ class Movies extends Controller {
         ]);
 
         header('Content-Type: application/json');
-        header("Cache-Control: max-age=3600");
+        header("Cache-Control: max-age=3600, public");
 
         echo json_encode($toots);
     }
