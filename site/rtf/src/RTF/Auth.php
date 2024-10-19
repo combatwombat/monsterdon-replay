@@ -22,6 +22,8 @@ class Auth extends Base {
             $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
         }
 
+        header("Cache-Control: private");
+
         return $this->exitIfNoAccess();
     }
 
