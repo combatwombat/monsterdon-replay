@@ -53,6 +53,7 @@ $app->cli("save_toots {catchup}", function($catchup = true) {
 
     // timestamp. when did we last re-fetch older toots?
     $lastCatchUpDateTime = time();
+    die();
 
     while (true) {
 
