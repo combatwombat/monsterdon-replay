@@ -78,13 +78,7 @@ class SaveToots extends Base {
             $oldestTootDateTime = \DateTime::createFromFormat('Y-m-d H:i:s', $oldestTootDateTime);
         }
 
-        // get max_id from options table, if it exists
         $maxId = null;
-        $row = $this->db->getByName('options', 'max_id');
-        if ($row) {
-            $maxId = $row['value'];
-        }
-
         $newTootCount = 0;
         $error = false;
 
