@@ -45,13 +45,25 @@ class SaveToots extends Base {
         }
     }
 
-    public function run() {
+    /**
+     * Fetch toots from Mastodon and save them to the database.
+     * The Mastodon API only provides a list opf toots ordered by date, newest first, or all toots that come after
+     * a specific toot id (max_id). So, we can only work ourselves backwards until we reach a stop criterium.
+     * @param $stopAtExisting boolean fetching toots if we reach one we already have in the database
+     * @param $oldestTootDateTime string datetime at which to stop fetching toots
+     * @return void
+     * @throws \DateMalformedIntervalStringException
+     * @throws \DateMalformedStringException
+     */
+    public function run($stopAtExisting = true, $oldestTootDateTime = null) {
+        
 
         $hashtag = $this->config('mastodon.hashtag');
-        $startDateTime = $this->config('mastodon.startDateTime');
 
-        #$this->saveMediaForExistingToots();
-        #return;
+        if (!$oldestTootDateTime) {
+            $oldestTootDateTime = $this->config('mastodon.oldestTootDateTime');
+        }
+
 
         if (empty($hashtag)) {
             $this->log("No hashtag provided");
@@ -61,8 +73,8 @@ class SaveToots extends Base {
         // get movies
         $this->movies = $this->db->getAll("movies");
 
-        if ($startDateTime) {
-            $startDateTime = \DateTime::createFromFormat('Y-m-d H:i:s', $startDateTime);
+        if ($oldestTootDateTime) {
+            $oldestTootDateTime = \DateTime::createFromFormat('Y-m-d H:i:s', $oldestTootDateTime);
         }
 
         // get max_id from options table, if it exists
@@ -118,8 +130,8 @@ class SaveToots extends Base {
                 $createdAt = \DateTime::createFromFormat('Y-m-d\TH:i:s.u\Z', $toot['created_at']);
 
                 // toot too old? exit
-                if ($startDateTime && $createdAt < $startDateTime) {
-                    $this->log("Toot " . $toot['id'] . " is older than " . $startDateTime->format('Y-m-d H:i:s'));
+                if ($oldestTootDateTime && $createdAt < $oldestTootDateTime) {
+                    $this->log("Toot " . $toot['id'] . " is older than " . $oldestTootDateTime->format('Y-m-d H:i:s'));
                     break 2;
                 }
 
