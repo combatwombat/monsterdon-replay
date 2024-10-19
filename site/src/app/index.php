@@ -99,4 +99,22 @@ $app->cli("save_toot_media", function() {
     $saveToots->saveMediaForExistingToots();
 });
 
+// call api for each movie to rebuild toot cache
+$app->cli("rebuild_movie_cache", function() {
+    $movies = $this->db->getAll("movies");
+
+    $baseURL = "https://" . $this->config("domain") . "/api/toots/";
+
+    $movieCount = count($movies);
+    $c = 1;
+    foreach ($movies as $movie) {
+
+        $this->log("rebuilding cache for movie " . $c . "/" . $movieCount . ": " . $movie['slug']);
+
+        $url = $baseURL . $movie['slug'];
+        file_get_contents($url);
+        $c++;
+    }
+});
+
 $app->run();
