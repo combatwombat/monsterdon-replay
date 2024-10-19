@@ -128,6 +128,9 @@ async function TootPlayer(slug) {
     }
 
 
+    // extra wrapper to append toots to, instead of directly into the dom. slightly faster.
+    let tootsWrapper = document.createElement('div');
+
     // build html elements for each toot
     toots.forEach( (toot, index) => {
 
@@ -190,11 +193,14 @@ async function TootPlayer(slug) {
 
         toots[index].el = tootElement;
 
-        els.tootsContainer.append(tootElement);
+        tootsWrapper.append(tootElement);
 
     });
 
+    els.tootsContainer.append(tootsWrapper);
+
     els.body.classList.add("toots-loaded");
+    
 
     // scrub on timeline
     els.inputCurrentTime.on('input', (e) => {
