@@ -49,12 +49,12 @@ $app->cli("save_toots", function() {
     $c = 1;
     while (true) {
 
-        // every 5 to 60 minutes (depending on wait time below), fetch all toots from now until yesterday and don't
+        // every 5 to 60 minutes (depending on wait time below), fetch all toots from now until last week and don't
         // stop at existing ones. that way we catch some stragglers that where federated late.
-        if ($c % 60 === 0) {
+        if ($c % 60 !== 0) {
 
             $now = new \DateTime();
-            $now->sub(new \DateInterval('P1D'));
+            $now->sub(new \DateInterval('P7D'));
             $now = $now->format('Y-m-d H:i:s');
 
             $ret = $saveToots->run(false, $now);
