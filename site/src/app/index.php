@@ -53,9 +53,11 @@ $app->cli("save_toots {catchup}", function($catchup = true) {
 
     // timestamp. when did we last re-fetch older toots?
     $lastCatchUpDateTime = time();
-    die();
+
 
     while (true) {
+        sleep(10);
+        continue;
 
         // every $catchUpInterval seconds, fetch all toots from now until last week and don't
         // stop at existing ones. that way we catch some stragglers that where federated late.
