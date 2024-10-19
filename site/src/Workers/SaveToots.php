@@ -48,7 +48,7 @@ class SaveToots extends Base {
     /**
      * Fetch toots from Mastodon and save them to the database.
      * The Mastodon API only provides a list opf toots ordered by date, newest first, or all toots that come after
-     * a specific toot id (max_id). So, we can only work ourselves backwards until we reach a stop criterium.
+     * a specific toot id (max_id). So, we can only work ourselves backwards until we reach a stop criterion.
      * @param $stopAtExisting boolean fetching toots if we reach one we already have in the database
      * @param $oldestTootDateTime string datetime at which to stop fetching toots
      * @return void
@@ -56,7 +56,7 @@ class SaveToots extends Base {
      * @throws \DateMalformedStringException
      */
     public function run($stopAtExisting = true, $oldestTootDateTime = null) {
-        
+
 
         $hashtag = $this->config('mastodon.hashtag');
 

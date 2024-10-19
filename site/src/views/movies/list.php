@@ -37,7 +37,7 @@
                         </div>
                         <div class="bottom">
                             <div class="start_datetime">
-                                Watched on <?= formatDateTime($movie['start_datetime'], "d MMMM YYYY"); ?>
+                                <?= $movie['is_in_future'] ? 'To be watched' : 'Watched';?> on <?= formatDateTime($movie['start_datetime'], "d MMMM YYYY"); ?>
                             </div>
                         </div>
                     </div>
