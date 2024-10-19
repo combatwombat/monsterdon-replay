@@ -95,7 +95,7 @@ class SaveToots extends Base {
                 $url .= "&max_id=" . $maxId;
             }
 
-            $this->log("Fetching " . $url);
+            $this->log("Fetching from url " . $url);
 
             $this->log("sleeping for 3 seconds");
             sleep(3);
