@@ -89,11 +89,8 @@ class SaveToots extends Base {
                 $url .= "&max_id=" . $maxId;
             }
 
-            $this->log("Fetching from url " . $url);
-
-            $this->log("sleeping for 3 seconds");
+            $this->log("Fetching " . $url);
             sleep(3);
-            $this->log("waking up");
 
             try {
                 $json = $this->helper->httpRequest($url);
