@@ -96,7 +96,10 @@ class SaveToots extends Base {
             }
 
             $this->log("Fetching " . $url);
+
+            $this->log("sleeping for 3 seconds");
             sleep(3);
+            $this->log("waking up");
 
             try {
                 $json = $this->helper->httpRequest($url);
