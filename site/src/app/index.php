@@ -60,6 +60,8 @@ $app->cli("save_toots {catchup}", function($catchup = true) {
         // stop at existing ones. that way we catch some stragglers that where federated late.
         if ($catchup || time() - $lastCatchUpDateTime > $catchUpInterval) {
 
+            $this->log("catching up");
+
             $now = new \DateTime();
             $now->sub(new \DateInterval('P6D'));
             $now = $now->format('Y-m-d H:i:s');
