@@ -166,7 +166,7 @@ class SaveToots extends Base {
 
                     $movie = $this->db->getBySlug("movies", $slug);
 
-                    $this->db->execute("DELETE FROM cache WHERE name LIKE :prefix", ["prefix" => "toots-" . $slug . "%"]);
+                    $this->db->deleteCacheByPrefix("toots-" . $slug);
                     $this->log("Deleted cache entries for movie " . $slug);
 
 

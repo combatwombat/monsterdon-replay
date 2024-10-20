@@ -2,7 +2,7 @@
     "name": "combatwombat/rtf",
     "description": "Robs Tiny Framework",
     "type": "library",
-    "version": "0.1",
+    "version": "0.3",
     "authors": [
         {
             "name": "Robert Gerlach",

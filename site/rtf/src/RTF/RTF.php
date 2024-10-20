@@ -2,7 +2,8 @@
 
 /**
  * Rob's Tiny Framework v0.3
- * gerlach.dev 2024
+ * Robert Gerlach 2024
+ * https://gerlach.dev
  */
 
 namespace RTF;
@@ -25,7 +26,6 @@ class RTF {
 
     }
 
-    // Wrap Router
 
     public function route($methods, $regex, $callbacks, $name = null) {
         $this->router->add($methods, $regex, $callbacks, $name);

@@ -103,9 +103,8 @@ class BackstageMovies extends \RTF\Controller {
         if ($movie) {
             $this->db->delete("movies", ["id" => $id]);
 
-            // delete cache entries with name = "toots-{$movie['slug']}"
-            $this->db->execute("DELETE FROM cache WHERE name LIKE :prefix", ["prefix" => "toots-" . $movie['slug'] . "%"]);
-
+            // delete toot-cache for movie
+            $this->db->deleteCacheByPrefix("toots-" . $movie['slug']);
 
             // if there are no other movies with this imdb_id...
             $otherMovies = $this->db->fetchAll("SELECT * FROM movies WHERE imdb_id = :imdb_id", ["imdb_id" => $movie['imdb_id']]);
@@ -202,8 +201,8 @@ class BackstageMovies extends \RTF\Controller {
             ], ['id' => $id]);
 
             if ($res) {
-                // delete cache entries with name = "toots-{$movie['slug']}"
-                $this->db->execute("DELETE FROM cache WHERE name LIKE :prefix", ["prefix" => "toots-" . $movie['slug'] . "%"]);
+                // delete toot-cache for movie
+                $this->db->deleteCacheByPrefix("toots-" . $movie['slug']);
             } else {
                 $errors['general'][] = 'error updating movie';
             }

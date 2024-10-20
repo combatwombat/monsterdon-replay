@@ -62,7 +62,7 @@ class Controller extends Base {
     }
 
     /**
-     * Stream back a file, supports rRange requests for media files
+     * Stream back a file, supports range requests for media files
      * @param $path
      * @param $encoding
      * @return void

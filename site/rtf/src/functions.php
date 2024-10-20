@@ -37,7 +37,7 @@ function dd($data, $varDump = false) {
 
 
 /**
- * Cut of string, remove the last word so there are no cut-off words
+ * Cut off string, remove the last word so there are no cut-off words
  * @param $content
  * @param $maxLength
  * @param $trimMarker
@@ -203,12 +203,13 @@ function h($str) {
     return htmlspecialchars($str, ENT_QUOTES, 'UTF-8');
 }
 
+// shortcut for $_POST access
 function post($key) {
     return isset($_POST['key']) ? $_POST['key'] : null;
 }
 
 /**
- * Loads icon from assets/icons/*.svg, returns it
+ * Loads svg icon, returns it
  * @param $name
  * @return string
  */
@@ -239,7 +240,23 @@ function formatDuration($seconds) {
 
 
 /**
- * Translate text
+ * Translate text.
+ *  usage:
+ *
+ *  # simple
+ *  t("Cat") => "Katze"
+ *
+ *  # with named parameters (similar to router)
+ *  t("Hello {name}", ["name" => "John"]) => "Hallo John"
+ *
+ *  # with ambiguous keys
+ *  t("Safe") => "Sicher"
+ *  t("Safe", "tresor") => "Tresor"
+ *  t("Safe", "adjective") => "Sicher"
+ *
+ *  # with ambiguous keys and parameters
+ *  t("Something {num}", "foo", ["num" => 1]) => "Etwas 1"
+ *  t("Something {num}", "bar", ["num" => 1]) => "Schmettwas 1"
  * @param $str
  * @return string in current language
  */

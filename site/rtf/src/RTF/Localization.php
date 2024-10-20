@@ -53,10 +53,10 @@ class Localization extends Base {
      *
      * usage:
      *
-     * #simple
+     * # simple
      * t("Cat") => "Katze"
      *
-     * # with named parameters 8similar to router)
+     * # with named parameters (similar to router)
      * t("Hello {name}", ["name" => "John"]) => "Hallo John"
      *
      * # with ambiguous keys

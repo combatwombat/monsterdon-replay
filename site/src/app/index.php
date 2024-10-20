@@ -4,27 +4,20 @@ namespace App;
 
 require __DIR__ . "/../../vendor/autoload.php";
 
-use App\Helpers\TMDB;
-use RTF\RTF;
-
-$app = new RTF();
+$app = new \RTF\RTF();
 $app->container->set('config', new \RTF\Config());
 $app->container->set('helper', new \RTF\Helper($app->container));
 $app->container->set('db', new \RTF\DB($app->container->config('db')));
 $app->container->set('auth', new \RTF\Auth($app->container, "http"));
 $app->container->set('view', new \RTF\View($app->container));
-$app->container->set('tmdb', new TMDB($app->container));
+$app->container->set('tmdb', new App\Helpers\TMDB($app->container));
 
 date_default_timezone_set($app->container->get('config')('timezone'));
 
-// Routing
+
+// Routes
 
 $app->get("/", "Movies@list");
-
-$app->get("/backstage/movies", "BackstageMovies@list");
-$app->post("/backstage/movies", "BackstageMovies@new");
-$app->delete("/backstage/movies/{id}", "BackstageMovies@delete");
-$app->post("/backstage/movies/{id}", "BackstageMovies@edit");
 
 $app->get("/about", function() {
     $this->view("about", ['header' => ['bodyClass' => 'page-text page-about', 'title' => 'About']]);
@@ -36,6 +29,12 @@ $app->get("/privacy", function() {
 
 $app->get("/api/toots/{slug}", "Movies@tootsJSON");
 
+$app->get("/backstage/movies", "BackstageMovies@list");
+$app->post("/backstage/movies", "BackstageMovies@new");
+$app->delete("/backstage/movies/{id}", "BackstageMovies@delete");
+$app->post("/backstage/movies/{id}", "BackstageMovies@edit");
+
+# assuming no monster movies are called "about" or "privacy"...
 $app->get("/{slug}", "Movies@show");
 
 $app->onError(404, function() {
@@ -47,8 +46,8 @@ $app->onError(404, function() {
 
 // save toot worker.
 // usage:
-// php site/public/index.php save_toots // fetch all toots up until oldTootDateTime or an existing toot. occasionally catch up on older toots
-// php site/public/index.php save_toots -catchup 6 // start with catching up. fetch toots until {num} days in the past
+// php site/public/index.php save_toots // fetch all toots up until config.mastodon.oldTootDateTime or an existing toot. occasionally catch up on older toots
+// php site/public/index.php save_toots -catchup 6 // start with catching up. fetch toots until {num} days in the past. don't stop on existing toots
 $app->cli("save_toots {catchup}", function($catchup = false) {
     $saveToots = new Workers\SaveToots($this->container);
 
@@ -63,8 +62,7 @@ $app->cli("save_toots {catchup}", function($catchup = false) {
 
     while (true) {
 
-
-        // every $catchUpInterval seconds, fetch all toots from now until last week and don't
+        // every $catchUpInterval seconds, fetch all toots from now until $catchUpDays ago and don't
         // stop at existing ones. that way we catch some stragglers that where federated late.
         if ($catchup || time() - $lastCatchUpDateTime > $catchUpInterval) {
 
@@ -97,7 +95,7 @@ $app->cli("save_toots {catchup}", function($catchup = false) {
     }
 });
 
-// go through all toots and save media
+// go through all toots and save their media
 $app->cli("save_toot_media", function() {
     $saveToots = new Workers\SaveToots($this->container);
     $saveToots->saveMediaForExistingToots();
@@ -106,19 +104,13 @@ $app->cli("save_toot_media", function() {
 // call api for each movie to rebuild toot cache
 $app->cli("rebuild_movie_cache", function() {
     $movies = $this->db->getAll("movies");
-
     $baseURL = "https://" . $this->config("domain") . "/api/toots/";
-
     $movieCount = count($movies);
     $c = 1;
     foreach ($movies as $movie) {
-
         $this->log("rebuilding cache for movie " . $c . "/" . $movieCount . ": " . $movie['slug']);
-
-        $this->db->execute("DELETE FROM cache WHERE name LIKE :prefix", ["prefix" => "toots-" . $movie['slug'] . "%"]);
-
-        $url = $baseURL . $movie['slug'];
-        file_get_contents($url);
+        $this->db->deleteCacheByPrefix("toots-" . $movie['slug']);
+        file_get_contents($baseURL . $movie['slug']);
         $c++;
     }
 });
