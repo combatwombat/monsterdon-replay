@@ -57,15 +57,9 @@
         Our site, products and services are all directed to people who are at least 16 years old. If you are under the age of 16, per the requirements of the GDPR (General Data Protection Regulation) do not use this site.
     </p>
 
-
     <h2>Contact</h2>
     <p>
         <a href="mailto:<?= h($this->config('contact.email'));?>?subject=Mastodon+Replay"><?= h($this->config('contact.email'));?></a>
-    </p>
-
-    <h2>Info</h2>
-    <p>
-        Icons by <a href="https://remixicon.com/" target="_blank">Remix Icon</a> under Apache License.
     </p>
 
 </div>

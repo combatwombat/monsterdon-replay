@@ -26,8 +26,12 @@ $app->post("/backstage/movies", "BackstageMovies@new");
 $app->delete("/backstage/movies/{id}", "BackstageMovies@delete");
 $app->post("/backstage/movies/{id}", "BackstageMovies@edit");
 
-$app->get("/privacy-info", function() {
-    $this->view("privacy-info", ['header' => ['bodyClass' => 'page-privacy', 'title' => 'Privacy Policy & Info']]);
+$app->get("/about", function() {
+    $this->view("about", ['header' => ['bodyClass' => 'page-text page-about', 'title' => 'About']]);
+});
+
+$app->get("/privacy", function() {
+    $this->view("privacy", ['header' => ['bodyClass' => 'page-text page-privacy', 'title' => 'Privacy Policy & Info']]);
 });
 
 $app->get("/api/toots/{slug}", "Movies@tootsJSON");
