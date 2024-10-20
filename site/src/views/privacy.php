@@ -28,22 +28,21 @@
 
     <h2>Cookies</h2>
     <p>
-        This website does not use cookies, except for a session cookie on the non-public parts of the site.
+        This website does not use cookies, except for a necessary session cookie on the non-public parts of the site.
     </p>
 
     <h2>Server Log Files</h2>
     <p>
-        The provider of the pages automatically collects and stores information in so-called server log files, which your browser automatically transmits to us. These are:
+        We collect and store information in server log files. Your browser automatically transmits this information to us. These are:
     </p>
     <ul>
         <li>Browser type and browser version</li>
         <li>Operating system used</li>
         <li>Referrer URL</li>
-        <li>Hostname of the accessing computer</li>
         <li>Time of the server request</li>
     </ul>
     <p>
-        These data cannot be assigned to specific individuals. This data is not combined with other data sources.
+        This data cannot be assigned to specific individuals. This data is not combined with other data sources.
     </p>
 
     <h2>SSL Encryption</h2>
