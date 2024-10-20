@@ -10,7 +10,7 @@ $app->container->set('helper', new \RTF\Helper($app->container));
 $app->container->set('db', new \RTF\DB($app->container->config('db')));
 $app->container->set('auth', new \RTF\Auth($app->container, "http"));
 $app->container->set('view', new \RTF\View($app->container));
-$app->container->set('tmdb', new App\Helpers\TMDB($app->container));
+$app->container->set('tmdb', new Helpers\TMDB($app->container));
 
 date_default_timezone_set($app->container->get('config')('timezone'));
 
