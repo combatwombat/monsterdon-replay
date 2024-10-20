@@ -70,6 +70,20 @@ class BackstageMovies extends \RTF\Controller {
                 $_POST['slug'] = $_POST['slug'] . '-' . rand(1000, 9999);
             }
 
+
+            // calculate toot_count
+
+            $startDateTime = new \DateTime($_POST['start_datetime']);
+
+            // add some seconds for aftershow toots
+            $endDateTime = clone $startDateTime;
+            $endDateTime->add(new \DateInterval('PT' . $_POST['duration'] . 'S'));
+            $endDateTime->add(new \DateInterval('PT' . $this->config("aftershowDuration") . 'S'));
+
+            $res = $this->db->fetch("SELECT COUNT(*) AS count FROM toots WHERE created_at >= :start AND created_at <= :end ORDER BY created_at ASC", ["start" => $startDateTime->format("Y-m-d H:i:s"), "end" => $endDateTime->format("Y-m-d H:i:s")], 'toots-' . $_POST['slug']);
+
+            $tootCount = $res['count'];
+
             $res = $this->db->insert("movies", [
                 'title' => $_POST['title'],
                 'slug' => $_POST['slug'],
@@ -78,10 +92,14 @@ class BackstageMovies extends \RTF\Controller {
                 'duration' => $_POST['duration'],
                 'imdb_id' => $_POST['imdb_id'],
                 'tmdb_id' => $_POST['tmdb_id'],
+                'toot_count' => $tootCount,
                 'og_image_cover_offset' => $_POST['og_image_cover_offset']
             ]);
 
             $this->tmdb->saveImage($_POST['imdb_id'], 270, $_POST['og_image_cover_offset']);
+
+
+
 
             if (!$res) {
                 $errors['general'][] = 'error adding movie';
