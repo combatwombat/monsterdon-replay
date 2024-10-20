@@ -15,15 +15,35 @@
         <th></th>
     </tr>
     <tr class="new">
-        <td><input type="text" name="title" value="<?= h(post('title'));?>" placeholder="optional"></td>
-        <td><input type="text" name="slug" value="<?= h(post('slug'));?>" pattern="[a-z0-9\-]+" placeholder="optional"></td>
-        <td><input type="date" name="release_date" value="<?= h(post('release_date'));?>" placeholder="optional"></td>
-        <td><input type="datetime-local" name="start_datetime" value="<?= h(post('start_datetime'));?>" required></td>
-        <td><input type="number" name="duration" value="<?= h(post('duration'));?>" placeholder="0"></td>
-        <td><input type="text" name="imdb_id" value="<?= h(post('imdb_id'));?>" required pattern="tt[a-z0-9]+"></td>
-        <td><input type="number" name="tmdb_id" value="<?= h(post('tmdb_id'));?>" placeholder="optional"></td>
-        <td><input type="number" name="og_image_cover_offset" value="<?= h(isset($_POST['og_image_cover_offset']) ? $_POST['og_image_cover_offset'] : 50);?>" placeholder="optional" min="0" max="100"></td>
-        <td><button type="submit" class="add">add</button></td>
+        <td>
+            <?php /* to make it more obvious for now, hide the optional fields that get filled by TMDB data anyway.
+                      they're not deleted, because that's more effort in the backend/js and maybe i want to reactivate them later */ ?>
+            <input style="display: none" type="text" name="title" value="<?= h(post('title'));?>" placeholder="optional">
+        </td>
+        <td>
+            <input style="display: none" type="text" name="slug" value="<?= h(post('slug'));?>" pattern="[a-z0-9\-]+" placeholder="optional">
+        </td>
+        <td>
+            <input style="display: none" type="date" name="release_date" value="<?= h(post('release_date'));?>" placeholder="optional">
+        </td>
+        <td>
+            <input type="datetime-local" name="start_datetime" value="<?= h(post('start_datetime'));?>" required>
+        </td>
+        <td>
+            <input style="display: none" type="number" name="duration" value="<?= h(post('duration'));?>" placeholder="0">
+        </td>
+        <td>
+            <input type="text" name="imdb_id" value="<?= h(post('imdb_id'));?>" required pattern="tt[a-z0-9]+">
+        </td>
+        <td>
+            <input style="display: none" type="number" name="tmdb_id" value="<?= h(post('tmdb_id'));?>" placeholder="optional">
+        </td>
+        <td>
+            <input type="number" name="og_image_cover_offset" value="<?= h(isset($_POST['og_image_cover_offset']) ? $_POST['og_image_cover_offset'] : 50);?>" placeholder="optional" min="0" max="100">
+        </td>
+        <td>
+            <button type="submit" class="add">add</button>
+        </td>
     </tr>
 
     <tr>
@@ -41,7 +61,7 @@
             <td><input type="number" name="tmdb_id" value="<?= h($movie['tmdb_id']);?>" required></td>
             <td class="og-image-cover-offset">
                 <input type="number" name="og_image_cover_offset" value="<?= h($movie['og_image_cover_offset']);?>" min="0" max="100" required>
-                <a href="/media/covers/<?= $movie['imdb_id'];?>_ogimage.png" class="og-image-link">
+                <a href="/media/covers/<?= $movie['imdb_id'];?>_ogimage.png" class="og-image-link" target="_blank">
                     <?= icon("image-line");?>
                 </a>
             </td>

@@ -34,6 +34,25 @@ $app->post("/backstage/movies", "BackstageMovies@new");
 $app->delete("/backstage/movies/{id}", "BackstageMovies@delete");
 $app->post("/backstage/movies/{id}", "BackstageMovies@edit");
 
+
+$app->get("/temp", function() {
+    $query = "SELECT    id,    created_at,    JSON_UNQUOTE(JSON_EXTRACT(data, '$.account.acct')) AS account, JSON_UNQUOTE(JSON_EXTRACT(data, '$.account.display_name')) AS name,    JSON_UNQUOTE(JSON_EXTRACT(data, '$.content')) AS content FROM    toots WHERE    created_at < \"2023-05-15 01:00:19\" ORDER BY    created_at DESC;";
+
+    $toots = $this->db->fetchAll($query);
+
+    foreach ($toots as $toot) {
+        ?>
+<div style="border-bottom: 1px solid #ccc; margin: 0 auto; max-width: 600px;" data-id="<?= $toot['id'];?>">
+    <div><b><?= $toot['created_at'];?></b> &middot; <?= $toot['name'];?> &middot; <?= $toot['account'];?> &middot; <?= $toot['id'];?></div>
+    <div>
+        <?= $toot['content'];?>
+    </div>
+</div>
+
+<?php
+    }
+});
+
 # assuming no monster movies are called "about" or "privacy"...
 $app->get("/{slug}", "Movies@show");
 

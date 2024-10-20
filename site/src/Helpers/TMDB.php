@@ -78,7 +78,7 @@ class TMDB extends \RTF\Base {
                 $width = imagesx($image);
                 $height = imagesy($image);
                 $newWidth = $thumbWidth;
-                $newHeight = $height * ($newWidth / $width);
+                $newHeight = (int) ($height * ($newWidth / $width));
                 $newImage = imagecreatetruecolor($newWidth, $newHeight);
                 imagecopyresampled($newImage, $image, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
                 imagejpeg($newImage, __SITE__ . "/public/media/covers/" . $imdbId . "_thumb.jpg");
@@ -119,7 +119,7 @@ class TMDB extends \RTF\Base {
         $coverWidth = imagesx($coverImage);
         $coverHeight = imagesy($coverImage);
         $newCoverWidth = $width;
-        $newCoverHeight = ($coverHeight / $coverWidth) * $newCoverWidth;
+        $newCoverHeight = (int) (($coverHeight / $coverWidth) * $newCoverWidth);
 
         // Calculate vertical position based on $ogImageCoverOffset
         $yOffset = round(($newCoverHeight - $height) * ($ogImageCoverOffset / 100)) * -1;
