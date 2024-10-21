@@ -118,10 +118,10 @@ class Movies extends Controller {
 
             // only return necessary data
             $toot = [
-                'id' => h($data['id']),
+                'id' => h($dbToot['id']),
                 'url' => h($data['url']),
                 'account' => [
-                    'id' => h($data['account']['id']),
+                    'id' => hash('sha256', $data['account']['uri']),
                     'display_name' => h($data['account']['display_name']),
                     'acct' => h($data['account']['acct']),
                     'url' => h($data['account']['url'])
@@ -134,10 +134,16 @@ class Movies extends Controller {
             ];
 
             foreach ($data['media_attachments'] as $media) {
-                $extension = trim(pathinfo($media['url'], PATHINFO_EXTENSION));
-                if (empty($extension)) {
-                    $extension = trim(pathinfo($media['remote_url'], PATHINFO_EXTENSION));
+
+                $originalURL = $media['remote_url'];
+                if (!$originalURL) {
+                    $originalURL = $media['url'];
                 }
+
+                $id = hash('sha256', $originalURL);
+
+                $extension = trim(pathinfo($originalURL, PATHINFO_EXTENSION));
+
                 if (empty($extension)) {
                     if ($media['type'] == 'video') {
                         $extension = "mp4";
@@ -145,8 +151,9 @@ class Movies extends Controller {
                         $extension = "jpg";
                     }
                 }
+
                 $toot['media_attachments'][] = [
-                    'id' => h($media['id']),
+                    'id' => $id,
                     'type' => h($media['type']),
                     'extension' => $extension
                 ];

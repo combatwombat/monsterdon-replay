@@ -137,4 +137,90 @@ $app->cli("rebuild_movie_cache", function() {
     }
 });
 
+$app->cli("rename_media_files", function() {
+
+    // rename media files to sha256 hashes
+
+    $toots = $this->db->fetchAll("SELECT data FROM toots WHERE data->'$.media_attachments' IS NOT NULL;");
+
+    $c = 1;
+    foreach ($toots as $toot) {
+        $data = json_decode($toot['data'], true);
+
+        foreach ($data['media_attachments'] as $media) {
+
+            $originalURL = $media['remote_url'];
+            if (!$originalURL) {
+                $originalURL = $media['url'];
+            }
+
+            $id = $media['id'];
+            $newID = hash("sha256", $originalURL);
+
+            $fileExtension = pathinfo($originalURL, PATHINFO_EXTENSION);
+
+            $originalFileName = __SITE__ . '/public/media/originals/' . $id . '.' . $fileExtension;
+            $previewFileName = __SITE__ . '/public/media/previews/' . $id . '.jpg';
+
+            $newOriginalFileName = __SITE__ . '/public/media/originals/' . $newID . '.' . $fileExtension;
+            $newPreviewFileName = __SITE__ . '/public/media/previews/' . $newID . '.jpg';
+
+            if (file_exists($originalFileName)) {
+                rename($originalFileName, $newOriginalFileName);
+            }
+
+            if (file_exists($previewFileName)) {
+                rename($previewFileName, $newPreviewFileName);
+            }
+
+            $this->log("renamed media file " . $c . ": " . $originalFileName . " -> " . $newOriginalFileName);
+
+            $c++;
+
+        }
+    }
+
+});
+
+$app->cli("rename_avatars", function () {
+
+    $toots = $this->db->getAll("toots");
+
+    $c = 1;
+    foreach ($toots as $toot) {
+
+        $data = json_decode($toot['data'], true);
+
+        $uri = $data['account']['uri'];
+
+        $id = $data['account']['id'];
+        $newID = hash("sha256", $uri);
+
+        $fileName = __SITE__ . '/public/media/avatars/' . $id . '.jpg';
+        $newFileName = __SITE__ . '/public/media/avatars/' . $newID . '.jpg';
+
+        if (file_exists($fileName)) {
+            rename($fileName, $newFileName);
+            $this->log("renamed avatar " . $c . ": " . $fileName . " -> " . $newFileName);
+        }
+
+
+        $c++;
+    }
+
+});
+
+
+/*
+ TODO:
+x lokal: cli-script um media-attachments umzubenennen (originals, previews) (id zu sha256($originalFile))
+x lokal: cli-script um avatar-bild-dateien umzubenennen (id zu sha256($uri))
+- deploy
+- auf server: toots.id zu char(64)
+- auf server: UPDATE toots SET id = SHA2(data->>'$.uri', 256);
+- auf server: php public/index.php rename_media_files
+- auf server: php public/index.php rename_avatars
+
+ */
+
 $app->run();

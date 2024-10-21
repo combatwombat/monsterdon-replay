@@ -158,6 +158,8 @@ async function TootPlayer(slug) {
 
             toot.media_attachments.forEach( (media) => {
 
+
+
                 if (media.type === "image") {
                     tootHTML += `<div class="media media-image"><a href="/media/originals/${media.id}.${media.extension}" target="_blank"><img src="/media/previews/${media.id}.jpg" alt="${media.description}" loading="lazy"></a></div>`;
 

@@ -116,9 +116,11 @@ class SaveToots extends Base {
 
             foreach ($toots as $toot) {
 
+                $dbID = hash("sha256", $toot['uri']);
+
                 // toot not public? skip
                 if ($toot['visibility'] !== 'public') {
-                    $this->log("Toot " . $toot['id'] . " is not public");
+                    $this->log("Toot " . $toot['uri'] . " is not public");
                     continue;
                 }
 
@@ -126,13 +128,13 @@ class SaveToots extends Base {
 
                 // toot too old? exit
                 if ($oldestTootDateTime && $createdAt < $oldestTootDateTime) {
-                    $this->log("Toot " . $toot['id'] . " is older than " . $oldestTootDateTime->format('Y-m-d H:i:s'));
+                    $this->log("Toot " . $toot['uri'] . " is older than " . $oldestTootDateTime->format('Y-m-d H:i:s'));
                     break 2;
                 }
 
                 // toot already exists? exit
-                if ($this->db->getById("toots", $toot['id'])) {
-                    $this->log("Toot " . $toot['id'] . " already exists");
+                if ($this->db->getById("toots", $dbID)) {
+                    $this->log("Toot " . $dbID . " from " . $toot['created_at'] . " already exists");
 
                     if ($stopAtExistingToot) {
                         break 2;
@@ -143,11 +145,11 @@ class SaveToots extends Base {
 
                 // toot not too old and not existing yet: save it
                 $this->db->insert('toots', [
-                    'id' => $toot['id'],
+                    'id' => $dbID,
                     'data' => json_encode($toot),
                     'created_at' => $createdAt->format('Y-m-d H:i:s')
                 ]);
-                $this->log("Saved toot " . $toot['id'] . " from " . $toot['account']['username'] . ", date: " . $createdAt->format('Y-m-d H:i:s'));
+                $this->log("Saved toot " . $dbID . " from " . $toot['account']['username'] . ", date: " . $createdAt->format('Y-m-d H:i:s'));
 
                 // save previews of media attachments.
                 if (!empty($toot['media_attachments'])) {
@@ -157,7 +159,7 @@ class SaveToots extends Base {
                 }
 
                 // save avatar image of account
-                $this->saveAvatarImage($toot['account']['id'], $toot['account']['avatar']);
+                $this->saveAvatarImage($toot['account']['uri'], $toot['account']['avatar']);
 
                 // delete cache entries with name "toots-{slug}" for movies that take place during the toots time
                 // also update toot_count
@@ -249,10 +251,18 @@ class SaveToots extends Base {
         return $movies;
     }
 
-    public function saveAvatarImage($id, $url) {
-        if (empty($id) || empty($url) || !filter_var($url, FILTER_VALIDATE_URL) || preg_match('/[.\/]/', $id)) {
+    /**
+     * Save avatar image for account
+     * @param $uri string unique id of account
+     * @param $url string url of avatar image
+     * @return void
+     */
+    public function saveAvatarImage($uri, $url) {
+        if (empty($uri) || empty($url) || !filter_var($url, FILTER_VALIDATE_URL)) {
             return;
         }
+
+        $id = hash("sha256", $uri);
 
         $fileName = __SITE__ . '/public/media/avatars/' . $id . '.jpg';
 
@@ -295,7 +305,7 @@ class SaveToots extends Base {
     // save original file and preview
     public function saveMedia($media) {
 
-        if (empty($media) || !isset($media['id']) || !isset($media['url']) || !isset($media['preview_url']) || preg_match('/[.\/]/', $media['id'])) {
+        if (empty($media) || !isset($media['id']) || !isset($media['url']) || !isset($media['preview_url'])) {
             return;
         }
 
@@ -304,7 +314,7 @@ class SaveToots extends Base {
             $originalURL = $media['url'];
         }
 
-        $id = $media['id'];
+        $id = hash("sha256", $originalURL);
 
         $fileExtension = pathinfo($originalURL, PATHINFO_EXTENSION);
 
