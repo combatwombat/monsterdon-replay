@@ -70,12 +70,7 @@ $app->onError(404, function() {
 // usage:
 // php site/public/index.php save_toots // fetch all toots up until config.mastodon.oldTootDateTime or an existing toot. occasionally catch up on older toots
 // php site/public/index.php save_toots -catchup 6 // start with catching up. fetch toots until {num} days in the past. don't stop on existing toots
-$app->cli("save_toots {catchup}", function($catchup = false) {
-
-    # disable for now
-    while (true) {
-        sleep(1000);
-    }
+$app->cli("save_toots {catchup}", function($catchup = 1095) {
 
     $saveToots = new Workers\SaveToots($this->container);
 
@@ -207,7 +202,7 @@ $app->cli("rename_avatars", function () {
 
         if (file_exists($fileName)) {
             rename($fileName, $newFileName);
-            $this->log("renamed avatar " . $c . ": " . $fileName . " -> " . $newFileName);
+            $this->log("renamed avatar for toot " . $c . ": " . $fileName . " -> " . $newFileName);
         }
 
 
@@ -221,9 +216,9 @@ $app->cli("rename_avatars", function () {
  TODO:
 x lokal: cli-script um media-attachments umzubenennen (originals, previews) (id zu sha256($originalFile))
 x lokal: cli-script um avatar-bild-dateien umzubenennen (id zu sha256($uri))
-- deploy
-- auf server: toots.id zu char(64)
-- auf server: UPDATE toots SET id = SHA2(data->>'$.uri', 256);
+x deploy
+x auf server: toots.id zu char(64)
+x auf server: UPDATE toots SET id = SHA2(data->>'$.uri', 256);
 - auf server: php public/index.php rename_media_files
 - auf server: php public/index.php rename_avatars
 
