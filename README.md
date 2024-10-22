@@ -42,7 +42,7 @@ example.com/backstage/movies contains the backend to add and edit movies. To add
 
 Change the og:image cover offset to nudge the cover image up (higher value) or down (lower value) for the og:image used for social sharing. Example:
 
-<img src="site/public/img/ogimage.png?raw=true" width="600"/>
+<img src="site/public/img/screenshot-ogimage.png?raw=true" width="600"/>
 
 
 
