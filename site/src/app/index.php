@@ -18,22 +18,65 @@ date_default_timezone_set($app->container->get('config')('timezone'));
 // Routes
 
 $app->get("/", "Movies@list");
+$app->get("/api/toots/{slug}", "Movies@tootsJSON");
+
 
 $app->get("/about", function() {
     $this->view("about", ['header' => ['bodyClass' => 'page-text page-about', 'title' => 'About']]);
 });
-
 $app->get("/privacy", function() {
     $this->view("privacy", ['header' => ['bodyClass' => 'page-text page-privacy', 'title' => 'Privacy Policy & Info']]);
 });
 
-$app->get("/api/toots/{slug}", "Movies@tootsJSON");
 
 $app->get("/backstage/movies", "BackstageMovies@list");
 $app->post("/backstage/movies", "BackstageMovies@new");
 $app->delete("/backstage/movies/{id}", "BackstageMovies@delete");
 $app->post("/backstage/movies/{id}", "BackstageMovies@edit");
 
+
+
+
+// get list of authors, ordered by toot count
+$app->get("/stats/authors", function() {
+    $this->auth(); // heavy operation. members-only
+    $toots = $this->db->getAll("toots");
+
+    $authors = [];
+    foreach ($toots as $toot) {
+        $data = json_decode($toot['data'], true);
+
+        $acct = $data['account']['acct'];
+        $displayName = $data['account']['display_name'];
+
+        // is acct part of the keys of the $authors array?
+        if (!array_key_exists($acct, $authors)) {
+            $authors[$acct] = [
+                'acct' => $acct,
+                'displayName' => $displayName,
+                'tootCount' => 1
+            ];
+        } else {
+            $authors[$acct]['tootCount']++;
+        }
+    }
+
+    // sort by toot count
+    usort($authors, function($a, $b) {
+        return $b['tootCount'] - $a['tootCount'];
+    });
+
+    echo '<h1>Toot Ranking</h1>';
+
+    echo "Authors: " . count($authors) . "<br>";
+
+    echo '<ol>';
+    foreach ($authors as $author) {
+        echo '<li>' . $author['displayName'] . " (" . $author['acct'] . "): " . $author['tootCount'] . "</li>";
+    }
+    echo '</ol>';
+
+});
 
 // show some select toots to find older monsterdon movies
 /*
