@@ -16,7 +16,6 @@ This is work-in-progress and some manual intervention might be required. But, if
 - A way to deploy it to your server. I use Capistrano.
 
 ### Setup
-- Fork the repository. It's too tied to #monsterdon and myself for now.
 - Set up your server, so that I can be deployed to with Capistrano and can keep a worker script alive, with Supervisor, systemd for example.
 - Have some space on your server. The media files for ~110.000 toots take about 6 GB.
 - Create shared/ folder with
