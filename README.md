@@ -76,10 +76,13 @@ Files:
 
 ### Building the frontend
 
-To keep things simple, there are only two bash scripts to watch and build the JS and CSS. They need `terser`, `fswatch` and `sass` installed. Thus, this needs some Unix environment to work.
+`build.sh` builds CSS from SCSS and concatenates and minifies the JS. 
 
-Call `watch.sh`, edit files and they get built with `build.sh`. 
-Edit and restart `build.sh` if you add a JS file. But don't add a JS file, it's nice and small right now. 
+`watch.sh` watches for file changes and calls `build.sh`. 
+
+They need `terser`, `fswatch` and `sass` installed. Thus, this needs some Unix-like environment to work.
+
+Edit `build.sh` and restart the watcher if you want to include different JS files.
 
 ### Toots and movies
 
