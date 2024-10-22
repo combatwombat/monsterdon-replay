@@ -36,7 +36,7 @@ $app->post("/backstage/movies/{id}", "BackstageMovies@edit");
 
 
 // show some select toots to find older monsterdon movies
-
+/*
 $app->get("/temp", function() {
     $query = "SELECT    id,    created_at,    JSON_UNQUOTE(JSON_EXTRACT(data, '$.uri')) AS uri, JSON_UNQUOTE(JSON_EXTRACT(data, '$.account.acct')) AS account, JSON_UNQUOTE(JSON_EXTRACT(data, '$.account.display_name')) AS name,    JSON_UNQUOTE(JSON_EXTRACT(data, '$.content')) AS content FROM    toots WHERE    created_at < \"2022-06-11 01:00:19\" ORDER BY    created_at DESC;";
 
@@ -54,6 +54,7 @@ $app->get("/temp", function() {
 <?php
     }
 });
+*/
 
 
 # assuming no monster movies are called "about" or "privacy"...
