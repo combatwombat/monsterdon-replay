@@ -86,7 +86,7 @@ $app->get("/stats/movies", function() {
     $csv = "Title;Year;Duration;Watched On;Toots\n";
 
     foreach ($movies as $movie) {
-        $csvLine = $movie['title'] . ";" . substr($movie['release_date'], 0, 4) . ";" . formatDuration($movie['duration']) . ";" . substr($movie['start_datetime'], 0, 10) . ";" . $movie['toot_count'] . "\n";
+        $csvLine = $movie['title'] . ";" . substr($movie['release_date'], 0, 4) . ";" . trim(formatDuration($movie['duration'])) . ";" . substr($movie['start_datetime'], 0, 10) . ";" . $movie['toot_count'] . "\n";
 
         $csv .= $csvLine;
     }
