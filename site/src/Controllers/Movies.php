@@ -86,6 +86,9 @@ class Movies extends Controller {
 
         $movie = $this->db->getBySlug("movies", $slug);
 
+        header('Content-Type: application/json');
+        header("Cache-Control: max-age=3600, public");
+
         if (!$movie) {
             echo json_encode([]);
             exit;
@@ -167,9 +170,6 @@ class Movies extends Controller {
             'name' => $cacheKey,
             'value' => serialize($toots)
         ]);
-
-        header('Content-Type: application/json');
-        header("Cache-Control: max-age=3600, public");
 
         echo json_encode($toots);
     }
