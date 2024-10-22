@@ -61,9 +61,9 @@ Check `site/logs/default.log` (or `site/shared/logs/default.log` if deployed wit
 
 ## Development
 
-This is a hobby project, with a focus on small, fast and fun code. It deliberately doesn't use frameworks or libraries, other than my own small ones, to keep the whole code base tiny and efficient. This also means, that it doesn't scale well if new features should be added. In that case we might add alpine.js or use the component capabilities of RTF (Rob's Tiny Framework) with HTMX. But feel free to fork and rebuild it in Laravel, React or some such :D
+This is a hobby project, with a focus on small, fast and fun code. It deliberately doesn't use frameworks or libraries, other than my own small ones, to keep the whole code base tiny and efficient. 
 
-RTF is a basic MVC framework with a router, Controllers and Views. No models for now, only a DB abstraction layer.
+RTF (Rob's Tiny Framework) is a small MVC framework with a router, Controllers and Views. No models for now, only a DB abstraction layer. If the app grows, we could use alpine.js and the component capabilities of RTF with HTMX (think poor mans Livewire). But for now it's full pages and Vanilla JS. 
 
 Files:
 
@@ -79,7 +79,7 @@ Files:
 To keep things simple, there are only two bash scripts to watch and build the JS and CSS. They need `terser`, `fswatch` and `sass` installed. Thus, this needs some Unix environment to work.
 
 Call `watch.sh`, edit files and they get built with `build.sh`. 
-Edit and restart `build.sh` if you add a JS file. But don't add a JS file, it's nice and small right now :> 
+Edit and restart `build.sh` if you add a JS file. But don't add a JS file, it's nice and small right now. 
 
 ### Toots and movies
 
