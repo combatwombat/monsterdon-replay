@@ -8,8 +8,14 @@ return [
         'host' => 'localhost'
     ],
     'auth' => [
-        'user' => 'bob',
-        'pass' => 'hunter3'
+        'http' => [
+            'users' => [
+                [
+                    'user' => 'franz',
+                    'pass' => 'hunter3'
+                ]
+            ]
+        ],
     ],
     'mastodon' => [
         'instance' => 'https://mastodon.social',
@@ -23,6 +29,10 @@ return [
         'headers' => [ // extra headers for http requests
             "User-Agent: monsterdon-replay-bot"
         ]
-    ]
+    ],
+    'contact' => [
+        'email' => 'contact@example.com' # for privacy policy
+    ],
+    'aftershowDuration' => 60 * 60, // how long to keep playing toots after the movie has ended, in seconds
 ];
 
