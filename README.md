@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://monsterdon-replay.gerlach.dev/img/logo.svg?raw=true" width="300"/>
+  <img style="margin: 100px 0 -50px 0;" src="https://monsterdon-replay.gerlach.dev/img/logo.svg?raw=true" width="300"/>
 </p>
 
 Records Mastodon toots for a specific hashtag, to replay them for movie watch parties.
