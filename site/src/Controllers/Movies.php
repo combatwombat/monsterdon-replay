@@ -98,7 +98,7 @@ class Movies extends Controller {
         $cacheKey = "toots-" . $slug;
         $res = $this->db->getByName("cache", $cacheKey);
         if ($res) {
-            echo json_encode(unserialize($res['value']));
+            echo $res['value'];
             exit;
         }
 
@@ -168,7 +168,7 @@ class Movies extends Controller {
         // save in cache
         $this->db->insert("cache", [
             'name' => $cacheKey,
-            'value' => serialize($toots)
+            'value' => json_encode($toots)
         ]);
 
         echo json_encode($toots);
