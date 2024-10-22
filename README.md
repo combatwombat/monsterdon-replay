@@ -10,8 +10,7 @@ This is work-in-progress and some manual intervention might be required. But, if
 
 ### Requirements
 
-- PHP 8+
-  - with gd
+- PHP 8+ with gd
 - MySQL 8+
 - A way to keep a worker script running. I use Supervisor.
 - A way to deploy it to your server. I use Capistrano.
