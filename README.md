@@ -2,7 +2,7 @@
   <img src="https://monsterdon-replay.gerlach.dev/img/logo.svg?raw=true" width="300"/>
 </p>
 
-Records and replays Mastodon toots for a specific hashtag, to replay toots for movie watch parties.
+Records Mastodon toots for a specific hashtag, to replay them for movie watch parties.
 
 ## Hosting
 
