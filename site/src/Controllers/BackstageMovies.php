@@ -11,9 +11,7 @@ class BackstageMovies extends \RTF\Controller {
 
     public function list() {
         $this->auth();
-
-        $this->tmdb->createOGImage("tt0044121", 30);
-
+        
         $movies = $this->db->fetchAll("SELECT * FROM movies ORDER BY start_datetime DESC");
         $data = [
             'header' => [
