@@ -14,6 +14,8 @@ This is work-in-progress and some manual intervention might be required. But, if
 - MySQL 8+
 - A way to keep a worker script running. I use Supervisor.
 - A way to deploy it to your server. I use Capistrano.
+- An API key from [tmdb.org](https://tmdb.org)
+- A Mastodon instance whose API you can use without credentials
 
 ### Setup
 - Set up your server, so that I can be deployed to with Capistrano and can keep a worker script alive, with Supervisor, systemd for example.
