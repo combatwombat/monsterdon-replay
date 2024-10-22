@@ -1,4 +1,6 @@
-![Logo](site/public/img/logo.svg?raw=true)
+<p align="center">
+  <img src="site/public/img/logo.svg?raw=true" width="300"/>
+</p>
 
 Records and replays Mastodon toots for a specific hashtag, to replay toots for movie watch parties.
 
