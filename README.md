@@ -63,7 +63,7 @@ Check `site/logs/default.log` (or `site/shared/logs/default.log` if deployed wit
 
 This is a hobby project, with a focus on small, fast and fun code. It deliberately doesn't use frameworks or libraries, other than my own small ones, to keep the whole code base tiny and efficient. 
 
-RTF (Rob's Tiny Framework) is a small MVC framework with a router, Controllers and Views. No models for now, only a DB abstraction layer. If the app grows, we could use alpine.js and the component capabilities of RTF with HTMX (think poor mans Livewire). But for now it's full pages and Vanilla JS. 
+RTF (Rob's Tiny Framework) is a small MVC framework with a router, Controllers and Views. No models for now, only a DB abstraction layer. If the app grows, we could use alpine.js and the component capabilities of RTF with HTMX (think poor mans Livewire). But for now, it's full pages and Vanilla JS. 
 
 Files:
 
