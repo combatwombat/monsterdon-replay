@@ -1,3 +1,5 @@
+![Logo](combatwombat/monsterdon-replay/blob/main/site/public/img/logo.svg?raw=true)
+
 Records and replays Mastodon toots for a specific hashtag, to replay toots for movie watch parties.
 
 ## Hosting
