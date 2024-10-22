@@ -70,7 +70,7 @@ $app->onError(404, function() {
 // usage:
 // php site/public/index.php save_toots // fetch all toots up until config.mastodon.oldTootDateTime or an existing toot. occasionally catch up on older toots
 // php site/public/index.php save_toots -catchup 6 // start with catching up. fetch toots until {num} days in the past. don't stop on existing toots
-$app->cli("save_toots {catchup}", function($catchup = 1095) {
+$app->cli("save_toots {catchup}", function($catchup = false) {
 
     $saveToots = new Workers\SaveToots($this->container);
 
@@ -124,7 +124,7 @@ $app->cli("save_toot_media", function() {
     $saveToots->saveMediaForExistingToots();
 });
 
-// call api for each movie to rebuild toot cache
+// call api for each movie to rebuild toot cache. also update toot_count on movie
 $app->cli("rebuild_movie_cache", function() {
     $movies = $this->db->getAll("movies");
     $baseURL = "https://" . $this->config("domain") . "/api/toots/";
@@ -133,7 +133,11 @@ $app->cli("rebuild_movie_cache", function() {
     foreach ($movies as $movie) {
         $this->log("rebuilding cache for movie " . $c . "/" . $movieCount . ": " . $movie['slug']);
         $this->db->deleteCacheByPrefix("toots-" . $movie['slug']);
-        file_get_contents($baseURL . $movie['slug']);
+        $toots = file_get_contents($baseURL . $movie['slug']);
+
+        $tootCount = count($toots);
+        $this->db->update("movies", ['toot_count' => $tootCount], ['id' => $movie['id']]);
+
         $c++;
     }
 });
