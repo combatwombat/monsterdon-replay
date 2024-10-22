@@ -78,6 +78,31 @@ $app->get("/stats/authors", function() {
 
 });
 
+// display movies and their date and toot count. also as csv with ?csv option
+$app->get("/stats/movies", function() {
+
+    $movies = $this->db->fetchAll("SELECT * FROM movies ORDER BY start_datetime ASC");
+
+    $csv = "Title;Year;Duration;Watched On;Toots\n";
+
+    foreach ($movies as $movie) {
+        $csvLine = $movie['title'] . ";" . substr($movie['release_date'], 0, 4) . ";" . formatDuration($movie['duration']) . ";" . substr($movie['start_datetime'], 0, 10) . ";" . $movie['toot_count'] . "\n";
+
+        $csv .= $csvLine;
+    }
+
+    if (isset($_GET['csv'])) {
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment; filename="movies.csv"');
+        echo $csv;
+        exit;
+    }
+
+    echo '<pre>';
+    echo $csv;
+    echo '</pre>';
+});
+
 // show some select toots to find older monsterdon movies
 /*
 $app->get("/temp", function() {
