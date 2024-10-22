@@ -18,7 +18,7 @@ This is work-in-progress and some manual intervention might be required. But, if
 - A Mastodon instance whose API you can use without credentials
 
 ### Setup
-- Set up your server, so that I can be deployed to with Capistrano and can keep a worker script alive, with Supervisor, systemd for example.
+- Set up your server, so that I can be deployed to with Capistrano and can keep a worker script alive, with Supervisor, systemd for example. Alternatively deploy in another way. 
 - Have some space on your server. The media files for ~110.000 toots take about 6 GB.
 - Create shared/ folder with
   - config/config.php 
