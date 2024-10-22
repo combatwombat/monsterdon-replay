@@ -36,9 +36,15 @@ This is work-in-progress and some manual intervention might be required. But, if
 
 ### Backstage
 
-example.com/backstage/movies contains the backend to add and edit movies. To add, enter the Start Datetime (UTC time for when watching/tooting for the movie started) and the IMDb id. The name, runtime etc. gets pulled from the TMDB API via the IMDb id. Change the og:image cover offset to nudge the cover image up (higher value) or down (lower value) for the og:image used for social sharing. [Example](https://monsterdon-replay.gerlach.dev/media/covers/tt0065569_ogimage.png).
+example.com/backstage/movies contains the backend to add and edit movies. To add, enter the Start Datetime (UTC time for when watching/tooting for the movie started) and the IMDb id. The name, runtime etc. gets pulled from the TMDB API via the IMDb id. 
 
 <img src="site/public/img/screenshot-backstage.png?raw=true" width="100%"/>
+
+Change the og:image cover offset to nudge the cover image up (higher value) or down (lower value) for the og:image used for social sharing. Example:
+
+<img src="site/public/img/ogimage.png?raw=true" width="600"/>
+
+
 
 ### CLI
 
