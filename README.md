@@ -51,16 +51,18 @@ Change the og:image cover offset to nudge the cover image up (higher value) or d
 There are some CLI commands. Stop your worker beforehand:
 
 - `php site/public/index.php save_toots` - Save newest toots and their media until it reaches an existing one. Good to initially fill the toots db, then check periodically for new ones.
-- `php site/public/index.php save_toots -catchup 100` - Save toots and their media from now till 100 days ago. Don't stop on existing toots. Good to catch some stragglers, or if you change your config.mastodon.instance to fill in some toots from anoher instance.
+- `php site/public/index.php save_toots -catchup 100` - Save toots and their media from now until 100 days ago. Don't stop on existing toots. Good to catch some stragglers, or if you change your config.mastodon.instance to fill in some toots from another instance.
 - `php site/public/index.php save_toot_media` - Go through all toots, save media if it doesn't exist yet. Good if the initial import missed some media files.
-- `php site/public/index.php rebuild_movie_cache` - Delete and rebuild toot-cache for all movies. Also updates toot_count. The cache of a movie also gets deleted if it's edited in the backend.
+- `php site/public/index.php rebuild_movie_cache` - Delete and rebuild cache for all movies. Also updates movies.toot_count. This is not often needed, since the cache of a movie also gets deleted if it's edited in the backend.
 
-Check site/logs/default.log (or site/shared/logs/default.log if deployed with Capistrano) for various debug output. The file is truncated to 100k lines.
+Check `site/logs/default.log` (or `site/shared/logs/default.log` if deployed with Capistrano) for various debug output. The file is truncated to 100k lines.
 
 
 ## Development
 
-This is a hobby project, with a focus on small, fast and fun code. So it might not be your cup of tea, nor does it use frameworks or libraries, other than my own small ones. 
+This is a hobby project, with a focus on small, fast and fun code. It deliberately doesn't use frameworks or libraries, other than my own small ones, to keep the whole code base tiny and efficient. This also means, that it doesn't scale well if new features should be added. In that case we might add alpine.js or use the component capabilities of RTF (Rob's Tiny Framework) with HTMX. But feel free to fork and rebuild it in Laravel, React or some such :D
+
+RTF is a basic MVC framework with a router, Controllers and Views. No models for now, only a DB abstraction layer.
 
 Files:
 
@@ -71,6 +73,12 @@ Files:
 - `site/src/Workers/SaveToots.php` - background worker that saves toots and media
 - `site/src/assets/*` - Contains JS and SCSS files, to build JS and CSS from.
 
+### Building the frontend
+
+To keep things simple, there are only two bash scripts to watch and build the JS and CSS. They need `terser`, `fswatch` and `sass` installed. Thus, this needs some Unix environment to work.
+
+Call `watch.sh`, edit files and they get built with `build.sh`. 
+Edit and restart `build.sh` if you add a JS file. But don't add a JS file, it's nice and small right now :> 
 
 ### Toots and movies
 
@@ -79,13 +87,6 @@ Toots are not directly linked to movies in the DB. Instead, a movie has a start_
 ### Caching
 
 To keep things snappy, the JSON list of toots for a movie (via /api/toots/{slug}) is saved in the cache table. The toot_count of a movie is also pre-calculated. Editing a movie refreshes the cache.
-
-### Building the frontend
-
-To keep things simple, there is no gulp, grunt, vite, webpack, rollup, parcel, esbuild or bun. Just two bash scripts to watch and build the JS and CSS. They need `terser`, `fswatch` and `sass` installed. Thus, this needs some Unix environment to work.
-
-Call `watch.sh`, edit files, they get built with `build.sh`. 
-Edit and restart `build.sh` if you add a JS file. But don't add a JS file, it's nice and small right now :D 
 
 ## Licensing
 
