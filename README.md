@@ -82,7 +82,7 @@ Edit and restart `build.sh` if you add a JS file. But don't add a JS file, it's 
 
 ### Toots and movies
 
-Toots are not directly linked to movies in the DB. Instead, a movie has a start_datetime and a end_datetime (calculated from start_datetime + duration + config.aftershowDuration). All toots with created_at in between those times belong to the movie.
+Toots are not directly linked to movies in the DB. Instead, a movie has a start_datetime and an end_datetime (calculated from start_datetime + duration + config.aftershowDuration). All toots with created_at in between those times belong to the movie.
 
 ### Caching
 
