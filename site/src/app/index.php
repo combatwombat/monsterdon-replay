@@ -133,7 +133,7 @@ $app->cli("rebuild_movie_cache", function() {
     foreach ($movies as $movie) {
         $this->log("rebuilding cache for movie " . $c . "/" . $movieCount . ": " . $movie['slug']);
         $this->db->deleteCacheByPrefix("toots-" . $movie['slug']);
-        $toots = file_get_contents($baseURL . $movie['slug']);
+        $toots = json_decode(file_get_contents($baseURL . $movie['slug']), true);
 
         $tootCount = count($toots);
         $this->db->update("movies", ['toot_count' => $tootCount], ['id' => $movie['id']]);
