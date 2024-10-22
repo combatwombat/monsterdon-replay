@@ -61,7 +61,7 @@ Check `site/logs/default.log` (or `site/shared/logs/default.log` if deployed wit
 
 ## Development
 
-This is a hobby project, with a focus on small, fast and fun code. No dependencies, other than to my minimal framework. 
+This is a hobby project, with a focus on small, fast and fun code. No dependencies, other than SASS and my minimal framework. 
 
 RTF (Rob's Tiny Framework) is a small MVC framework with a router, controllers, views and some convenience methods. No models for now, only a DB abstraction layer. If the app grows, we could use alpine.js and the component capabilities of RTF with HTMX (think poor mans Livewire). But for now, it's full pages and Vanilla JS. 
 
