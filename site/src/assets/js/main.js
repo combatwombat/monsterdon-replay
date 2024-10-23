@@ -234,9 +234,13 @@ async function TootPlayer(slug) {
     });
 
     // click anywhere outside player: close settings
+    // don't bubble up click if player is open
     document.on('click', (e) => {
         if (!els.player.contains(e.target)) {
-            els.player.classList.remove("settings-open");
+            if (els.player.classList.contains("settings-open")) {
+                els.player.classList.remove("settings-open");
+                e.preventDefault();
+            }
         }
     });
 
