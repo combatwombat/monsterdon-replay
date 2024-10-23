@@ -299,6 +299,8 @@ async function TootPlayer(slug) {
     let startCurrentTime = 0; // what was the time when we pressed play?
     let oldCurrentTime = -1; // what was the last time we updated the display?
 
+    let prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
     updateDisplay();
 
     function startPlaying() {
@@ -512,13 +514,11 @@ async function TootPlayer(slug) {
         }
     });
 
+    // start button
     els.tootsStartButton.on('click', (e) => {
         e.preventDefault();
         els.body.classList.add("playing-started");
         startPlaying();
     });
-
-
-
 
 }
