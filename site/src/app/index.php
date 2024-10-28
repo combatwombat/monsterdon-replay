@@ -141,7 +141,7 @@ $app->onError(404, function() {
 // usage:
 // php site/public/index.php save_toots // fetch all toots up until config.mastodon.oldTootDateTime or an existing toot. occasionally catch up on older toots
 // php site/public/index.php save_toots -catchup 6 // start with catching up. fetch toots until {num} days in the past. don't stop on existing toots
-$app->cli("save_toots {catchup}", function($catchup = false) {
+$app->cli("save_toots {catchup}", function($catchup = 1) {
 
     $saveToots = new Workers\SaveToots($this->container);
 

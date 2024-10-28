@@ -57,6 +57,19 @@ class SaveToots extends Base {
      */
     public function run($stopAtExistingToot = true, $oldestTootDateTime = null) {
 
+        /*
+        New idea. Two modes:
+        1. Like before. Get all the newest toots and save them. Stop at existing toot or oldestTootDateTime.
+        2. Get all the toots. Two new database columns: "visible" and "is_on_mastodon"
+           Before fetching all toots: visible = 1, is_on_mastodon = 1, last_found_on_mastodon = datetime, for all toots
+           Then we fetch all toots. While we do that:
+              If a fetched toot exists in the database: visible = 1, is_on_mastodon = 1, last_found_on_mastodon = now
+              If a fetched toot does not exist in the database: add toot to database, set visible = 1, is_on_mastodon = 1, last_found_on_mastodon = now
+           After fetching all toots, go through all toots again:
+              If is_on_mastodon = 0, set visible to 0 if last_found_on_mastodon is older than 1 week
+           Then, every week or so, go through all toots and delete the ones that are not visible and are older than 1 week
+         */
+
 
         $hashtag = $this->config('mastodon.hashtag');
 
