@@ -1,5 +1,10 @@
 <?php
 use App\Helpers\ViewHelper;
+
+// $startDatetime is UTC. convert it to pacific time
+$startDatetime = new DateTime($movie['start_datetime']);
+$startDatetime->setTimezone(new DateTimeZone('America/Los_Angeles'));
+$movie['start_datetime'] = $startDatetime->format('Y-m-d H:i:s');
 ?>
 
 <?php $this->include("parts/header", $header); ?>

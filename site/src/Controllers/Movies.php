@@ -28,7 +28,7 @@ class Movies extends Controller {
 
             $movie['is_in_future'] = $movieEndTime >= $now;
 
-            // show all movies for logged in users, show only past movies for guests
+            // show all movies for logged-in users, show only past movies for guests
             if ($isLoggedIn) {
                 $movies[] = $movie;
 
