@@ -51,10 +51,13 @@ Change the og:image cover offset to nudge the cover image up (higher value) or d
 
 There are some CLI commands. Stop your worker beforehand:
 
-- `php site/public/index.php save_toots` - Save newest toots and their media until it reaches an existing one. Good to initially fill the toots db, then check periodically for new ones.
-- `php site/public/index.php save_toots -catchup 100` - Save toots and their media from now until 100 days ago. Don't stop on existing toots. Good to catch some stragglers, or if you change your config.mastodon.instance to fill in some toots from another instance.
-- `php site/public/index.php save_toot_media` - Go through all toots, save media if it doesn't exist yet. Good if the initial import missed some media files.
-- `php site/public/index.php rebuild_movie_cache` - Delete and rebuild cache for all movies. Also updates movies.toot_count. This is not often needed, since the cache of a movie also gets deleted if it's edited in the backend, or if the save_toots worker adds a toot for that movie. 
+
+
+- `php site/public/index.php save_toots` - Save newest toots and their media until it reaches an existing one. Good to initially fill the toots db, then check periodically for new ones. Occasionally catches up on older toots. Seldom re-fetches all toots, possibly deleting ones that have not been found on Mastodon for a while.
+- `php site/public/index.php save_toots -first catchup` - Starts with catching up on older toots, then goes on as usual.
+- `php site/public/index.php save_toot_media -frist resave` - Starts with re-saving all toots, then goes on as usual.
+- `php site/public/index.php rebuild_movie_cache` - Delete and rebuild cache for all movies. Also updates movies.toot_count. This is not often needed, since the cache of a movie also gets deleted if it's edited in the backend, or if the save_toots worker adds a toot for that movie.
+- `php site/public/index.php save_toot_media` - Goes through all toots and saves their media
 
 Check `site/logs/default.log` (or `site/shared/logs/default.log` if deployed with Capistrano) for various debug output. The file is truncated to 100k lines.
 
