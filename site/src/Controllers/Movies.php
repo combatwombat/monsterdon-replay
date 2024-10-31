@@ -109,7 +109,7 @@ class Movies extends Controller {
         $endDateTime->add(new \DateInterval('PT' . $movie['duration'] . 'S'));
         $endDateTime->add(new \DateInterval('PT' . $this->config("aftershowDuration") . 'S'));
 
-        $dbToots = $this->db->fetchAll("SELECT * FROM toots WHERE created_at >= :start AND created_at <= :end ORDER BY created_at DESC", ["start" => $startDateTime->format("Y-m-d H:i:s"), "end" => $endDateTime->format("Y-m-d H:i:s")]);
+        $dbToots = $this->db->fetchAll("SELECT * FROM toots WHERE visible = 1 AND created_at >= :start AND created_at <= :end ORDER BY created_at DESC", ["start" => $startDateTime->format("Y-m-d H:i:s"), "end" => $endDateTime->format("Y-m-d H:i:s")]);
 
 
         $toots = [];

@@ -137,80 +137,108 @@ $app->onError(404, function() {
 
 // CLI commands
 
-// save toot worker.
-// usage:
-// php site/public/index.php save_toots // fetch all toots up until config.mastodon.oldTootDateTime or an existing toot. occasionally catch up on older toots
-// php site/public/index.php save_toots -catchup 6 // start with catching up. fetch toots until {num} days in the past. don't stop on existing toots
-$app->cli("save_toots {catchup}", function($catchup = false) {
+/**
+ * - Saves newest toots. The default
+ * - Occasionally re-saves older toots
+ * - Seldom re-fetches all toots, possibly deleting ones that have not been found on Mastodon for a while
+ *
+ * Usage:
+ * php site/public/index.php save_toots # saves newest toots first, then goes on as usual
+ * php site/public/index.php save_toots -first catchup # re-fetches older toots first
+ * php site/public/index.php save_toots -first resave # re-fetches all toots first
+ */
+$app->cli("save_toots {first?}", function($first = null) {
 
-    $saveToots = new Workers\SaveToots($this->container);
+    $tootsWorker = new Workers\TootsWorker($this->container);
 
-    // re-fetch older toots every x seconds
+    // re-fetch older toots every 6 hours
     $catchUpInterval = 3600 * 6;
 
     // timestamp. when did we last re-fetch older toots?
-    $lastCatchUpDateTime = time();
+    $lastCatchUpTime = time();
 
-    // when catching up, how many days to fetch back?
-    $catchUpDays = $catchup ? (int)$catchup : 6;
+    // when catching up, how many seconds to fetch back?
+    $catchUpSeconds = 3600 * 24 * 6; // 6 days
+
+    // re-fetch all toots every 7 days
+    $resaveInterval = 3600 * 24 * 7;
+
+    // timestamp. when did we last re-fetch all toots?
+    $lastResaveTime = time();
+
+    $rebuildCacheSecondsPadding = 3600 * 24; // 1 day
+
 
     while (true) {
 
-        // every $catchUpInterval seconds, fetch all toots from now until $catchUpDays ago and don't
-        // stop at existing ones. that way we catch some stragglers that where federated late.
-        if ($catchup || time() - $lastCatchUpDateTime > $catchUpInterval) {
+        $now = time();
 
-            $this->log("catching up until ".$catchUpDays." days ago");
+        // catching up with stragglers?
+        if ($first == "catchup" || $now > $lastCatchUpTime + $catchUpInterval) {
 
-            $now = new \DateTime();
-            $now->sub(new \DateInterval('P'.((string)$catchUpDays).'D'));
-            $now = $now->format('Y-m-d H:i:s');
+            $oldestTootDateTime = new \DateTime();
+            $oldestTootDateTime->sub(new \DateInterval("PT" . $catchUpSeconds . "S"));
 
-            $ret = $saveToots->run(false, $now);
-            $catchup = false;
+            $res = $tootsWorker->saveTootsUntil($oldestTootDateTime->format("Y-m-d H:i:s"));
+            $lastCatchUpTime = $now;
+
+            $oldestTootDateTime->sub(new \DateInterval("PT" . $rebuildCacheSecondsPadding . "S"));
+
+            $tootsWorker->rebuildMovieCache($oldestTootDateTime->format("Y-m-d H:i:s"));
+
+            $first = null;
+
+        // or re-save all toots, updating them?
+        } else if ($first == "resave" || $now > $lastResaveTime + $resaveInterval) {
+
+            $res = $tootsWorker->resaveAllToots(false);
+            $lastResaveTime = $now;
+
+            $tootsWorker->rebuildMovieCache();
+
+            $first = null;
+
+        // or just save new toots?
         } else {
 
-            $this->log("not catching up");
+            $res = $tootsWorker->saveNewToots();
 
-            // download all toots until we reach an existing one or the config.mastodon.oldTootDateTime
-            $ret = $saveToots->run();
+            if ($res['newTootCount'] > 0 || $res['updatedTootCount'] > 0) {
+
+                // create datetime from lastModifiedTootDatetime string
+                $oldestTootDateTime = new \DateTime($res['lastModifiedTootDatetime']);
+                $oldestTootDateTime->sub(new \DateInterval("PT" . $rebuildCacheSecondsPadding . "S"));
+
+                $tootsWorker->rebuildMovieCache($oldestTootDateTime->format("Y-m-d H:i:s"));
+            }
+
+
         }
 
-
-        if ($ret['newTootCount'] > 0) {
+        // wait less if there are new toots
+        if ($res['newTootCount'] > 0) {
             sleep(5);
         } else {
-            if ($ret['error']) {
-                sleep(10);
-            } else {
+            if ($res['error']) {
                 sleep(60);
+            } else {
+                sleep(60 * 5); // 5 minutes
             }
         }
+
     }
 });
 
 // go through all toots and save their media
 $app->cli("save_toot_media", function() {
-    $saveToots = new Workers\SaveToots($this->container);
-    $saveToots->saveMediaForExistingToots();
+    $tootsWorker = new Workers\TootsWorker($this->container);
+    $tootsWorker->saveMediaForExistingToots();
 });
 
-// call api for each movie to rebuild toot cache. also update toot_count on movie
+// rebuild the movie cache, update toots_count
 $app->cli("rebuild_movie_cache", function() {
-    $movies = $this->db->getAll("movies");
-    $baseURL = "https://" . $this->config("domain") . "/api/toots/";
-    $movieCount = count($movies);
-    $c = 1;
-    foreach ($movies as $movie) {
-        $this->log("rebuilding cache for movie " . $c . "/" . $movieCount . ": " . $movie['slug']);
-        $this->db->deleteCacheByPrefix("toots-" . $movie['slug']);
-        $toots = json_decode(file_get_contents($baseURL . $movie['slug']), true);
-
-        $tootCount = count($toots);
-        $this->db->update("movies", ['toot_count' => $tootCount], ['id' => $movie['id']]);
-
-        $c++;
-    }
+    $tootsWorker = new Workers\TootsWorker($this->container);
+    $tootsWorker->rebuildMovieCache();
 });
 
 
