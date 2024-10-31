@@ -1,6 +1,6 @@
 # SQL Export
 # Created by Querious (400074)
-# Created: 24. October 2024 at 23:08:45 CEST
+# Created: 31. October 2024 at 01:06:14 GMT+1
 # Encoding: Unicode (UTF-8)
 
 
@@ -36,7 +36,7 @@ CREATE TABLE `movies` (
   `toot_count` int DEFAULT '0',
   `og_image_cover_offset` int DEFAULT '50',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=133 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=135 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 
 CREATE TABLE `options` (
@@ -50,6 +50,9 @@ CREATE TABLE `toots` (
   `id` char(64) COLLATE utf8mb4_unicode_520_ci NOT NULL,
   `data` json DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
+  `visible` tinyint(1) DEFAULT NULL,
+  `found_on_mastodon` tinyint(1) DEFAULT NULL,
+  `last_found_on_mastodon` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `id` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
@@ -68,4 +71,4 @@ SET TIME_ZONE = @ORIG_TIME_ZONE;
 
 
 
-#  Export Finished: 24. October 2024 at 23:08:45 CEST
+#  Export Finished: 31. October 2024 at 01:06:14 GMT+1
