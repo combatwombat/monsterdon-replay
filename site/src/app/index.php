@@ -158,7 +158,7 @@ $app->cli("save_toots {first?}", function($first = null) {
     $lastCatchUpTime = time();
 
     // when catching up, how many seconds to fetch back?
-    $catchUpSeconds = 3600 * 24 * 6; // 6 days
+    $catchUpSeconds = 3600 * 24 * 5; // 5 days
 
     // re-fetch all toots every 7 days
     $resaveInterval = 3600 * 24 * 7;
