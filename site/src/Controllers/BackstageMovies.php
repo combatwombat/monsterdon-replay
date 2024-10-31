@@ -78,7 +78,7 @@ class BackstageMovies extends \RTF\Controller {
             $endDateTime->add(new \DateInterval('PT' . $_POST['duration'] . 'S'));
             $endDateTime->add(new \DateInterval('PT' . $this->config("aftershowDuration") . 'S'));
 
-            $res = $this->db->fetch("SELECT COUNT(*) AS count FROM toots WHERE created_at >= :start AND created_at <= :end ORDER BY created_at ASC", ["start" => $startDateTime->format("Y-m-d H:i:s"), "end" => $endDateTime->format("Y-m-d H:i:s")], 'toots-' . $_POST['slug']);
+            $res = $this->db->fetch("SELECT COUNT(*) AS count FROM toots WHERE created_at >= :start AND created_at <= :end ORDER BY created_at ASC", ["start" => $startDateTime->format("Y-m-d H:i:s"), "end" => $endDateTime->format("Y-m-d H:i:s")]);
 
             $tootCount = $res['count'];
 
@@ -218,7 +218,7 @@ class BackstageMovies extends \RTF\Controller {
                 $endDateTime->add(new \DateInterval('PT' . $movie['duration'] . 'S'));
                 $endDateTime->add(new \DateInterval('PT' . $this->config("aftershowDuration") . 'S'));
 
-                $res = $this->db->fetch("SELECT COUNT(*) AS count FROM toots WHERE created_at >= :start AND created_at <= :end ORDER BY created_at ASC", ["start" => $startDateTime->format("Y-m-d H:i:s"), "end" => $endDateTime->format("Y-m-d H:i:s")], 'toots-' . $movie['slug']);
+                $res = $this->db->fetch("SELECT COUNT(*) AS count FROM toots WHERE created_at >= :start AND created_at <= :end ORDER BY created_at ASC", ["start" => $startDateTime->format("Y-m-d H:i:s"), "end" => $endDateTime->format("Y-m-d H:i:s")]);
 
                 $tootCount = $res['count'];
 
