@@ -30,7 +30,7 @@ class Controller extends Base {
      * @param $code
      * @return void
      */
-    public function error($code) {
+    public function error($code, $additionalViewParams = []) {
         $viewFile = __SITE__ . "/src/views/$code.php";
         if (file_exists($viewFile)) {
 
@@ -52,8 +52,10 @@ class Controller extends Base {
                     break;
             }
 
+            $viewParams = ['bodyClass' => "error-$code"];
+            $viewParams = array_merge($viewParams, $additionalViewParams);
 
-            $this->view($code, ['bodyClass' => "error-$code"]);
+            $this->view($code, $viewParams);
         } else {
             echo "Error $code";
         }

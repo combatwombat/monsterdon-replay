@@ -58,7 +58,7 @@ class Movies extends Controller {
         $movie = $this->db->getBySlug("movies", $slug);
 
         if (!$movie) {
-            $this->error(404);
+            $this->error(404, ['header' => ['bodyClass' => 'error-404', 'title' => 'Movie not found']]);
         }
 
         $overallDuration = $movie['duration'] + $this->config("aftershowDuration");
