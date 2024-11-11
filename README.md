@@ -74,7 +74,7 @@ Files:
 - `site/src/Controllers/*` - Backend and frontend controllers to show and edit movies and return toots for a movie.
 - `site/src/views/*` - Various views/templates for the controller actions. Contains about and privacy page.
 - `site/src/Helpers/TMDB.php` - TMDB API wrapper. Also saves images and generates og:image for each cover.
-- `site/src/Workers/SaveToots.php` - background worker that saves toots and media
+- `site/src/Workers/TootsWorker.php` - background worker that saves toots and media
 - `site/src/assets/*` - Contains JS and SCSS files, to build JS and CSS from.
 
 ### Building the frontend
