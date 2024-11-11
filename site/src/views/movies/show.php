@@ -34,7 +34,8 @@ $movie['start_datetime'] = $startDatetime->format('Y-m-d H:i:s');
                 <div class="meta">
                     <a href="https://letterboxd.com/imdb/<?= $movie['imdb_id'];?>" target="_blank">Letterboxd</a> &middot;
                     <a href="https://www.imdb.com/title/<?= $movie['imdb_id'];?>" target="_blank">IMDb</a> &middot;
-                    <a href="https://www.themoviedb.org/movie/<?= $movie['tmdb_id'];?>/watch" target="_blank">Where to watch</a>
+                    <a href="https://www.themoviedb.org/movie/<?= $movie['tmdb_id'];?>/watch" target="_blank">Where to watch</a> &middot;
+                    <a href="/<?= $movie['slug'];?>/subtitles" target="_blank">Toots as Subtitles</a>
                 </div>
                 <a href="#" class="close">
                     <?= icon('close-line');?>

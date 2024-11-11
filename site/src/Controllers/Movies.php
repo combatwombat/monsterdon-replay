@@ -174,5 +174,66 @@ class Movies extends Controller {
         echo json_encode($toots);
     }
 
+    public function subtitles($slug) {
+
+        $movie = $this->db->getBySlug("movies", $slug);
+
+        if (!$movie) {
+            $this->error(404, ['header' => ['bodyClass' => 'error-404', 'title' => 'Movie subtitles not found']]);
+            exit;
+        }
+
+        $startDateTime = new \DateTime($movie['start_datetime']);
+
+        $endDateTime = clone $startDateTime;
+        $endDateTime->add(new \DateInterval('PT' . $movie['duration'] . 'S'));
+
+        $dbToots = $this->db->fetchAll("SELECT * FROM toots WHERE visible = 1 AND created_at >= :start AND created_at <= :end ORDER BY created_at DESC", ["start" => $startDateTime->format("Y-m-d H:i:s"), "end" => $endDateTime->format("Y-m-d H:i:s")]);
+
+        $toots = [];
+
+        foreach ($dbToots as $dbToot) {
+            $data = json_decode($dbToot['data'], true);
+
+            // time between start of movie and toot in seconds
+            $timeDelta = strtotime($dbToot['created_at']) - strtotime($startDateTime->format("Y-m-d H:i:s"));
+
+            $content = strip_tags($data['content']);
+            $content = html_entity_decode($content);
+            $content = trim($content);
+            if (empty($content)) {
+                continue;
+            }
+
+            // remove #hashtags
+            $content = preg_replace('/#(\w+)/', '', $content);
+
+            // remove more than one spaces
+            $content = preg_replace('/\s+/', ' ', $content);
+
+            $toot = [
+                'account' => [
+                    'display_name' => h($data['account']['display_name']),
+                ],
+                'content' => $content,
+                'time_delta' => $timeDelta,
+            ];
+
+            $toots[] = $toot;
+
+        }
+
+        $toots = array_reverse($toots);
+
+        $subtitles = $this->subtitles->generate($toots, $movie['title']);
+
+        echo $subtitles;
+
+        #header('Content-Type: text/plain');
+        #header('Content-Disposition: attachment; filename="' . $movie['slug'] . '.ass"');
+        #echo $subtitles;
+
+    }
+
 
 }
