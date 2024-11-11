@@ -133,7 +133,7 @@ class TootsWorker extends Base {
 
     /**
      * Fetch toots from Mastodon and save them to the database.
-     * The Mastodon API only provides a list opf toots ordered by date, newest first, or all toots that come after
+     * The Mastodon API only provides a list of toots ordered by date, newest first, or all toots that come after
      * a specific toot id (max_id). So, we can only work ourselves backwards until we reach a stop criterion.
      * @param $stopAtExistingToot boolean stop fetching toots if we reach one we already have in the database
      * @param $oldestTootDateTime string toot-datetime at which to stop fetching toots
