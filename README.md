@@ -55,7 +55,7 @@ There are some CLI commands. Stop your worker beforehand:
 
 - `php site/public/index.php save_toots` - Save newest toots and their media until it reaches an existing one. Good to initially fill the toots db, then check periodically for new ones. Occasionally catches up on older toots. Seldom re-fetches all toots, possibly deleting ones that have not been found on Mastodon for a while.
 - `php site/public/index.php save_toots -first catchup` - Starts with catching up on older toots, then goes on as usual.
-- `php site/public/index.php save_toot_media -frist resave` - Starts with re-saving all toots, then goes on as usual.
+- `php site/public/index.php save_toot_media -first resave` - Starts with re-saving all toots, then goes on as usual.
 - `php site/public/index.php rebuild_movie_cache` - Delete and rebuild cache for all movies. Also updates movies.toot_count. This is not often needed, since the cache of a movie also gets deleted if it's edited in the backend, or if the save_toots worker adds a toot for that movie.
 - `php site/public/index.php save_toot_media` - Goes through all toots and saves their media
 
