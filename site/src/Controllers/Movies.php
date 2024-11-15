@@ -183,6 +183,16 @@ class Movies extends Controller {
             exit;
         }
 
+        // check cache first
+        $cacheKey = "toots-" . $slug . "-subtitles";
+        $res = $this->db->getByName("cache", $cacheKey);
+        if ($res) {
+            header('Content-Type: text/plain');
+            header('Content-Disposition: attachment; filename="' . $movie['slug'] . '.ass"');
+            echo $res['value'];
+            exit;
+        }
+
         $startDateTime = new \DateTime($movie['start_datetime']);
 
         $endDateTime = clone $startDateTime;
@@ -229,7 +239,11 @@ class Movies extends Controller {
 
         $subtitles = $this->subtitles->generate($toots, $movie['title'], $movie['duration']);
 
-        #echo $subtitles;
+        // save in cache
+        $this->db->insert("cache", [
+            'name' => $cacheKey,
+            'value' => $subtitles
+        ]);
 
         header('Content-Type: text/plain');
         header('Content-Disposition: attachment; filename="' . $movie['slug'] . '.ass"');

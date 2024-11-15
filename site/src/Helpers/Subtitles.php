@@ -152,7 +152,10 @@ class Subtitles extends \RTF\Base {
 
         }
 
-        $xPos = 20;//$this->videoWidth - $this->chatWidth - 20; // 20px margin from right edge
+        $xPos = 20; // left aligned.
+        // right-aligned would be: $this->videoWidth - $this->chatWidth - 20;
+        // but that needs adjustments for different aspect ratios
+
         $yPos = $this->topMargin;
 
         $dialogLine =   "Dialogue: 0," .
