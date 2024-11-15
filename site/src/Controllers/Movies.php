@@ -189,7 +189,8 @@ class Movies extends Controller {
         if ($res) {
             header('Content-Type: text/plain');
             header('Content-Disposition: attachment; filename="' . $movie['slug'] . '.ass"');
-            echo $res['value'];
+            $subtitles = base64_decode($res['value']);
+            echo $subtitles;
             exit;
         }
 
@@ -215,8 +216,9 @@ class Movies extends Controller {
                 continue;
             }
 
-            // remove #hashtags
-            $content = preg_replace('/#(\w+)/', '', $content);
+            // remove non-#monsterdon or #mastoween hashtags, upper or lower case
+            $content = preg_replace('/#(monsterdon|mastoween)(?![a-z0-9_])/', '', $content, -1, $count);
+
 
             // remove urls
             $content = preg_replace('/(https?:\/\/[^\s]+)/', '', $content);
@@ -227,8 +229,12 @@ class Movies extends Controller {
             // remove more than one spaces
             $content = preg_replace('/\s+/', ' ', $content);
 
+            $name = $data['account']['display_name'];
+            $name = html_entity_decode($name);
+            $name = preg_replace('/[\x{1F600}-\x{1F64F}]/u', '', $name);
+
             $toot = [
-                'name' => $data['account']['display_name'],
+                'name' => $name,
                 'content' => $content,
                 'time_delta' => $timeDelta,
             ];
@@ -242,7 +248,7 @@ class Movies extends Controller {
         // save in cache
         $this->db->insert("cache", [
             'name' => $cacheKey,
-            'value' => $subtitles
+            'value' => base64_encode($subtitles)
         ]);
 
         header('Content-Type: text/plain');
