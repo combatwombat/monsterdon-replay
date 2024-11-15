@@ -208,13 +208,17 @@ class Movies extends Controller {
             // remove #hashtags
             $content = preg_replace('/#(\w+)/', '', $content);
 
+            // remove urls
+            $content = preg_replace('/(https?:\/\/[^\s]+)/', '', $content);
+
+            // remove emoji
+            $content = preg_replace('/[\x{1F600}-\x{1F64F}]/u', '', $content);
+
             // remove more than one spaces
             $content = preg_replace('/\s+/', ' ', $content);
 
             $toot = [
-                'account' => [
-                    'display_name' => h($data['account']['display_name']),
-                ],
+                'name' => $data['account']['display_name'],
                 'content' => $content,
                 'time_delta' => $timeDelta,
             ];
@@ -223,15 +227,13 @@ class Movies extends Controller {
 
         }
 
-        $toots = array_reverse($toots);
+        $subtitles = $this->subtitles->generate($toots, $movie['title'], $movie['duration']);
 
-        $subtitles = $this->subtitles->generate($toots, $movie['title']);
-
-        echo $subtitles;
-
-        #header('Content-Type: text/plain');
-        #header('Content-Disposition: attachment; filename="' . $movie['slug'] . '.ass"');
         #echo $subtitles;
+
+        header('Content-Type: text/plain');
+        header('Content-Disposition: attachment; filename="' . $movie['slug'] . '.ass"');
+        echo $subtitles;
 
     }
 
