@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Controllers;
+use App\Helpers\ViewHelper;
 use RTF\Controller;
 
 class Movies extends Controller {
@@ -223,8 +224,8 @@ class Movies extends Controller {
             $content = preg_replace('/(https?:\/\/[^\s]+)/', '', $content);
 
             // remove emoji
-            $content = preg_replace('/[\x{1F600}-\x{1F64F}]/u', '', $content);
-
+            $content = ViewHelper::removeEmoji($content);
+            
             // remove more than one spaces
             $content = preg_replace('/\s+/', ' ', $content);
 
@@ -257,6 +258,8 @@ class Movies extends Controller {
         echo $subtitles;
 
     }
+
+
 
 
 }
