@@ -218,7 +218,7 @@ class Movies extends Controller {
 
             // remove all hashtags
             $content = preg_replace('/#(\w+)/', '', $content);
-            
+
             // remove urls
             $content = preg_replace('/(https?:\/\/[^\s]+)/', '', $content);
 
@@ -230,7 +230,9 @@ class Movies extends Controller {
 
             $name = $data['account']['display_name'];
             $name = html_entity_decode($name);
-            $name = preg_replace('/[\x{1F600}-\x{1F64F}]/u', '', $name);
+
+            // remove things from name that are not suitable for .ass (heh) format
+            $name = preg_replace("/[^a-zA-Z0-9., -:#\[\]{}()]+/", "", $name);
 
             $toot = [
                 'name' => $name,
