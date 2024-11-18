@@ -216,10 +216,9 @@ class Movies extends Controller {
                 continue;
             }
 
-            // remove non-#monsterdon or #mastoween hashtags, upper or lower case
-            $content = preg_replace('/#(monsterdon|mastoween)(?![a-z0-9_])/', '', $content, -1, $count);
-
-
+            // remove all hashtags
+            $content = preg_replace('/#(\w+)/', '', $content);
+            
             // remove urls
             $content = preg_replace('/(https?:\/\/[^\s]+)/', '', $content);
 
