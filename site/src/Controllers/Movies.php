@@ -225,9 +225,15 @@ class Movies extends Controller {
 
             // remove emoji
             $content = ViewHelper::removeEmoji($content);
-            
+
             // remove more than one spaces
             $content = preg_replace('/\s+/', ' ', $content);
+
+            $content = trim($content);
+
+            if (empty($content)) {
+                continue;
+            }
 
             $name = $data['account']['display_name'];
             $name = html_entity_decode($name);
