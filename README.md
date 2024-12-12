@@ -31,7 +31,7 @@ This is work-in-progress and some manual intervention might be required. But, if
 - Fill config/config.php with your details, including domain name, hashtag, backstage credentials and tmdb.org api key
 - Create database, fill with config/schema.sql
 - Test worker: `php site/public/index.php save_toot`
-    - This should save all toots and their media for the given hashtag, down to the beginning of Mastodon (or config.mastodon.oldestTootDateTime). Once that is done, it periodically checks for new toots.
+    - This should save all toots and their media for the given hashtag, down to the beginning of Mastodon (or config.mastodon.oldestTootDateTime). Once that is done, it periodically checks for new toots and also re-saves existing ones every few days, to cstch edits and deletions.
 
 ## Usage
 
