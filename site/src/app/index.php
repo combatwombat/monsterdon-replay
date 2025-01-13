@@ -151,7 +151,7 @@ $app->onError(404, function() {
  * php site/public/index.php save_toots -first catchup # re-fetches older toots first
  * php site/public/index.php save_toots -first resave # re-fetches all toots first
  */
-$app->cli("save_toots {first?}", function($first = null) {
+$app->cli("save_toots {first?}", function($first = 'catchup') {
 
     $tootsWorker = new Workers\TootsWorker($this->container);
 
