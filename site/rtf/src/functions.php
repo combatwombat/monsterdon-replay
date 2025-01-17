@@ -105,7 +105,7 @@ function formatDate($dateTime, $format = "d. MMMM YYYY") {
  * @param string $format default output: "4. Dezember 2023 13:37"
  * @return void
  */
-function formatDateTime($dateTime, $format = "d. MMMM YYYY HH:mm") {
+function formatDateTime($dateTime, $format = "d. MMMM yyyy HH:mm") {
     global $app;
     $locale = 'en_US';
 
@@ -116,7 +116,6 @@ function formatDateTime($dateTime, $format = "d. MMMM YYYY HH:mm") {
             $locale = $localization->locale;
         }
     }
-
 
     $date = new \DateTime($dateTime);
 
@@ -130,7 +129,9 @@ function formatDateTime($dateTime, $format = "d. MMMM YYYY HH:mm") {
         $format
     );
 
-    return $formatter->format($date);
+    $formattedDate = $formatter->format($date);
+
+    return $formattedDate;
 }
 
 // thx to https://stackoverflow.com/a/2510459/1191375
