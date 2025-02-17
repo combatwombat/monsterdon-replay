@@ -2,7 +2,7 @@
 
 <div class="content">
     <div class="info">
-        <a href="https://wiki.neuromatch.social/Monsterdon" target="_blank">#monsterdon</a> is a weekly monster movie watch party on <a href="https://joinmastodon.org/" target=_"blank">Mastodon</a>, organized by <a href="https://octodon.social/@Taweret" target="_blank">Taweret</a> and usually held at 6 PM Pacific on Sundays (1 AM UTC Mondays). If you missed it, replay the toots here and watch along.
+        <a href="https://wiki.neuromatch.social/Monsterdon" target="_blank">#monsterdon</a> is a weekly monster movie watch party on <a href="https://joinmastodon.org/" target=_"blank">Mastodon</a>, organized by <a href="https://timeloop.cafe/@Taweret" target="_blank">Taweret</a> and usually held at 6 PM Pacific on Sundays (1 AM UTC Mondays). If you missed it, replay the toots here and watch along.
     </div>
 
     <ul class="movies">
