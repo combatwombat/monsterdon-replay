@@ -29,6 +29,13 @@ class Movies extends Controller {
 
             $movie['is_in_future'] = $movieEndTime >= $now;
 
+            // is the movie running? meaning, movie start time <= now <= movie end time + 1 hours?
+            $movie['is_running'] = (new \DateTime($movie['start_datetime']) <= $now) && ($movieEndTime >= $now);
+
+            // always show all movies
+            $movies[] = $movie;
+
+            /*
             // show all movies for logged-in users, show only past movies for guests
             if ($isLoggedIn) {
                 $movies[] = $movie;
@@ -38,6 +45,7 @@ class Movies extends Controller {
                     $movies[] = $movie;
                 }
             }
+            */
 
         }
 

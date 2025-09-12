@@ -26,19 +26,27 @@
     .movie {
 
       a {
-        display: grid;
-        grid-template-columns: 90px 1fr;
-        grid-gap: 15px;
+        display: block;
+        > .inner {
+          display: grid;
+          grid-template-columns: 90px 1fr;
+          grid-gap: 15px;
+          border-radius: $border-radius + 10px;
+          padding: 10px;
+        }
+
         color: $color-text;
         font-weight: normal;
-        padding: 10px;
+
 
         border-radius: $border-radius + 10px;
 
         @include transition(all $speed-slowish $easing);
 
         &:hover {
-          background: $color-blue-subtle;
+          > .inner {
+            background: $color-blue-subtle;
+          }
           transform: scale(1.02);
           @include transition(all $speed-faster $easing);
         }
@@ -49,11 +57,45 @@
       }
 
       &.is-in-future {
+
+      }
+
+      &.is-running {
+
         a {
-          border: 1px solid rgba(255,0,0,0.4);
+          padding: 3px;
+          background: red;
+
+          /* rotating rainbox radial gradient */
+            background: radial-gradient(circle, red, orange, yellow, green, blue, indigo, violet);
+            background-size: 400% 400%;
+            animation: rainbow 10s linear infinite;
+
+
+          > .inner {
+            background: $color-bg;
+            border-radius: $border-radius + 7px;
+
+          }
+
+          &:hover {
+            > .inner {
+                background: #11213B;
+            }
+          }
+
+
         }
 
       }
+
+        @keyframes rainbow {
+          0%{background-position:0% 50%}
+          50%{background-position:100% 50%}
+          100%{background-position:0% 50%}
+        }
+
+
 
 
       .col {
