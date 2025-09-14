@@ -10,7 +10,6 @@
     max-width: 575px;
     border-radius: $border-radius;
     background: $color-blue-subtle;
-    @include hyphens(auto);
   }
 
   .movies {
