@@ -3,8 +3,7 @@
 <div class="content">
     <div class="info">
         <a href="https://wiki.neuromatch.social/Monsterdon" target="_blank">#monsterdon</a> is a weekly monster movie watch party on <a href="https://joinmastodon.org/" target=_"blank">Mastodon</a>.<br>
-        It's <a href="https://timeloop.cafe/@Taweret" target="_blank">organized by Taweret</a>, with <a href="https://monsterdonbingo.neocities.org/" target="_blank">Bingo Cards by Cheri</a>, <a href="https://www.threadless.com/shop/@thediremushrump/design/monsterdon-doodles-color/">T-Shirts by Louisa</a>, made awesome by every contributor and usually held at 6 PM Pacific on Sundays (1 AM UTC Mondays).<br>
-        If you missed it, replay the toots here and watch along.
+        It's <a href="https://timeloop.cafe/@Taweret" target="_blank">organized by Taweret</a>, with <a href="https://monsterdonbingo.neocities.org/" target="_blank">Bingo Cards by Cheri</a>, <a href="https://www.threadless.com/shop/@thediremushrump/design/monsterdon-doodles-color/">T-Shirts by Louisa</a>, made awesome by every contributor and held at 6 PM Pacific on Sundays (1&nbsp;AM UTC Mondays). If you missed it, replay the toots here and watch along.
     </div>
 
     <ul class="movies">
