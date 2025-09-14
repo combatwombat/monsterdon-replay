@@ -7,11 +7,10 @@
   .info {
     padding: 10px;
     margin: 0 auto 40px auto;
-    max-width: 790px;
+    max-width: 670px;
     border-radius: $border-radius;
     background: $color-blue-subtle;
     @include hyphens(auto);
-    text-align: center;
   }
 
   .movies {
