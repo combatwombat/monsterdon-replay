@@ -10,7 +10,7 @@ $movie['start_datetime'] = $startDatetime->format('Y-m-d H:i:s');
 <?php $this->include("parts/header", $header); ?>
 
 
-<div class="movie">
+<div class="movie state-<?php echo $movie['is_running'] || !$movie['is_in_future'] ? 'has-toots' : 'coming-soon' ;?>">
 
     <div class="movie-info">
         <div class="col col-cover">
@@ -43,7 +43,12 @@ $movie['start_datetime'] = $startDatetime->format('Y-m-d H:i:s');
             </div>
             <div class="bottom">
                 <div class="start_datetime">
-                    Watched on <?= formatDateTime($movie['start_datetime'], "d MMMM YYYY"); ?>
+                    <?php if ($movie['is_running']) { ?>
+                        <strong>Happening now!</strong><br>
+                        Go over to Mastodon. The toots are finished recording an hour after the movie ends.
+                    <?php } else { ?>
+                        <?= $movie['is_in_future'] ? 'To be watched' : 'Watched';?> on <?= formatDateTime($movie['start_datetime'], "d MMMM yyyy"); ?>
+                    <?php } ?>
                 </div>
             </div>
         </div>
@@ -60,6 +65,11 @@ $movie['start_datetime'] = $startDatetime->format('Y-m-d H:i:s');
             <span>Start</span>
         </a>
     </div>
+
+    <div class="coming-soon">
+        Toots soon. Come back later.
+    </div>
+
 
     <div class="toots"></div>
 

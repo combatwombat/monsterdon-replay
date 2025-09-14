@@ -16,6 +16,27 @@
 
   .movie {
 
+    &.state-has-toots {
+
+      .coming-soon {
+        display: none;
+      }
+
+    }
+
+    &.state-coming-soon {
+
+      .coming-soon {
+        display: block;
+      }
+
+      .toots-start,
+      .toots-loading,
+      .player {
+        display: none;
+      }
+    }
+
   }
 
   .movie-info {
@@ -186,6 +207,13 @@
       }
 
     }
+  }
+
+  .coming-soon {
+    margin-top: 100px;
+    text-align: center;
+    font-size: 20px;
+    font-style: italic;
   }
 
   &.playing-started .toots-start {

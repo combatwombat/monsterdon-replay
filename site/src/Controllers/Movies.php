@@ -70,6 +70,17 @@ class Movies extends Controller {
             $this->error(404, ['header' => ['bodyClass' => 'error-404', 'title' => 'Movie not found']]);
         }
 
+        $now = new \DateTime();
+
+        $movieEndTime = new \DateTime($movie['start_datetime']);
+        $movieEndTime->add(new \DateInterval('PT' . $movie['duration'] . 'S'));
+        $movieEndTime->add(new \DateInterval('PT' . $this->config("aftershowDuration") . 'S'));
+
+        $movie['is_in_future'] = $movieEndTime >= $now;
+
+        // is the movie running? meaning, movie start time <= now <= movie end time + 1 hours?
+        $movie['is_running'] = (new \DateTime($movie['start_datetime']) <= $now) && ($movieEndTime >= $now);
+
         $overallDuration = $movie['duration'] + $this->config("aftershowDuration");
 
         $data = [
