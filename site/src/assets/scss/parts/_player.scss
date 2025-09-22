@@ -222,6 +222,7 @@
   @media (max-width: #{$small-player-breakpoint}) {
     width: calc(100% + 20px);
     margin: 0 -10px;
+    top: calc(100dvh - 50px - env(safe-area-inset-bottom));
 
     > .columns {
       grid-template-columns: 41px 1fr 40px;
