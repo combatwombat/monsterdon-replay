@@ -21,6 +21,13 @@
                 <label>OG Image Cover Offset</label>
                 <input type="number" name="og_image_cover_offset" value="<?= h(isset($_POST['og_image_cover_offset']) ? $_POST['og_image_cover_offset'] : 50);?>" placeholder="50" min="0" max="100">
             </div>
+            <div class="field-group field-group-full extra-code-group">
+                <button type="button" class="toggle-extra-code">+ Extra Code</button>
+                <div class="extra-code-content" style="display: none;">
+                    <label>Extra Code (optional)</label>
+                    <textarea name="extra_code" placeholder="Custom HTML/CSS/JS code for this movie"><?= h(post('extra_code'));?></textarea>
+                </div>
+            </div>
             <!-- Hidden optional fields -->
             <input style="display: none" type="text" name="title" value="<?= h(post('title'));?>" placeholder="optional">
             <input style="display: none" type="text" name="slug" value="<?= h(post('slug'));?>" pattern="[a-z0-9\-]+" placeholder="optional">
@@ -81,6 +88,12 @@
                         </a>
                     </div>
                 </div>
+                <div class="field-group field-group-full extra-code-group">
+                    <button type="button" class="toggle-extra-code"><?= !empty($movie['extra_code']) ? '- Extra Code' : '+ Extra Code'; ?></button>
+                    <div class="extra-code-content" style="display: <?= !empty($movie['extra_code']) ? 'block' : 'none'; ?>;">
+                        <textarea name="extra_code" placeholder="Custom HTML/CSS/JS code for this movie. Inserted at the end of the movie page."><?= h($movie['extra_code']);?></textarea>
+                    </div>
+                </div>
             </div>
         </div>
     <?php } ?>
@@ -88,6 +101,22 @@
 
 <script>
     ready(() => {
+
+        // toggle extra code sections
+        findAll('.toggle-extra-code').forEach(btn => {
+            btn.on('click', () => {
+                const content = btn.parentNode.find('.extra-code-content');
+                const isVisible = content.style.display !== 'none';
+
+                if (isVisible) {
+                    content.hide();
+                    btn.textContent = '+ Extra Code';
+                } else {
+                    content.show();
+                    btn.textContent = '- Extra Code';
+                }
+            });
+        });
 
         // add
         find('.movie-card.new button[type="submit"]').on("click", async () => {
@@ -100,7 +129,8 @@
                 duration: card.find('[name=duration]').value,
                 imdb_id: card.find('[name=imdb_id]').value,
                 tmdb_id: card.find('[name=tmdb_id]').value,
-                og_image_cover_offset: card.find('[name=og_image_cover_offset]').value
+                og_image_cover_offset: card.find('[name=og_image_cover_offset]').value,
+                extra_code: card.find('[name=extra_code]').value
             }, "json");
 
             if (result.status === 'error') {
@@ -124,8 +154,8 @@
             });
         });
 
-        // edit
-        findAll('.movie-card.edit input').forEach(el => {
+        // edit - handle both input and textarea changes
+        findAll('.movie-card.edit input, .movie-card.edit textarea').forEach(el => {
             el.on('change', async () => {
                 const card = el.closest('.movie-card');
                 const result = await request("/backstage/movies/" + card.dataset.id, "POST", {
@@ -136,7 +166,8 @@
                     duration: card.find('[name=duration]').value,
                     imdb_id: card.find('[name=imdb_id]').value,
                     tmdb_id: card.find('[name=tmdb_id]').value,
-                    og_image_cover_offset: card.find('[name=og_image_cover_offset]').value
+                    og_image_cover_offset: card.find('[name=og_image_cover_offset]').value,
+                    extra_code: card.find('[name=extra_code]').value
                 }, "json");
 
                 // example: {"status":"error","errors":{"foo":["bar"],"bar":["baakjhsjh"]}}

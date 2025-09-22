@@ -73,6 +73,14 @@ Element.prototype.hide = function () {
     this.style.display = 'none';
 }
 
+// create DOM element(s) from HTML string
+globalThis.create = function (string) {
+    const template = document.createElement('template');
+    template.innerHTML = string.trim();
+    return template.content.firstChild;
+}
+
+
 /**
  * Format seconds to MM:SS or H:MM:SS if it's over an hour
  * @param seconds

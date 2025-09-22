@@ -24,14 +24,14 @@ $movie['start_datetime'] = $startDatetime->format('Y-m-d H:i:s');
                     </span>
 
                 </h2>
-                <div class="meta">
+                <div class="meta meta-info">
                     <span class="release-date" title="<?= h($movie['release_date']);?>">
                         <?= h(substr($movie['release_date'], 0, 4));?>
                     </span> &middot;
                     <span><?= formatDuration($movie['duration']); ?></span> &middot;
                     <span><?= $movie['toot_count'];?> toots</span>
                 </div>
-                <div class="meta">
+                <div class="meta meta-links">
                     <a href="https://letterboxd.com/imdb/<?= $movie['imdb_id'];?>" target="_blank">Letterboxd</a> &middot;
                     <a href="https://www.imdb.com/title/<?= $movie['imdb_id'];?>" target="_blank">IMDb</a> &middot;
                     <a href="https://www.themoviedb.org/movie/<?= $movie['tmdb_id'];?>/watch" target="_blank">Where to watch</a> &middot;
@@ -127,6 +127,8 @@ $movie['start_datetime'] = $startDatetime->format('Y-m-d H:i:s');
         TootPlayer('<?= $movie['slug'];?>');
     });
 </script>
+
+<?php echo $movie['extra_code']; ?>
 
 <?php $this->include("parts/footer"); ?>
 

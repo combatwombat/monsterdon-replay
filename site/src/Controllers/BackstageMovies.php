@@ -91,7 +91,8 @@ class BackstageMovies extends \RTF\Controller {
                 'imdb_id' => $_POST['imdb_id'],
                 'tmdb_id' => $_POST['tmdb_id'],
                 'toot_count' => $tootCount,
-                'og_image_cover_offset' => $_POST['og_image_cover_offset']
+                'og_image_cover_offset' => $_POST['og_image_cover_offset'],
+                'extra_code' => $_POST['extra_code'] ?? ''
             ]);
 
             $this->tmdb->saveImage($_POST['imdb_id'], 270, $_POST['og_image_cover_offset']);
@@ -196,7 +197,8 @@ class BackstageMovies extends \RTF\Controller {
                 'duration' => $_POST['duration'],
                 'imdb_id' => $_POST['imdb_id'],
                 'tmdb_id' => $_POST['tmdb_id'],
-                'og_image_cover_offset' => $_POST['og_image_cover_offset']
+                'og_image_cover_offset' => $_POST['og_image_cover_offset'],
+                'extra_code' => $_POST['extra_code'] ?? ''
             ], ['id' => $id]);
 
             if ($res) {

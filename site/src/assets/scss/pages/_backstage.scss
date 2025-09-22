@@ -130,6 +130,38 @@
         .field-group:nth-child(2) {
           grid-column: span 2;
         }
+
+        // Extra code field styling
+        .field-group-full {
+          grid-column: span 2;
+        }
+
+        .extra-code-group {
+          .toggle-extra-code {
+            background: none;
+            color: $color-text;
+            padding: 8px 12px 8px 0;
+            cursor: pointer;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+            width: auto;
+          }
+
+          .extra-code-content {
+            textarea {
+              font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+              font-size: 12px;
+              padding: 5px;
+              color: $color-text;
+              background: $color-bg;
+              min-height: 120px;
+              resize: vertical;
+              line-height: 1.4;
+              width: 100%;
+              border-radius: $border-radius-small;
+            }
+          }
+        }
       }
 
       .movie-card-actions {
