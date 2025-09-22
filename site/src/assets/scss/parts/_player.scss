@@ -1,7 +1,7 @@
 .player {
   display: none;
   position: fixed;
-  bottom: 20px;
+  top: calc(100vh - 80px);
 
   width: calc(100% + 22px);
   max-width: calc(min(var(--site-width), 100%) - 20px);
