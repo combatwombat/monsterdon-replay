@@ -2,94 +2,105 @@
 
 <h1>Backstage &gt; Movies</h1>
 
-<table class="movies">
-    <tr>
-        <th>Title</th>
-        <th>Slug</th>
-        <th>Release Date</th>
-        <th>Start Datetime</th>
-        <th>Duration in s</th>
-        <th>IMDb id</th>
-        <th>TMDB id</th>
-        <th>og:i cover offset</th>
-        <th></th>
-    </tr>
-    <tr class="new">
-        <td>
-            <?php /* to make it more obvious for now, hide the optional fields that get filled by TMDB data anyway.
-                      they're not deleted, because that's more effort in the backend/js and maybe i want to reactivate them later */ ?>
+<div class="movies-grid">
+    <!-- Add new movie card -->
+    <div class="movie-card new">
+        <div class="movie-card-header">
+            <h3>Add New Movie</h3>
+        </div>
+        <div class="movie-card-content">
+            <div class="field-group">
+                <label>Start Datetime *</label>
+                <input type="datetime-local" name="start_datetime" value="<?= h(post('start_datetime'));?>" required>
+            </div>
+            <div class="field-group">
+                <label>IMDb ID *</label>
+                <input type="text" name="imdb_id" value="<?= h(post('imdb_id'));?>" required pattern="tt[a-z0-9]+" placeholder="tt1234567">
+            </div>
+            <div class="field-group">
+                <label>OG Image Cover Offset</label>
+                <input type="number" name="og_image_cover_offset" value="<?= h(isset($_POST['og_image_cover_offset']) ? $_POST['og_image_cover_offset'] : 50);?>" placeholder="50" min="0" max="100">
+            </div>
+            <!-- Hidden optional fields -->
             <input style="display: none" type="text" name="title" value="<?= h(post('title'));?>" placeholder="optional">
-        </td>
-        <td>
             <input style="display: none" type="text" name="slug" value="<?= h(post('slug'));?>" pattern="[a-z0-9\-]+" placeholder="optional">
-        </td>
-        <td>
             <input style="display: none" type="date" name="release_date" value="<?= h(post('release_date'));?>" placeholder="optional">
-        </td>
-        <td>
-            <input type="datetime-local" name="start_datetime" value="<?= h(post('start_datetime'));?>" required>
-        </td>
-        <td>
             <input style="display: none" type="number" name="duration" value="<?= h(post('duration'));?>" placeholder="0">
-        </td>
-        <td>
-            <input type="text" name="imdb_id" value="<?= h(post('imdb_id'));?>" required pattern="tt[a-z0-9]+">
-        </td>
-        <td>
             <input style="display: none" type="number" name="tmdb_id" value="<?= h(post('tmdb_id'));?>" placeholder="optional">
-        </td>
-        <td>
-            <input type="number" name="og_image_cover_offset" value="<?= h(isset($_POST['og_image_cover_offset']) ? $_POST['og_image_cover_offset'] : 50);?>" placeholder="optional" min="0" max="100">
-        </td>
-        <td>
-            <button type="submit" class="add">add</button>
-        </td>
-    </tr>
+        </div>
+        <div class="movie-card-actions">
+            <button type="submit" class="add">Add Movie</button>
+        </div>
+    </div>
 
-    <tr>
-        <td colspan="9"><hr></td>
-    </tr>
-
+    <!-- Existing movies -->
     <?php foreach ($movies as $movie) { ?>
-        <tr class="edit" data-id="<?= $movie['id'];?>">
-            <td><input type="text" name="title" value="<?= h($movie['title']);?>" required></td>
-            <td><input type="text" name="slug" value="<?= h($movie['slug']);?>" required pattern="[a-z0-9\-]+"></td>
-            <td><input type="date" name="release_date" value="<?= h($movie['release_date']);?>" required></td>
-            <td><input type="datetime-local" name="start_datetime" value="<?= h($movie['start_datetime']);?>" required></td>
-            <td><input type="number" name="duration" value="<?= h($movie['duration']);?>" required></td>
-            <td><input type="text" name="imdb_id" value="<?= h($movie['imdb_id']);?>" required pattern="tt[a-z0-9]+"></td>
-            <td><input type="number" name="tmdb_id" value="<?= h($movie['tmdb_id']);?>" required></td>
-            <td class="og-image-cover-offset">
-                <input type="number" name="og_image_cover_offset" value="<?= h($movie['og_image_cover_offset']);?>" min="0" max="100" required>
-                <a href="/media/covers/<?= $movie['imdb_id'];?>_ogimage.png" class="og-image-link" target="_blank">
-                    <?= icon("image-line");?>
-                </a>
-            </td>
-            <td>
-                <button type="submit" style="display: none;">edit</button>
-                <div class="button delete">delete</div>
-            </td>
-        </tr>
+        <div class="movie-card edit" data-id="<?= $movie['id'];?>">
+            <div class="movie-card-header">
+                <h3><?= h($movie['title']); ?></h3>
+                <div class="movie-actions">
+                    <button type="submit" style="display: none;">edit</button>
+                    <div class="button delete">delete</div>
+                </div>
+            </div>
+            <div class="movie-card-content">
+                <div class="field-group">
+                    <label>Title</label>
+                    <input type="text" name="title" value="<?= h($movie['title']);?>" required>
+                </div>
+                <div class="field-group">
+                    <label>Slug</label>
+                    <input type="text" name="slug" value="<?= h($movie['slug']);?>" required pattern="[a-z0-9\-]+">
+                </div>
+                <div class="field-group">
+                    <label>Release Date</label>
+                    <input type="date" name="release_date" value="<?= h($movie['release_date']);?>" required>
+                </div>
+                <div class="field-group">
+                    <label>Start Datetime</label>
+                    <input type="datetime-local" name="start_datetime" value="<?= h($movie['start_datetime']);?>" required>
+                </div>
+                <div class="field-group">
+                    <label>Duration (seconds)</label>
+                    <input type="number" name="duration" value="<?= h($movie['duration']);?>" required>
+                </div>
+                <div class="field-group">
+                    <label>IMDb ID</label>
+                    <input type="text" name="imdb_id" value="<?= h($movie['imdb_id']);?>" required pattern="tt[a-z0-9]+">
+                </div>
+                <div class="field-group">
+                    <label>TMDB ID</label>
+                    <input type="number" name="tmdb_id" value="<?= h($movie['tmdb_id']);?>" required>
+                </div>
+                <div class="field-group og-image-cover-offset">
+                    <label>OG Image Cover Offset</label>
+                    <div class="input-with-link">
+                        <input type="number" name="og_image_cover_offset" value="<?= h($movie['og_image_cover_offset']);?>" min="0" max="100" required>
+                        <a href="/media/covers/<?= $movie['imdb_id'];?>_ogimage.png" class="og-image-link" target="_blank">
+                            <?= icon("image-line");?>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
     <?php } ?>
-
-
-</table>
+</div>
 
 <script>
     ready(() => {
 
         // add
-        find('.movies .new button[type="submit"]').on("click", async () => {
-            const tr = find('.movies .new');
+        find('.movie-card.new button[type="submit"]').on("click", async () => {
+            const card = find('.movie-card.new');
             const result = await request("/backstage/movies", "POST", {
-                title: tr.find('[name=title]').value,
-                slug: tr.find('[name=slug]').value,
-                release_date: tr.find('[name=release_date]').value,
-                start_datetime: tr.find('[name=start_datetime]').value,
-                duration: tr.find('[name=duration]').value,
-                imdb_id: tr.find('[name=imdb_id]').value,
-                tmdb_id: tr.find('[name=tmdb_id]').value,
-                og_image_cover_offset: tr.find('[name=og_image_cover_offset]').value
+                title: card.find('[name=title]').value,
+                slug: card.find('[name=slug]').value,
+                release_date: card.find('[name=release_date]').value,
+                start_datetime: card.find('[name=start_datetime]').value,
+                duration: card.find('[name=duration]').value,
+                imdb_id: card.find('[name=imdb_id]').value,
+                tmdb_id: card.find('[name=tmdb_id]').value,
+                og_image_cover_offset: card.find('[name=og_image_cover_offset]').value
             }, "json");
 
             if (result.status === 'error') {
@@ -104,28 +115,28 @@
         });
 
         // delete
-        findAll('.edit .delete').forEach(el => {
+        findAll('.movie-card.edit .delete').forEach(el => {
             el.on('click', async () => {
                 if (confirm('Really?')) {
-                    await request("/backstage/movies/" + el.closest("tr").dataset.id, "DELETE");
+                    await request("/backstage/movies/" + el.closest(".movie-card").dataset.id, "DELETE");
                     location.reload();
                 }
             });
         });
 
         // edit
-        findAll('.edit input').forEach(el => {
+        findAll('.movie-card.edit input').forEach(el => {
             el.on('change', async () => {
-                const tr = el.closest('tr');
-                const result = await request("/backstage/movies/" + tr.dataset.id, "POST", {
-                    title: tr.find('[name=title]').value,
-                    slug: tr.find('[name=slug]').value,
-                    release_date: tr.find('[name=release_date]').value,
-                    start_datetime: tr.find('[name=start_datetime]').value,
-                    duration: tr.find('[name=duration]').value,
-                    imdb_id: tr.find('[name=imdb_id]').value,
-                    tmdb_id: tr.find('[name=tmdb_id]').value,
-                    og_image_cover_offset: tr.find('[name=og_image_cover_offset]').value
+                const card = el.closest('.movie-card');
+                const result = await request("/backstage/movies/" + card.dataset.id, "POST", {
+                    title: card.find('[name=title]').value,
+                    slug: card.find('[name=slug]').value,
+                    release_date: card.find('[name=release_date]').value,
+                    start_datetime: card.find('[name=start_datetime]').value,
+                    duration: card.find('[name=duration]').value,
+                    imdb_id: card.find('[name=imdb_id]').value,
+                    tmdb_id: card.find('[name=tmdb_id]').value,
+                    og_image_cover_offset: card.find('[name=og_image_cover_offset]').value
                 }, "json");
 
                 // example: {"status":"error","errors":{"foo":["bar"],"bar":["baakjhsjh"]}}

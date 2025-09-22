@@ -32,6 +32,128 @@
   .site {
     max-width: 1500px;
 
+    // Movies grid layout
+    .movies-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 20px;
+      margin: 20px 0;
+    }
+
+    .movie-card {
+      background: rgba($color-border, 0.1);
+      border: 1px solid $color-border;
+      border-radius: $border-radius-small;
+      padding: 20px;
+
+      &.new {
+        border-color: $color-green;
+        background: rgba($color-green, 0.05);
+      }
+
+      .movie-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        border-bottom: 1px solid $color-border;
+        padding-bottom: 10px;
+
+        h3 {
+          margin: 0;
+          font-size: 1.2em;
+          color: $color-text;
+        }
+
+        .movie-actions {
+          display: flex;
+          gap: 10px;
+
+
+
+          .button {
+            color: $color-red;
+            cursor: pointer;
+            font-size: 0.9em;
+            text-align: right;
+
+            &:hover {
+              opacity: 0.7;
+            }
+          }
+        }
+      }
+
+      .movie-card-content {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+
+        .field-group {
+          display: flex;
+          flex-direction: column;
+
+          &.og-image-cover-offset {
+            .input-with-link {
+              display: flex;
+              align-items: center;
+              gap: 5px;
+
+              input {
+                flex: 1;
+              }
+
+              .og-image-link {
+                display: inline-block;
+                svg {
+                  width: 16px;
+                  height: 16px;
+                }
+              }
+            }
+          }
+
+          label {
+            font-size: 0.85em;
+            color: rgba($color-text, 0.8);
+            margin-bottom: 5px;
+            font-weight: 500;
+          }
+
+          input {
+            margin-bottom: 0;
+          }
+        }
+
+        // Make some fields span full width
+        .field-group:nth-child(1),
+        .field-group:nth-child(2) {
+          grid-column: span 2;
+        }
+      }
+
+      .movie-card-actions {
+        margin-top: 20px;
+        text-align: center;
+
+        button {
+          background: $color-green;
+          color: white;
+          border: none;
+          padding: 10px 20px;
+          border-radius: $border-radius-small;
+          cursor: pointer;
+          font-size: 1em;
+          width: auto;
+
+          &:hover {
+            opacity: 0.8;
+          }
+        }
+      }
+    }
+
+    // Legacy table styles (keeping for compatibility if needed)
     table {
       width: 100%;
       margin: 0 -5px;
@@ -84,9 +206,6 @@
           }
         }
       }
-
-
-
     }
   }
 

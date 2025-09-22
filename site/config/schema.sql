@@ -35,6 +35,7 @@ CREATE TABLE `movies` (
   `tmdb_id` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,
   `toot_count` int DEFAULT '0',
   `og_image_cover_offset` int DEFAULT '50',
+  `extra_code` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=135 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
