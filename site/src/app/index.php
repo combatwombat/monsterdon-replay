@@ -139,7 +139,13 @@ $app->get("/export-movies/{format}", function($format) {
         $csv = "Title;Year;Duration;Watched On;Toots;IMDb;TMDB\n";
 
         foreach ($movies as $movie) {
-            $csvLine = $movie['title'] . ";" . substr($movie['release_date'], 0, 4) . ";" . trim(formatDuration($movie['duration'])) . ";" . substr($movie['start_datetime'], 0, 10) . ";" . $movie['toot_count'] . ";https://www.imdb.com/title/" . $movie['imdb_id'] . ";https://www.themoviedb.org/movie/" . $movie['tmdb_id'] . "\n";
+
+            $startDatetimeMinus1Day = new \DateTime($movie['start_datetime']);
+            $startDatetimeMinus1Day->sub(new \DateInterval('P1D'));
+
+
+            $csvLine = $movie['title'] . ";" . substr($movie['release_date'], 0, 4) . ";" . trim(formatDuration($movie['duration'])) . ";" . $startDatetimeMinus1Day->format("Y-m-d")
+                . ";" . $movie['toot_count'] . ";https://www.imdb.com/title/" . $movie['imdb_id'] . ";https://www.themoviedb.org/movie/" . $movie['tmdb_id'] . "\n";
 
             $csv .= $csvLine;
         }
