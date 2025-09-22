@@ -126,6 +126,39 @@ $app->get("/temp", function() {
 */
 
 
+$app->get("/export-movies/{format}", function($format) {
+    $movies = $this->db->fetchAll("SELECT title, release_date, start_datetime, duration, imdb_id, tmdb_id, toot_count FROM movies ORDER BY start_datetime DESC");
+
+    $allowedFormats = ["csv", "json",];
+    if (!in_array($format, $allowedFormats)) {
+        $this->view("404", ['header' => ['bodyClass' => 'error-404', 'title' => 'Format not found']]);
+        return;
+    }
+
+    if ($format == "csv") {
+        $csv = "Title;Year;Duration;Watched On;Toots;IMDb;TMDB\n";
+
+        foreach ($movies as $movie) {
+            $csvLine = $movie['title'] . ";" . substr($movie['release_date'], 0, 4) . ";" . trim(formatDuration($movie['duration'])) . ";" . substr($movie['start_datetime'], 0, 10) . ";" . $movie['toot_count'] . ";https://www.imdb.com/title/" . $movie['imdb_id'] . ";https://www.themoviedb.org/movie/" . $movie['tmdb_id'] . "\n";
+
+            $csv .= $csvLine;
+        }
+
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment; filename="monsterdon-movies.csv"');
+        echo $csv;
+        exit;
+    } else if ($format == "json") {
+        header('Content-Type: application/json');
+        header('Content-Disposition: attachment; filename="monsterdon-movies.json"');
+        echo json_encode($movies, JSON_PRETTY_PRINT);
+        exit;
+    }
+
+});
+
+
+
 $app->get("/{slug}/subtitles", "Movies@subtitles");
 
 
@@ -135,6 +168,7 @@ $app->get("/{slug}", "Movies@show");
 $app->onError(404, function() {
     $this->view("404", ['header' => ['bodyClass' => 'error-404', 'title' => 'Movie not found']]);
 });
+
 
 
 
