@@ -1,3 +1,30 @@
+// DOM helper functions
+// example usage:
+/*
+ready(() => {
+    console.log('DOM is ready');
+    const element = find(".selector"); // shortcut for querySelector
+    const elements = element.findAll(".another .selector"); // shortcut for querySelectorAll on an element
+    element.on('click', (e) => { // shortcut for addEventListener
+        e.preventDefault();
+        console.log('clicked', e);
+    });
+    on('click', '.list-item', (e) => { // event delegation for possibly live changing elements
+        console.log('clicked on list item', e.target);
+    });
+    element.hide(); // hide element
+    element.show(); // show element
+    const newElement = create('<div class="new-element">Hello World</div>'); // create element from HTML string
+    document.body.appendChild(newElement); // append to body
+    console.log(formatTime(3661)); // format seconds to H:MM:SS
+
+    request('/api/data', 'POST', {key: 'value'}, 'json').then(response => {
+        console.log('API response:', response);
+    }
+});
+
+ */
+
 function ready(fn) {
     if (document.readyState != 'loading') {
         fn();
