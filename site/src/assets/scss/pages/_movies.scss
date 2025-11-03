@@ -54,7 +54,7 @@
         }
       }
 
-      &.is-in-future {
+      &.is-in-future:not(.is-running) {
 
         opacity: 0.5;
 
