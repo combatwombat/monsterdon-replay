@@ -4,5 +4,7 @@
     <a href="/privacy">Privacy Policy</a>
 </footer>
 </div>
+<!-- 100% privacy-first analytics -->
+<script async src="https://scripts.simpleanalyticscdn.com/latest.js"></script>
 </body>
 </html>
