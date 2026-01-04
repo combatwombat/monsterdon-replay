@@ -220,7 +220,7 @@
   }
 
   @media (max-width: 500px) {
-    top: calc(100dvh - 50px - env(safe-area-inset-bottom));
+    top: calc(100dvh - 80px - env(safe-area-inset-bottom));
   }
 
   @media (max-width: #{$small-player-breakpoint}) {
