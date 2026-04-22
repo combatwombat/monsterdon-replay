@@ -77,61 +77,88 @@ class BestOf extends Controller {
 
         $whereSQL = implode(" AND ", $where);
 
-        // Total (pre-filter). TootFilter may drop a few, so count is approximate for a single-movie view.
-        $totalRow   = $this->db->fetch("SELECT COUNT(*) AS c FROM toots t WHERE $whereSQL", $params);
-        $totalCount = (int)($totalRow['c'] ?? 0);
-        $totalPages = max(1, (int)ceil($totalCount / $pageSize));
-
-        // Over-fetch a bit when TootFilter applies so filtered-out toots don't thin the page.
-        $fetchLimit = $filter && $filter['mode'] !== 'none' ? $pageSize * 2 : $pageSize;
-
-        $rows = $this->db->fetchAll(
-            "SELECT t.id, t.data, t.created_at, t.favourites_count, t.reblogs_count, t.replies_count,
-                    t.has_image, t.has_video, t.has_audio
-             FROM toots t
-             WHERE $whereSQL
-             ORDER BY $orderBy DESC, t.created_at DESC
-             LIMIT $fetchLimit OFFSET $offset",
-            $params
-        );
-
         // All movies: used both for the dropdown selector (newest first) and, on the
         // overall view, to tag each toot with its owning movie.
         $allMovies = $this->db->fetchAll(
             "SELECT slug, title, start_datetime, duration, secondary_feature FROM movies ORDER BY start_datetime DESC"
         );
 
-        // For toot → movie assignment, walk oldest-first so the first window match wins.
-        $moviesAsc = $slug === null ? array_reverse($allMovies) : null;
+        // Cache: key by slug + normalized query string. Value holds the heavy stuff
+        // (filtered toots + total count); light data (movie, allMovies, pagination)
+        // is recomputed every request.
+        $cacheKey = $this->cacheKey($slug, $sort, $media, $from, $to, $page);
+        $ttl      = $this->cacheTTL($slug, $movie, $allMovies, $from, $to);
 
-        $toots = [];
-        $kept  = 0;
-        foreach ($rows as $row) {
-            $data = json_decode($row['data'], true);
+        $toots      = null;
+        $totalCount = null;
 
-            if ($filter && !TootFilter::matches($data, $filter)) continue;
+        $cached = $this->db->getByName("cache", $cacheKey);
+        if ($cached && (time() - strtotime($cached['created_at'])) < $ttl) {
+            $payload    = @unserialize($cached['value']);
+            if (is_array($payload) && isset($payload['toots'], $payload['totalCount'])) {
+                $toots      = $payload['toots'];
+                $totalCount = (int)$payload['totalCount'];
+            }
+        }
 
-            $row['parsed']      = $data;
-            $row['movie_slug']  = null;
-            $row['movie_title'] = null;
+        if ($toots === null) {
+            // Total (pre-filter). TootFilter may drop a few, so count is approximate for a single-movie view.
+            $totalRow   = $this->db->fetch("SELECT COUNT(*) AS c FROM toots t WHERE $whereSQL", $params);
+            $totalCount = (int)($totalRow['c'] ?? 0);
 
-            if ($moviesAsc) {
-                $tootTs = strtotime($row['created_at']);
-                foreach ($moviesAsc as $m) {
-                    $mStart = strtotime($m['start_datetime']);
-                    $mEnd   = $mStart + (int)$m['duration'] + (int)$this->config("aftershowDuration");
-                    if ($tootTs >= $mStart && $tootTs <= $mEnd) {
-                        $row['movie_slug']  = $m['slug'];
-                        $row['movie_title'] = $m['title'];
-                        break;
+            // Over-fetch a bit when TootFilter applies so filtered-out toots don't thin the page.
+            $fetchLimit = $filter && $filter['mode'] !== 'none' ? $pageSize * 2 : $pageSize;
+
+            $rows = $this->db->fetchAll(
+                "SELECT t.id, t.data, t.created_at, t.favourites_count, t.reblogs_count, t.replies_count,
+                        t.has_image, t.has_video, t.has_audio
+                 FROM toots t
+                 WHERE $whereSQL
+                 ORDER BY $orderBy DESC, t.created_at DESC
+                 LIMIT $fetchLimit OFFSET $offset",
+                $params
+            );
+
+            // For toot → movie assignment, walk oldest-first so the first window match wins.
+            $moviesAsc = $slug === null ? array_reverse($allMovies) : null;
+
+            $toots = [];
+            $kept  = 0;
+            foreach ($rows as $row) {
+                $data = json_decode($row['data'], true);
+
+                if ($filter && !TootFilter::matches($data, $filter)) continue;
+
+                $row['parsed']      = $data;
+                $row['movie_slug']  = null;
+                $row['movie_title'] = null;
+
+                if ($moviesAsc) {
+                    $tootTs = strtotime($row['created_at']);
+                    foreach ($moviesAsc as $m) {
+                        $mStart = strtotime($m['start_datetime']);
+                        $mEnd   = $mStart + (int)$m['duration'] + (int)$this->config("aftershowDuration");
+                        if ($tootTs >= $mStart && $tootTs <= $mEnd) {
+                            $row['movie_slug']  = $m['slug'];
+                            $row['movie_title'] = $m['title'];
+                            break;
+                        }
                     }
                 }
+
+                $toots[] = $row;
+                $kept++;
+                if ($kept >= $pageSize) break;
             }
 
-            $toots[] = $row;
-            $kept++;
-            if ($kept >= $pageSize) break;
+            $this->db->delete("cache", ["name" => $cacheKey]);
+            $this->db->insert("cache", [
+                'name'  => $cacheKey,
+                'value' => serialize(['toots' => $toots, 'totalCount' => $totalCount]),
+            ]);
         }
+
+        $totalPages = max(1, (int)ceil($totalCount / $pageSize));
 
         $data = [
             'header' => [
@@ -156,6 +183,56 @@ class BestOf extends Controller {
         header("Cache-Control: max-age=3600, public");
 
         $this->view("best-of/list", $data);
+    }
+
+    private function cacheKey($slug, $sort, $media, $from, $to, $page) {
+        $parts = [
+            'slug'  => $slug ?? 'all',
+            'sort'  => $sort,
+            'media' => $media,
+            'from'  => $from ?? '',
+            'to'    => $to   ?? '',
+            'page'  => $page,
+        ];
+        return "best-of:" . ($slug ?? 'all') . ":" . md5(json_encode($parts));
+    }
+
+    /**
+     * TTL in seconds. Per-movie: based on that movie's age since end. Overall: based on
+     * the youngest movie in scope (or all movies if no date range), with a 1-day floor
+     * since accuracy matters less on the overall view than keeping it fast.
+     */
+    private function cacheTTL($slug, $movie, $allMovies, $from, $to) {
+        $aftershow = (int)$this->config("aftershowDuration");
+
+        if ($slug !== null && $movie) {
+            $age = time() - strtotime($movie['start_datetime']) - (int)$movie['duration'] - $aftershow;
+            return $this->ttlForAge($age);
+        }
+
+        // Overall: youngest movie whose window overlaps the date range (or youngest overall).
+        $fromTs = $from ? strtotime($from . " 00:00:00") : null;
+        $toTs   = $to   ? strtotime($to   . " 23:59:59") : null;
+
+        $youngestEnd = null;
+        foreach ($allMovies as $m) {
+            $mStart = strtotime($m['start_datetime']);
+            $mEnd   = $mStart + (int)$m['duration'] + $aftershow;
+            if ($fromTs !== null && $mEnd   < $fromTs) continue;
+            if ($toTs   !== null && $mStart > $toTs)   continue;
+            if ($youngestEnd === null || $mEnd > $youngestEnd) $youngestEnd = $mEnd;
+        }
+
+        if ($youngestEnd === null) return 30 * 86400;
+
+        return max(86400, $this->ttlForAge(time() - $youngestEnd));
+    }
+
+    private function ttlForAge($ageSeconds) {
+        if ($ageSeconds < 12 * 3600)  return 3600;       // < 12h:  1h
+        if ($ageSeconds < 7  * 86400) return 6 * 3600;   // < 7d:   6h
+        if ($ageSeconds < 30 * 86400) return 86400;      // < 30d:  1d
+        return 30 * 86400;                               // >= 30d: 30d
     }
 
     private function parseDate($s) {

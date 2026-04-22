@@ -180,8 +180,19 @@ browser, separate from the replay timeline. Controller `BestOf.php`, view
   `pageSize * 2` so filtered-out toots don't thin a page. The overall view
   does not apply `TootFilter`; each toot is tagged with its owning movie via
   a single pass over the movies list (oldest-first, first window match wins).
-- No caching yet — server-rendered fresh each request. If it ever gets slow,
-  the `cache` table is the place (keyed by the full query string).
+- Cached via the `cache` table. Key: `best-of:{slug|all}:{md5 of normalized
+  params}` (sort/media/from/to/page). Value: `serialize(['toots' => …,
+  'totalCount' => …])` — only the heavy part; `movie`, `allMovies`, and
+  pagination math are recomputed each request, so the view can be tweaked
+  without busting the cache.
+- TTL is age-based. Per-movie view uses the movie's age since end:
+  `<12 h → 1 h`, `<7 d → 6 h`, `<30 d → 1 d`, else `30 d`. Overall view uses
+  the youngest movie in scope (or overall if no date range), with a **1-day
+  floor** — accuracy matters less than staying fast for the handful of
+  visitors. Helpers: `BestOf::cacheKey()`, `cacheTTL()`, `ttlForAge()`.
+- No explicit invalidation (unlike `toots-{slug}`); entries just expire.
+  A cache-fill worker that pre-warms newest movies × sort/media combos is a
+  future nice-to-have.
 - Pagination markup matches the home list and uses the shared
   `parts/_pagination.scss`. Toot styles are shared via `parts/_toot.scss`
   (lifted out of `_movie.scss` for reuse across `.page-movie` and
