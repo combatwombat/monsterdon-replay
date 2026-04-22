@@ -1,5 +1,6 @@
 
 <footer>
+    <a href="/best-of">Best of</a> &middot;
     <a href="/about">About</a> &middot;
     <a href="/privacy">Privacy Policy</a>
 </footer>
