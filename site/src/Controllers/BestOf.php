@@ -168,6 +168,7 @@ class BestOf extends Controller {
                 'logoSrc'   => '/img/logo-best-of.svg',
                 'scopeTitle' => $movie ? $movie['title'] : 'All movies',
                 'backgroundImage' => $movie ? 'url(/media/covers/' . $movie['imdb_id'] . '.jpg)' : null,
+                'ogImage'   => $movie ? "https://" . $this->config("domain") . '/media/covers/' . $movie['imdb_id'] . '_ogimage.png' : null,
             ],
             'movie'       => $movie,
             'allMovies'   => $allMovies,
