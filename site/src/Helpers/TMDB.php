@@ -128,6 +128,9 @@ class TMDB extends \RTF\Base {
         $resizedCover = imagecreatetruecolor($newCoverWidth, $newCoverHeight);
         imagecopyresampled($resizedCover, $coverImage, 0, 0, 0, 0, $newCoverWidth, $newCoverHeight, $coverWidth, $coverHeight);
 
+        // Boost saturation of the cover only (GD has no built-in saturation filter)
+        $this->boostSaturation($resizedCover, 1.4);
+
         // Apply the resized cover to the new image with 12% opacity
         imagecopymerge($newImage, $resizedCover, 0, $yOffset, 0, 0, $newCoverWidth, $newCoverHeight, 12);
 
@@ -144,6 +147,25 @@ class TMDB extends \RTF\Base {
         imagedestroy($newImage);
         imagedestroy($resizedCover);
 
+    }
+
+
+    private function boostSaturation($image, $factor) {
+        $w = imagesx($image);
+        $h = imagesy($image);
+        for ($y = 0; $y < $h; $y++) {
+            for ($x = 0; $x < $w; $x++) {
+                $rgb = imagecolorat($image, $x, $y);
+                $r = ($rgb >> 16) & 0xFF;
+                $g = ($rgb >> 8) & 0xFF;
+                $b = $rgb & 0xFF;
+                $gray = 0.3 * $r + 0.59 * $g + 0.11 * $b;
+                $nr = (int) max(0, min(255, $gray + ($r - $gray) * $factor));
+                $ng = (int) max(0, min(255, $gray + ($g - $gray) * $factor));
+                $nb = (int) max(0, min(255, $gray + ($b - $gray) * $factor));
+                imagesetpixel($image, $x, $y, ($nr << 16) | ($ng << 8) | $nb);
+            }
+        }
     }
 
 
