@@ -7,6 +7,8 @@ use RTF\Controller;
 
 class Movies extends Controller {
 
+    const PAGE_SIZE = 10;
+
 
     public function __construct($container) {
         parent::__construct($container);
@@ -14,7 +16,23 @@ class Movies extends Controller {
 
     public function list() {
 
-        $allMovies = $this->db->fetchAll("SELECT * FROM movies ORDER BY start_datetime DESC");
+        $includeSecondaryFeatures = !empty($_COOKIE['include_secondary_features']);
+
+        $where = $includeSecondaryFeatures ? "" : "WHERE secondary_feature = 0";
+
+        $totalRow = $this->db->fetch("SELECT COUNT(*) AS c FROM movies $where");
+        $totalCount = (int)($totalRow['c'] ?? 0);
+
+        $pageSize = self::PAGE_SIZE;
+        $totalPages = max(1, (int)ceil($totalCount / $pageSize));
+
+        $page = max(1, (int)($_GET['page'] ?? 1));
+        if ($page > $totalPages) {
+            $page = $totalPages;
+        }
+        $offset = ($page - 1) * $pageSize;
+
+        $allMovies = $this->db->fetchAll("SELECT * FROM movies $where ORDER BY start_datetime DESC LIMIT $pageSize OFFSET $offset");
 
         $isLoggedIn = $this->auth->isLoggedIn();
 
@@ -54,7 +72,11 @@ class Movies extends Controller {
             'header' => [
                 'bodyClass' => 'page-movies',
             ],
-            'movies' => $movies
+            'movies' => $movies,
+            'includeSecondaryFeatures' => $includeSecondaryFeatures,
+            'totalCount' => $totalCount,
+            'page' => $page,
+            'totalPages' => $totalPages,
         ];
 
         # cache for 1 hour

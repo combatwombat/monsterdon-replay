@@ -128,8 +128,8 @@ class TMDB extends \RTF\Base {
         $resizedCover = imagecreatetruecolor($newCoverWidth, $newCoverHeight);
         imagecopyresampled($resizedCover, $coverImage, 0, 0, 0, 0, $newCoverWidth, $newCoverHeight, $coverWidth, $coverHeight);
 
-        // Apply the resized cover to the new image with 6% opacity
-        imagecopymerge($newImage, $resizedCover, 0, $yOffset, 0, 0, $newCoverWidth, $newCoverHeight, 6);
+        // Apply the resized cover to the new image with 12% opacity
+        imagecopymerge($newImage, $resizedCover, 0, $yOffset, 0, 0, $newCoverWidth, $newCoverHeight, 12);
 
         // Copy foreground
         imagecopy($newImage, $fgImage, 0, 0, 0, 0, $width, $height);

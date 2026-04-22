@@ -10,7 +10,7 @@ $movie['start_datetime'] = $startDatetime->format('Y-m-d H:i:s');
 <?php $this->include("parts/header", $header); ?>
 
 
-<div class="movie state-<?php echo $movie['is_running'] || !$movie['is_in_future'] ? 'has-toots' : 'coming-soon' ;?>">
+<div class="movie state-<?php echo $movie['is_running'] || !$movie['is_in_future'] ? 'has-toots' : 'coming-soon' ;?> <?= !empty($movie['secondary_feature']) ? 'is-secondary-feature' : '';?>">
 
     <div class="movie-info">
         <div class="col col-cover">

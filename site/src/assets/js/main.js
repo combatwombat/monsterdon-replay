@@ -1,5 +1,16 @@
 ready(() => {
 
+    if (find('.page-movies')) {
+        const includeSecondary = find('#include-secondary-features');
+        if (includeSecondary) {
+            includeSecondary.on('change', () => {
+                const value = includeSecondary.checked ? '1' : '0';
+                document.cookie = 'include_secondary_features=' + value + '; path=/; max-age=31536000; SameSite=Lax';
+                window.location.href = '/';
+            });
+        }
+    }
+
     if (find('.page-movie')) {
 
         // show / hide info box
