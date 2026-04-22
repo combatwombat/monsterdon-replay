@@ -75,8 +75,8 @@ $pageUrl = function($p) use ($basePath, $qs) {
                 <fieldset class="filter-group">
                     <legend>Sort by</legend>
                     <?php foreach ([
-                        'boosts'  => 'Boosts',
                         'favs'    => 'Favorites',
+                        'boosts'  => 'Boosts',
                         'replies' => 'Replies',
                         'score'   => 'Combined score',
                     ] as $k => $label): ?>
@@ -193,8 +193,8 @@ $pageUrl = function($p) use ($basePath, $qs) {
 
                             <div class="toot-footer">
                                 <div class="toot-stats">
-                                    <span class="stat stat-boosts" title="Boosts">&uarr; <?= number_format((int)$t['reblogs_count']) ?></span>
                                     <span class="stat stat-favs" title="Favorites">★ <?= number_format((int)$t['favourites_count']) ?></span>
+                                    <span class="stat stat-boosts" title="Boosts">&uarr; <?= number_format((int)$t['reblogs_count']) ?></span>
                                     <span class="stat stat-replies" title="Replies">&larr; <?= number_format((int)$t['replies_count']) ?></span>
                                     <?php if (!empty($t['movie_slug'])): ?>
                                         <a class="stat stat-movie" href="/<?= h($t['movie_slug']) ?>"><?= h($t['movie_title']) ?></a>
