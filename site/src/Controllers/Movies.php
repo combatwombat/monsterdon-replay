@@ -7,7 +7,7 @@ use RTF\Controller;
 
 class Movies extends Controller {
 
-    const PAGE_SIZE = 10;
+    const PAGE_SIZE = 100;
 
 
     public function __construct($container) {
