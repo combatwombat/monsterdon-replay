@@ -172,19 +172,22 @@ browser, separate from the replay timeline. Controller `BestOf.php`, view
   overall view only), `page`. Page size = `BestOf::PAGE_SIZE`.
 - `score` = `favourites_count + 2*reblogs_count + replies_count`.
 - Sidebar has a movie scope `<select>` (native typeahead) at the top — "All
-  movies" plus every movie newest-first, with 🐸 after secondary features
-  (#wrongfrogs). Changing it navigates and preserves `sort`/`media`; `from`/`to`
-  are dropped when scoping to a specific movie.
+  movies" plus every past movie newest-first (future movies excluded — no
+  toots yet), with 🐸 after secondary features (#wrongfrogs). Changing it
+  navigates and preserves `sort`/`media`; `from`/`to` are dropped when scoping
+  to a specific movie.
 - Sidebar collapses behind a "Filters" button below 800px.
 - Per-movie view runs results through `TootFilter` in PHP and over-fetches
   `pageSize * 2` so filtered-out toots don't thin a page. The overall view
   does not apply `TootFilter`; each toot is tagged with its owning movie via
   a single pass over the movies list (oldest-first, first window match wins).
 - Cached via the `cache` table. Key: `best-of:{slug|all}:{md5 of normalized
-  params}` (sort/media/from/to/page). Value: `serialize(['toots' => …,
+  params}` (sort/media/from/to/page). Value: `json_encode(['toots' => …,
   'totalCount' => …])` — only the heavy part; `movie`, `allMovies`, and
   pagination math are recomputed each request, so the view can be tweaked
-  without busting the cache.
+  without busting the cache. JSON (not `serialize`) because `cache.value` is
+  `utf8mb4 longtext` and serialized PHP can contain non-UTF-8 bytes that get
+  mangled on write.
 - TTL is age-based. Per-movie view uses the movie's age since end:
   `<12 h → 1 h`, `<7 d → 6 h`, `<30 d → 1 d`, else `30 d`. Overall view uses
   the youngest movie in scope (or overall if no date range), with a **1-day
