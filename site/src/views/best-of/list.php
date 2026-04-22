@@ -13,7 +13,7 @@
  * @var int        $totalCount
  */
 
-$this->include("parts/header", $header);
+$this->include("parts/header-best-of", $header);
 
 $qs = function(array $overrides = []) use ($sort, $media, $from, $to) {
     $params = array_filter([
@@ -52,10 +52,6 @@ $pageUrl = function($p) use ($basePath, $qs) {
 ?>
 
 <div class="content page-best-of-content">
-
-    <h1 class="best-of-title">
-        <?= $movie ? 'Best of <em>' . h($movie['title']) . '</em>' : 'Best of #monsterdon' ?>
-    </h1>
 
     <button class="filters-toggle" type="button" aria-expanded="false">Filters</button>
 
@@ -129,10 +125,11 @@ $pageUrl = function($p) use ($basePath, $qs) {
         </aside>
 
         <main class="results">
+            <?php /*
             <div class="results-meta">
                 <?= number_format($totalCount) ?> toot<?= $totalCount === 1 ? '' : 's' ?>
-                <?php if (!$movie): ?> · <a href="/" class="scope-link">All movies</a><?php endif; ?>
             </div>
+            */ ?>
 
             <?php if (empty($toots)): ?>
                 <div class="empty">No toots match these filters.</div>
@@ -149,9 +146,6 @@ $pageUrl = function($p) use ($basePath, $qs) {
                                 <div class="col col-name">
                                     <div class="display-name"><?= h($data['account']['display_name']) ?></div>
                                     <div class="acct"><?= h($data['account']['acct']) ?></div>
-                                </div>
-                                <div class="col col-created_at">
-                                    <?= (new DateTime($t['created_at']))->format('Y-m-d') ?>
                                 </div>
                             </a>
 
@@ -197,13 +191,18 @@ $pageUrl = function($p) use ($basePath, $qs) {
                                 </div>
                             <?php endif; ?>
 
-                            <div class="toot-stats">
-                                <span class="stat stat-boosts" title="Boosts">↻ <?= number_format((int)$t['reblogs_count']) ?></span>
-                                <span class="stat stat-favs" title="Favorites">★ <?= number_format((int)$t['favourites_count']) ?></span>
-                                <span class="stat stat-replies" title="Replies">↩ <?= number_format((int)$t['replies_count']) ?></span>
-                                <?php if (!empty($t['movie_slug'])): ?>
-                                    <a class="stat stat-movie" href="/<?= h($t['movie_slug']) ?>"><?= h($t['movie_title']) ?></a>
-                                <?php endif; ?>
+                            <div class="toot-footer">
+                                <div class="toot-stats">
+                                    <span class="stat stat-boosts" title="Boosts">&uarr; <?= number_format((int)$t['reblogs_count']) ?></span>
+                                    <span class="stat stat-favs" title="Favorites">★ <?= number_format((int)$t['favourites_count']) ?></span>
+                                    <span class="stat stat-replies" title="Replies">&larr; <?= number_format((int)$t['replies_count']) ?></span>
+                                    <?php if (!empty($t['movie_slug'])): ?>
+                                        <a class="stat stat-movie" href="/<?= h($t['movie_slug']) ?>"><?= h($t['movie_title']) ?></a>
+                                    <?php endif; ?>
+                                </div>
+                                <div class="toot-created_at">
+                                    <?= formatDateTime($t['created_at'], "d MMM yyyy HH:mm:ss") ?>
+                                </div>
                             </div>
                         </article>
                     <?php endforeach; ?>

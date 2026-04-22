@@ -16,12 +16,12 @@
         <div class="col col-middle">
             <h1 class="logo">
                 <a href="/">
-                    <img src="/img/logo.svg" alt="#monsterdon replay">
+                    <img src="<?= !empty($logoSrc) ? $logoSrc : '/img/logo.svg' ?>" alt="#monsterdon replay">
                 </a>
             </h1>
         </div>
         <div class="col col-right">
-            <?php if (!empty($backLink)) { ?>
+            <?php if (!empty($showInfo)) { ?>
                 <a href="#" class="open-movie-info">
                     <?= icon('information-2-line');?>
                 </a>

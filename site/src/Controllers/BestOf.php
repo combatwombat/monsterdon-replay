@@ -137,7 +137,9 @@ class BestOf extends Controller {
             'header' => [
                 'bodyClass' => 'page-best-of',
                 'title'     => $movie ? 'Best of ' . $movie['title'] : 'Best of #monsterdon',
-                'backLink'  => $movie ? '/' . $movie['slug'] : '/',
+                'logoSrc'   => '/img/logo-best-of.svg',
+                'scopeTitle' => $movie ? $movie['title'] : 'All movies',
+                'backgroundImage' => $movie ? 'url(/media/covers/' . $movie['imdb_id'] . '.jpg)' : null,
             ],
             'movie'       => $movie,
             'allMovies'   => $allMovies,
