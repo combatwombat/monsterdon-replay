@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 use App\Helpers\ViewHelper;
+use App\Helpers\TootFilter;
 use RTF\Controller;
 
 class Movies extends Controller {
@@ -131,11 +132,16 @@ class Movies extends Controller {
 
         $dbToots = $this->db->fetchAll("SELECT * FROM toots WHERE visible = 1 AND created_at >= :start AND created_at <= :end ORDER BY created_at DESC", ["start" => $startDateTime->format("Y-m-d H:i:s"), "end" => $endDateTime->format("Y-m-d H:i:s")]);
 
+        $filter = TootFilter::forMovie($this->db, $movie);
 
         $toots = [];
 
         foreach ($dbToots as $dbToot) {
             $data = json_decode($dbToot['data'], true);
+
+            if (!TootFilter::matches($data, $filter)) {
+                continue;
+            }
 
             $timeDelta = strtotime($dbToot['created_at']) - strtotime($startDateTime->format("Y-m-d H:i:s"));
 
@@ -221,10 +227,16 @@ class Movies extends Controller {
 
         $dbToots = $this->db->fetchAll("SELECT * FROM toots WHERE visible = 1 AND created_at >= :start AND created_at <= :end ORDER BY created_at DESC", ["start" => $startDateTime->format("Y-m-d H:i:s"), "end" => $endDateTime->format("Y-m-d H:i:s")]);
 
+        $filter = TootFilter::forMovie($this->db, $movie);
+
         $toots = [];
 
         foreach ($dbToots as $dbToot) {
             $data = json_decode($dbToot['data'], true);
+
+            if (!TootFilter::matches($data, $filter)) {
+                continue;
+            }
 
             // time between start of movie and toot in seconds
             $timeDelta = strtotime($dbToot['created_at']) - strtotime($startDateTime->format("Y-m-d H:i:s"));

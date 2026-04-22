@@ -2,8 +2,54 @@
 
 namespace App\Controllers;
 
+use App\Helpers\TootFilter;
 
 class BackstageMovies extends \RTF\Controller {
+
+    /**
+     * Count toots that belong to a movie, after applying the secondary_feature filter.
+     */
+    private function countTootsForMovie($movie) {
+        $startDateTime = new \DateTime($movie['start_datetime']);
+        $endDateTime = clone $startDateTime;
+        $endDateTime->add(new \DateInterval('PT' . $movie['duration'] . 'S'));
+        $endDateTime->add(new \DateInterval('PT' . $this->config("aftershowDuration") . 'S'));
+
+        $rows = $this->db->fetchAll(
+            "SELECT data FROM toots WHERE visible = 1 AND created_at >= :start AND created_at <= :end",
+            ["start" => $startDateTime->format("Y-m-d H:i:s"), "end" => $endDateTime->format("Y-m-d H:i:s")]
+        );
+
+        $filter = TootFilter::forMovie($this->db, $movie);
+
+        if ($filter['mode'] === 'none' || empty($filter['tags'])) {
+            return count($rows);
+        }
+
+        $count = 0;
+        foreach ($rows as $row) {
+            $data = json_decode($row['data'], true);
+            if (TootFilter::matches($data, $filter)) {
+                $count++;
+            }
+        }
+        return $count;
+    }
+
+    /**
+     * Invalidate the toot-cache of the movie immediately preceding this one by
+     * start_datetime. Needed because a secondary_feature's filter_tags change
+     * the exclusion filter applied to the preceding main movie.
+     */
+    private function invalidatePrecedingMovieCache($movie) {
+        $prev = $this->db->fetch(
+            "SELECT slug FROM movies WHERE start_datetime < :start ORDER BY start_datetime DESC LIMIT 1",
+            ['start' => $movie['start_datetime']]
+        );
+        if ($prev) {
+            $this->db->deleteCacheByPrefix("toots-" . $prev['slug']);
+        }
+    }
 
     public function __construct($container) {
         parent::__construct($container);
@@ -33,7 +79,8 @@ class BackstageMovies extends \RTF\Controller {
             'duration' => ['data' => $_POST['duration'], 'rules' => 'numeric'],
             'imdb_id' => ['data' => $_POST['imdb_id'], 'rules' => 'required|regex:tt[a-z0-9]+'],
             'tmdb_id' => ['data' => $_POST['tmdb_id'], 'rules' => 'numeric'],
-            'og_image_cover_offset' => ['data' => $_POST['og_image_cover_offset'], 'rules' => 'numeric|min:0|max:100']
+            'og_image_cover_offset' => ['data' => $_POST['og_image_cover_offset'], 'rules' => 'numeric|min:0|max:100'],
+            'filter_tags' => ['data' => $_POST['filter_tags'] ?? '', 'rules' => 'regex:[a-zA-Z0-9_, ]*']
         ]);
 
 
@@ -69,18 +116,17 @@ class BackstageMovies extends \RTF\Controller {
             }
 
 
-            // calculate toot_count
+            $secondaryFeature = !empty($_POST['secondary_feature']) ? 1 : 0;
+            $filterTags = trim($_POST['filter_tags'] ?? '');
 
-            $startDateTime = new \DateTime($_POST['start_datetime']);
+            $movieRow = [
+                'start_datetime' => $_POST['start_datetime'],
+                'duration' => $_POST['duration'],
+                'secondary_feature' => $secondaryFeature,
+                'filter_tags' => $filterTags
+            ];
 
-            // add some seconds for aftershow toots
-            $endDateTime = clone $startDateTime;
-            $endDateTime->add(new \DateInterval('PT' . $_POST['duration'] . 'S'));
-            $endDateTime->add(new \DateInterval('PT' . $this->config("aftershowDuration") . 'S'));
-
-            $res = $this->db->fetch("SELECT COUNT(*) AS count FROM toots WHERE created_at >= :start AND created_at <= :end ORDER BY created_at ASC", ["start" => $startDateTime->format("Y-m-d H:i:s"), "end" => $endDateTime->format("Y-m-d H:i:s")]);
-
-            $tootCount = $res['count'];
+            $tootCount = $this->countTootsForMovie($movieRow);
 
             $res = $this->db->insert("movies", [
                 'title' => $_POST['title'],
@@ -92,12 +138,18 @@ class BackstageMovies extends \RTF\Controller {
                 'tmdb_id' => $_POST['tmdb_id'],
                 'toot_count' => $tootCount,
                 'og_image_cover_offset' => $_POST['og_image_cover_offset'],
+                'secondary_feature' => $secondaryFeature,
+                'filter_tags' => $filterTags,
                 'extra_code' => $_POST['extra_code'] ?? ''
             ]);
 
             $this->tmdb->saveImage($_POST['imdb_id'], 270, $_POST['og_image_cover_offset']);
 
-
+            // if this is a secondary feature, the preceding movie's cache
+            // needs to be rebuilt so its exclusion filter picks up our tags
+            if ($res && $secondaryFeature) {
+                $this->invalidatePrecedingMovieCache($movieRow);
+            }
 
 
             if (!$res) {
@@ -157,7 +209,8 @@ class BackstageMovies extends \RTF\Controller {
             'duration' => ['data' => $_POST['duration'], 'rules' => 'required|numeric'],
             'imdb_id' => ['data' => $_POST['imdb_id'], 'rules' => 'required|regex:tt[a-z0-9]+'],
             'tmdb_id' => ['data' => $_POST['tmdb_id'], 'rules' => 'required|numeric'],
-            'og_image_cover_offset' => ['data' => $_POST['og_image_cover_offset'], 'rules' => 'required|numeric|min:0|max:100']
+            'og_image_cover_offset' => ['data' => $_POST['og_image_cover_offset'], 'rules' => 'required|numeric|min:0|max:100'],
+            'filter_tags' => ['data' => $_POST['filter_tags'] ?? '', 'rules' => 'regex:[a-zA-Z0-9_, ]*']
         ]);
 
         if (!$errors) {
@@ -189,6 +242,9 @@ class BackstageMovies extends \RTF\Controller {
             }
 
 
+            $secondaryFeature = !empty($_POST['secondary_feature']) ? 1 : 0;
+            $filterTags = trim($_POST['filter_tags'] ?? '');
+
             $res = $this->db->update("movies", [
                 'title' => $_POST['title'],
                 'slug' => $_POST['slug'],
@@ -198,6 +254,8 @@ class BackstageMovies extends \RTF\Controller {
                 'imdb_id' => $_POST['imdb_id'],
                 'tmdb_id' => $_POST['tmdb_id'],
                 'og_image_cover_offset' => $_POST['og_image_cover_offset'],
+                'secondary_feature' => $secondaryFeature,
+                'filter_tags' => $filterTags,
                 'extra_code' => $_POST['extra_code'] ?? ''
             ], ['id' => $id]);
 
@@ -211,19 +269,11 @@ class BackstageMovies extends \RTF\Controller {
                 // delete toot-cache for new movie slug. perhaps necessary if we changed the slug. if not, it doesn't take too long
                 $this->db->deleteCacheByPrefix("toots-" . $movie['slug']);
 
-                // update toot count
+                // preceding movie's exclusion filter depends on this movie's
+                // secondary_feature flag and filter_tags, so invalidate that too
+                $this->invalidatePrecedingMovieCache($movie);
 
-                $startDateTime = new \DateTime($movie['start_datetime']);
-
-                // add some seconds for aftershow toots
-                $endDateTime = clone $startDateTime;
-                $endDateTime->add(new \DateInterval('PT' . $movie['duration'] . 'S'));
-                $endDateTime->add(new \DateInterval('PT' . $this->config("aftershowDuration") . 'S'));
-
-                $res = $this->db->fetch("SELECT COUNT(*) AS count FROM toots WHERE created_at >= :start AND created_at <= :end ORDER BY created_at ASC", ["start" => $startDateTime->format("Y-m-d H:i:s"), "end" => $endDateTime->format("Y-m-d H:i:s")]);
-
-                $tootCount = $res['count'];
-
+                $tootCount = $this->countTootsForMovie($movie);
                 $this->db->update("movies", ['toot_count' => $tootCount], ['id' => $id]);
             } else {
                 $errors['general'][] = 'error updating movie';

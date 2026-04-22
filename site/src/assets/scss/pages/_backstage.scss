@@ -12,6 +12,20 @@
     border-radius: $border-radius-small;
   }
 
+  input[type="checkbox"] {
+    -webkit-appearance: checkbox;
+    appearance: checkbox;
+    display: inline-block;
+    width: auto;
+    height: auto;
+    padding: 0;
+    margin: 0 6px 0 0;
+    vertical-align: middle;
+    background: none;
+    border: none;
+    border-radius: 0;
+  }
+
   button,
   .button {
     display: inline-block;
@@ -125,13 +139,11 @@
           }
         }
 
-        // Make some fields span full width
-        .field-group:nth-child(1),
-        .field-group:nth-child(2) {
-          grid-column: span 2;
+        // Width classes for field groups
+        .field-group.col-50 {
+          grid-column: span 1;
         }
-
-        // Extra code field styling
+        .field-group.col-100,
         .field-group-full {
           grid-column: span 2;
         }

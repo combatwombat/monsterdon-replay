@@ -9,17 +9,27 @@
             <h3>Add New Movie</h3>
         </div>
         <div class="movie-card-content">
-            <div class="field-group">
+            <div class="field-group col-100">
                 <label>Start Datetime *</label>
                 <input type="datetime-local" name="start_datetime" value="<?= h(post('start_datetime'));?>" required>
             </div>
-            <div class="field-group">
+            <div class="field-group col-100">
                 <label>IMDb ID *</label>
                 <input type="text" name="imdb_id" value="<?= h(post('imdb_id'));?>" required pattern="tt[a-z0-9]+" placeholder="tt1234567">
             </div>
-            <div class="field-group">
+            <div class="field-group col-50">
                 <label>OG Image Cover Offset</label>
                 <input type="number" name="og_image_cover_offset" value="<?= h(isset($_POST['og_image_cover_offset']) ? $_POST['og_image_cover_offset'] : 50);?>" placeholder="50" min="0" max="100">
+            </div>
+            <div class="field-group col-50">
+                <label>
+                    <input type="checkbox" name="secondary_feature" value="1" <?= !empty($_POST['secondary_feature']) ? 'checked' : '';?>>
+                    Secondary Feature (double feature encore)
+                </label>
+            </div>
+            <div class="field-group col-100">
+                <label>Filter Tags (comma-separated, without #)</label>
+                <input type="text" name="filter_tags" value="<?= h(isset($_POST['filter_tags']) ? $_POST['filter_tags'] : 'wrongfrogs,monsterdondoublefeature,monstermiru');?>" placeholder="wrongfrogs,monsterdondoublefeature,monstermiru">
             </div>
             <div class="field-group field-group-full extra-code-group">
                 <button type="button" class="toggle-extra-code">+ Extra Code</button>
@@ -51,35 +61,35 @@
                 </div>
             </div>
             <div class="movie-card-content">
-                <div class="field-group">
+                <div class="field-group col-100">
                     <label>Title</label>
                     <input type="text" name="title" value="<?= h($movie['title']);?>" required>
                 </div>
-                <div class="field-group">
+                <div class="field-group col-100">
                     <label>Slug</label>
                     <input type="text" name="slug" value="<?= h($movie['slug']);?>" required pattern="[a-z0-9\-]+">
                 </div>
-                <div class="field-group">
+                <div class="field-group col-50">
                     <label>Release Date</label>
                     <input type="date" name="release_date" value="<?= h($movie['release_date']);?>" required>
                 </div>
-                <div class="field-group">
+                <div class="field-group col-50">
                     <label>Start Datetime</label>
                     <input type="datetime-local" name="start_datetime" value="<?= h($movie['start_datetime']);?>" required>
                 </div>
-                <div class="field-group">
+                <div class="field-group col-50">
                     <label>Duration (seconds)</label>
                     <input type="number" name="duration" value="<?= h($movie['duration']);?>" required>
                 </div>
-                <div class="field-group">
+                <div class="field-group col-50">
                     <label>IMDb ID</label>
                     <input type="text" name="imdb_id" value="<?= h($movie['imdb_id']);?>" required pattern="tt[a-z0-9]+">
                 </div>
-                <div class="field-group">
+                <div class="field-group col-50">
                     <label>TMDB ID</label>
                     <input type="number" name="tmdb_id" value="<?= h($movie['tmdb_id']);?>" required>
                 </div>
-                <div class="field-group og-image-cover-offset">
+                <div class="field-group col-50 og-image-cover-offset">
                     <label>OG Image Cover Offset</label>
                     <div class="input-with-link">
                         <input type="number" name="og_image_cover_offset" value="<?= h($movie['og_image_cover_offset']);?>" min="0" max="100" required>
@@ -87,6 +97,16 @@
                             <?= icon("image-line");?>
                         </a>
                     </div>
+                </div>
+                <div class="field-group col-50">
+                    <label>
+                        <input type="checkbox" name="secondary_feature" value="1" <?= !empty($movie['secondary_feature']) ? 'checked' : '';?>>
+                        Secondary Feature
+                    </label>
+                </div>
+                <div class="field-group col-100">
+                    <label>Filter Tags (comma-separated, without #)</label>
+                    <input type="text" name="filter_tags" value="<?= h($movie['filter_tags']);?>" placeholder="wrongfrogs,monsterdondoublefeature,monstermiru">
                 </div>
                 <div class="field-group field-group-full extra-code-group">
                     <button type="button" class="toggle-extra-code"><?= !empty($movie['extra_code']) ? '- Extra Code' : '+ Extra Code'; ?></button>
@@ -130,6 +150,8 @@
                 imdb_id: card.find('[name=imdb_id]').value,
                 tmdb_id: card.find('[name=tmdb_id]').value,
                 og_image_cover_offset: card.find('[name=og_image_cover_offset]').value,
+                secondary_feature: card.find('[name=secondary_feature]').checked ? 1 : 0,
+                filter_tags: card.find('[name=filter_tags]').value,
                 extra_code: card.find('[name=extra_code]').value
             }, "json");
 
@@ -167,6 +189,8 @@
                     imdb_id: card.find('[name=imdb_id]').value,
                     tmdb_id: card.find('[name=tmdb_id]').value,
                     og_image_cover_offset: card.find('[name=og_image_cover_offset]').value,
+                    secondary_feature: card.find('[name=secondary_feature]').checked ? 1 : 0,
+                    filter_tags: card.find('[name=filter_tags]').value,
                     extra_code: card.find('[name=extra_code]').value
                 }, "json");
 
