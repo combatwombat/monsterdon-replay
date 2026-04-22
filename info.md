@@ -31,8 +31,9 @@ framework. Vanilla JS, SCSS compiled to CSS, full server-rendered pages.
 - `site/src/app/index.php` — entry point. Wires the container, defines
   **routes** and **CLI commands**.
 - `site/src/Controllers/`
-  - `Movies.php` — public frontend. `list` (home), `show` (single movie replay
-    page), `tootsJSON` (`/api/toots/{slug}` — cached JSON of toots for replay),
+  - `Movies.php` — public frontend. `list` (home; paginated via `?page=N`,
+    page size = `Movies::PAGE_SIZE`), `show` (single movie replay page),
+    `tootsJSON` (`/api/toots/{slug}` — cached JSON of toots for replay),
     `subtitles` (`.ass` file download).
   - `BackstageMovies.php` — authenticated CRUD at `/backstage/movies`.
 - `site/src/Helpers/`
@@ -97,6 +98,13 @@ preceding movie's cache (because the preceding main's exclusion filter depends
 on this movie's flag and tags). Backstage also recomputes `toot_count` through
 the same filter.
 
+On the home list, secondary features are **hidden by default**. A styled
+switch ("Include Double Features") above the list toggles them in; the
+preference is stored in the `include_secondary_features` cookie. The total
+movie count (respecting the filter) is shown on the right side of that row.
+Secondary-feature entries also get an `is-secondary-feature` class on both
+the list `<li>` and the show-page `<div class="movie">`.
+
 ## CLI
 
 Run from the repo root (or with the given paths):
@@ -141,41 +149,4 @@ Requires `sass`, `terser`, `fswatch` on PATH.
 
 ## TODO (next session)
 
-1. **Filter movies by `secondary_feature` on the frontend list.** A toggle or
-   filter on the home page so users can show/hide encores.
-
-2. **Paginate the movie list.** The list is getting long. Use a simple
-   centered paginator with this shape:
-
-   ```html
-   <div class="pagination">
-       <div class="col col-prev">
-           <div class="link-wrap">
-               <!-- optional: <a class="page-link prev"> with left arrow SVG + label -->
-           </div>
-       </div>
-       <div class="col col-all">
-           <select class="all-pages" onchange="window.location.href = '/page/' + this.value">
-               <option value="1" selected>1</option>
-               <option value="2">2</option>
-           </select>
-       </div>
-       <div class="col col-right">
-           <div class="link-wrap">
-               <a href="/page/2/" class="page-link next">
-                   <svg width="10" height="15" viewBox="0 0 10 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-                       <path d="M1.5 1L8 7.5L1.5 14" stroke="currentColor" stroke-width="2"></path>
-                   </svg>
-                   <span>Older</span>
-               </a>
-           </div>
-       </div>
-   </div>
-   ```
-
-   Prev link only rendered if there's a previous page, next link only if
-   there's a next. Selector always present.
-
-3. **CSS class on secondary-feature movies** in both the list view and the
-   single-movie info box. Robert plans to use this class later to add a
-   decorative element (frog image etc.) to encore entries.
+_(nothing queued)_
