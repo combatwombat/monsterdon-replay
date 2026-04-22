@@ -14,7 +14,7 @@
                         <label for="include-secondary-features" class="switch"></label>
                     </div>
                     <div class="col col-label">
-                        <label for="include-secondary-features">Include Double Features</label>
+                        <label for="include-secondary-features">Include Double Features <img src="/img/wrongfrog.png" draggable="false" alt="wrong frog"></label>
                     </div>
                 </div>
             </div>

@@ -25,6 +25,10 @@
             > .col-label {
               label {
                 cursor: pointer;
+                img {
+                  width: 16px;
+                  transform: translate(3px, 2px);
+                }
               }
             }
             > .col-checkbox {
