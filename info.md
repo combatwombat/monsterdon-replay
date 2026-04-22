@@ -72,6 +72,15 @@ JSON payload and `toot_count` are precomputed into a `cache` table for speed.
 Editing a movie, or the worker saving/updating a toot in its window, invalidates
 the cache.
 
+The full Mastodon toot JSON lives in `toots.data`. Popularity counts
+(`favourites_count`, `reblogs_count`, `replies_count`) are also denormalized
+into their own indexed columns so they can be sorted/filtered without parsing
+JSON. They're written alongside `data` on insert and on every update path. The
+regular newest-toots fetch stops at existing toots (so counts stay at capture
+time), but the 6-hour catchup now runs with `updateExistingToots = true` and
+refreshes counts across the last ~5 days; the weekly resave refreshes
+everything.
+
 ## Double features
 
 Each `#monsterdon` week usually has a main movie plus an unofficial "encore"
@@ -149,4 +158,15 @@ Requires `sass`, `terser`, `fswatch` on PATH.
 
 ## TODO (next session)
 
-_(nothing queued)_
+- **Best-of / toot browser page.** A new section, separate from the movie list
+  and the per-movie timeline replay — more of an analysis tool than a replay.
+  Browse toots in a non-timeline way, ordered by popularity.
+  - Scopes: overall, date range, specific movie.
+  - Sidebar of filters/parameters; collapses into a hidden hamburger menu on
+    mobile.
+  - Toggle: media-only (show toots with attachments — surfaces the most
+    popular memes/videos people posted; we already save the media locally).
+  - Sort by favourites, boosts, replies, or a combined score. Counts already
+    live in dedicated indexed columns on `toots` so ordering is cheap.
+  - Remember to run results through `TootFilter` so secondary-feature toots
+    don't leak into main-feature views (and vice versa).

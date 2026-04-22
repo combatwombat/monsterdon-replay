@@ -56,8 +56,13 @@ CREATE TABLE `toots` (
   `visible` tinyint(1) DEFAULT NULL,
   `found_on_mastodon` tinyint(1) DEFAULT NULL,
   `last_found_on_mastodon` datetime DEFAULT NULL,
+  `favourites_count` int unsigned NOT NULL DEFAULT 0,
+  `reblogs_count` int unsigned NOT NULL DEFAULT 0,
+  `replies_count` int unsigned NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
-  KEY `id` (`id`)
+  KEY `id` (`id`),
+  KEY `favourites_count` (`favourites_count`),
+  KEY `reblogs_count` (`reblogs_count`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 

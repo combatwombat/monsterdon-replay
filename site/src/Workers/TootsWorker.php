@@ -62,7 +62,7 @@ class TootsWorker extends Base {
      * @return array with 'newTootCount' (int), 'error' (bool)
      */
     public function saveTootsUntil($oldestTootDateTime) {
-        return $this->saveToots(false, $oldestTootDateTime);
+        return $this->saveToots(false, $oldestTootDateTime, true);
     }
 
     /**
@@ -237,6 +237,9 @@ class TootsWorker extends Base {
 
                         $this->db->update('toots', [
                             'data' => json_encode($toot),
+                            'favourites_count' => (int)($toot['favourites_count'] ?? 0),
+                            'reblogs_count' => (int)($toot['reblogs_count'] ?? 0),
+                            'replies_count' => (int)($toot['replies_count'] ?? 0),
                             'visible' => true,
                             'found_on_mastodon' => true,
                             'last_found_on_mastodon' => (new \DateTime())->format('Y-m-d H:i:s')
@@ -293,6 +296,9 @@ class TootsWorker extends Base {
                     $this->db->insert('toots', [
                         'id' => $dbID,
                         'data' => json_encode($toot),
+                        'favourites_count' => (int)($toot['favourites_count'] ?? 0),
+                        'reblogs_count' => (int)($toot['reblogs_count'] ?? 0),
+                        'replies_count' => (int)($toot['replies_count'] ?? 0),
                         'created_at' => $createdAt->format('Y-m-d H:i:s'),
                         'visible' => true,
                         'found_on_mastodon' => true,
