@@ -21,6 +21,9 @@ date_default_timezone_set($app->container->get('config')('timezone'));
 $app->get("/", "Movies@list");
 $app->get("/api/toots/{slug}", "Movies@tootsJSON");
 
+$app->get("/best-of", "BestOf@list");
+$app->get("/best-of/{slug}", "BestOf@list");
+
 
 $app->get("/about", function() {
     $this->view("about", ['header' => ['bodyClass' => 'page-text page-about', 'title' => 'About']]);

@@ -35,6 +35,8 @@ framework. Vanilla JS, SCSS compiled to CSS, full server-rendered pages.
     page size = `Movies::PAGE_SIZE`), `show` (single movie replay page),
     `tootsJSON` (`/api/toots/{slug}` — cached JSON of toots for replay),
     `subtitles` (`.ass` file download).
+  - `BestOf.php` — `/best-of` and `/best-of/{slug}`. Popularity-sorted toot
+    browser. See "Best of" below.
   - `BackstageMovies.php` — authenticated CRUD at `/backstage/movies`.
 - `site/src/Helpers/`
   - `TMDB.php` — TMDB wrapper; also downloads/processes cover images and
@@ -47,6 +49,7 @@ framework. Vanilla JS, SCSS compiled to CSS, full server-rendered pages.
   catch edits/deletions), and rebuilds the per-movie cache.
 - `site/src/views/`
   - `movies/{list,show}.php` — frontend pages.
+  - `best-of/list.php` — /best-of browser (sidebar filters + toot list).
   - `backstage/movies/` — admin pages.
   - `layouts/default.php`, `parts/{header,footer,html-header}.php`,
     `about.php`, `privacy.php`, `404.php`.
@@ -73,9 +76,11 @@ Editing a movie, or the worker saving/updating a toot in its window, invalidates
 the cache.
 
 The full Mastodon toot JSON lives in `toots.data`. Popularity counts
-(`favourites_count`, `reblogs_count`, `replies_count`) are also denormalized
-into their own indexed columns so they can be sorted/filtered without parsing
-JSON. They're written alongside `data` on insert and on every update path. The
+(`favourites_count`, `reblogs_count`, `replies_count`) and media-type flags
+(`has_image`, `has_video`, `has_audio` — all `TINYINT(1)`, indexed) are also
+denormalized into their own columns so they can be sorted/filtered without
+parsing JSON. They're written alongside `data` on insert and on every update
+path via `TootsWorker::mediaFlags()` (treats Mastodon's `gifv` as video). The
 regular newest-toots fetch stops at existing toots (so counts stay at capture
 time), but the 6-hour catchup now runs with `updateExistingToots = true` and
 refreshes counts across the last ~5 days; the weekly resave refreshes
@@ -156,17 +161,30 @@ Requires `sass`, `terser`, `fswatch` on PATH.
 - No framework/runtime deps beyond SASS + terser for the build. Keep it that
   way unless there's a good reason.
 
-## TODO (next session)
+## Best of
 
-- **Best-of / toot browser page.** A new section, separate from the movie list
-  and the per-movie timeline replay — more of an analysis tool than a replay.
-  Browse toots in a non-timeline way, ordered by popularity.
-  - Scopes: overall, date range, specific movie.
-  - Sidebar of filters/parameters; collapses into a hidden hamburger menu on
-    mobile.
-  - Toggle: media-only (show toots with attachments — surfaces the most
-    popular memes/videos people posted; we already save the media locally).
-  - Sort by favourites, boosts, replies, or a combined score. Counts already
-    live in dedicated indexed columns on `toots` so ordering is cheap.
-  - Remember to run results through `TootFilter` so secondary-feature toots
-    don't leak into main-feature views (and vice versa).
+`/best-of` (overall) and `/best-of/{slug}` (one movie). Popularity-sorted toot
+browser, separate from the replay timeline. Controller `BestOf.php`, view
+`views/best-of/list.php`, styles `scss/pages/_best-of.scss`.
+
+- Query params: `sort` (`favs` | `boosts` | `replies` | `score`), `media`
+  (`all` | `image` | `video` | `audio` | `any`), `from` / `to` (YYYY-MM-DD,
+  overall view only), `page`. Page size = `BestOf::PAGE_SIZE`.
+- `score` = `favourites_count + 2*reblogs_count + replies_count`.
+- Sidebar has a movie scope `<select>` (native typeahead) at the top — "All
+  movies" plus every movie newest-first, with 🐸 after secondary features
+  (#wrongfrogs). Changing it navigates and preserves `sort`/`media`; `from`/`to`
+  are dropped when scoping to a specific movie.
+- Sidebar collapses behind a "Filters" button below 800px.
+- Per-movie view runs results through `TootFilter` in PHP and over-fetches
+  `pageSize * 2` so filtered-out toots don't thin a page. The overall view
+  does not apply `TootFilter`; each toot is tagged with its owning movie via
+  a single pass over the movies list (oldest-first, first window match wins).
+- No caching yet — server-rendered fresh each request. If it ever gets slow,
+  the `cache` table is the place (keyed by the full query string).
+- Pagination markup matches the home list and uses the shared
+  `parts/_pagination.scss`. Toot styles are shared via `parts/_toot.scss`
+  (lifted out of `_movie.scss` for reuse across `.page-movie` and
+  `.page-best-of`).
+- Not linked from anywhere yet — reachable by URL only while the page is
+  being tuned.

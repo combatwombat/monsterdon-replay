@@ -6,12 +6,15 @@
 
 // Parts
 @import 'parts/header';
-@import 'parts/footer';
 @import 'parts/player';
+@import 'parts/toot';
+@import 'parts/pagination';
+@import 'parts/footer';
 
 // Pages
 @import 'pages/backstage';
 @import 'pages/movies';
 @import 'pages/movie';
+@import 'pages/best-of';
 @import 'pages/text';
 @import 'pages/error-404';

@@ -1,0 +1,69 @@
+.pagination {
+  display: table;
+  width: 100%;
+  margin: 40px 0 20px 0;
+
+  .col {
+    display: table-cell;
+    vertical-align: top;
+  }
+  .col .link-wrap {
+    display: inline-block;
+    height: 40px;
+    width: 60px;
+  }
+  .col .link-wrap a {
+    position: relative;
+    display: block;
+    height: 40px;
+  }
+  .col .link-wrap a svg {
+    position: absolute;
+    top: 13px;
+    left: 20px;
+    color: #b3b3bf;
+    @include transition(color 250ms ease-out);
+  }
+  .col .link-wrap a:hover svg {
+    color: $color-main;
+    @include transition(color 13ms ease-out);
+  }
+  .col .link-wrap a span {
+    display: none;
+  }
+  .col.col-prev {
+    text-align: right;
+  }
+  .col.col-prev .link-wrap a svg {
+    right: 20px;
+    left: auto;
+  }
+  .col.col-next {
+    text-align: left;
+  }
+  .col.col-all {
+    width: 50px;
+  }
+  .col.col-all select {
+    width: 100%;
+    height: 40px;
+    -webkit-appearance: none;
+    border: none;
+    color: $color-text;
+    font-size: 16px;
+    line-height: 40px;
+    font-family: inherit;
+    text-align: center;
+    text-align-last: center;
+    outline: none;
+    background: $color-blue-subtle;
+    border-radius: 10px;
+    padding-top: 1px;
+    cursor: pointer;
+    @include transition(color 250ms ease-out);
+  }
+  .col.col-all select:hover {
+    color: $color-main;
+    @include transition(all 13ms ease-out);
+  }
+}

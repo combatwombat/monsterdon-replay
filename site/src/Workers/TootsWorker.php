@@ -235,11 +235,16 @@ class TootsWorker extends Base {
 
                         $this->log("Toot " . $dbID . " from " . $toot['created_at'] . " already exists. Updating.");
 
+                        $mediaFlags = $this->mediaFlags($toot);
+
                         $this->db->update('toots', [
                             'data' => json_encode($toot),
                             'favourites_count' => (int)($toot['favourites_count'] ?? 0),
                             'reblogs_count' => (int)($toot['reblogs_count'] ?? 0),
                             'replies_count' => (int)($toot['replies_count'] ?? 0),
+                            'has_image' => $mediaFlags['has_image'],
+                            'has_video' => $mediaFlags['has_video'],
+                            'has_audio' => $mediaFlags['has_audio'],
                             'visible' => true,
                             'found_on_mastodon' => true,
                             'last_found_on_mastodon' => (new \DateTime())->format('Y-m-d H:i:s')
@@ -292,6 +297,8 @@ class TootsWorker extends Base {
 
                 } else {
 
+                    $mediaFlags = $this->mediaFlags($toot);
+
                     // toot not too old and not existing yet: save it
                     $this->db->insert('toots', [
                         'id' => $dbID,
@@ -299,6 +306,9 @@ class TootsWorker extends Base {
                         'favourites_count' => (int)($toot['favourites_count'] ?? 0),
                         'reblogs_count' => (int)($toot['reblogs_count'] ?? 0),
                         'replies_count' => (int)($toot['replies_count'] ?? 0),
+                        'has_image' => $mediaFlags['has_image'],
+                        'has_video' => $mediaFlags['has_video'],
+                        'has_audio' => $mediaFlags['has_audio'],
                         'created_at' => $createdAt->format('Y-m-d H:i:s'),
                         'visible' => true,
                         'found_on_mastodon' => true,
@@ -430,6 +440,25 @@ class TootsWorker extends Base {
      * @param $media
      * @return string|boolean hash or false
      */
+    /**
+     * Summarize media attachment types for denormalized columns.
+     * @return array{has_image:int,has_video:int,has_audio:int}
+     */
+    public function mediaFlags($toot) {
+        $flags = ['has_image' => 0, 'has_video' => 0, 'has_audio' => 0];
+        if (empty($toot['media_attachments'])) return $flags;
+        foreach ($toot['media_attachments'] as $m) {
+            switch ($m['type'] ?? '') {
+                case 'image': $flags['has_image'] = 1; break;
+                case 'video':
+                case 'gifv':  $flags['has_video'] = 1; break;
+                case 'audio': $flags['has_audio'] = 1; break;
+            }
+        }
+        return $flags;
+    }
+
+
     public function getMediaId($media) {
 
         if (empty($media) || !isset($media['id']) || !isset($media['url']) || !isset($media['preview_url'])) {

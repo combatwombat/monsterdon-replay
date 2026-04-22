@@ -59,10 +59,16 @@ CREATE TABLE `toots` (
   `favourites_count` int unsigned NOT NULL DEFAULT 0,
   `reblogs_count` int unsigned NOT NULL DEFAULT 0,
   `replies_count` int unsigned NOT NULL DEFAULT 0,
+  `has_image` tinyint(1) NOT NULL DEFAULT 0,
+  `has_video` tinyint(1) NOT NULL DEFAULT 0,
+  `has_audio` tinyint(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   KEY `id` (`id`),
   KEY `favourites_count` (`favourites_count`),
-  KEY `reblogs_count` (`reblogs_count`)
+  KEY `reblogs_count` (`reblogs_count`),
+  KEY `has_image` (`has_image`),
+  KEY `has_video` (`has_video`),
+  KEY `has_audio` (`has_audio`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 
