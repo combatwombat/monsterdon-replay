@@ -80,7 +80,8 @@ class BestOf extends Controller {
         // All movies: used both for the dropdown selector (newest first) and, on the
         // overall view, to tag each toot with its owning movie.
         $allMovies = $this->db->fetchAll(
-            "SELECT slug, title, start_datetime, duration, secondary_feature FROM movies ORDER BY start_datetime DESC"
+            "SELECT slug, title, start_datetime, duration, secondary_feature FROM movies
+             WHERE start_datetime <= NOW() ORDER BY start_datetime DESC"
         );
 
         // Cache: key by slug + normalized query string. Value holds the heavy stuff
@@ -94,7 +95,7 @@ class BestOf extends Controller {
 
         $cached = $this->db->getByName("cache", $cacheKey);
         if ($cached && (time() - strtotime($cached['created_at'])) < $ttl) {
-            $payload    = @unserialize($cached['value']);
+            $payload = json_decode($cached['value'], true);
             if (is_array($payload) && isset($payload['toots'], $payload['totalCount'])) {
                 $toots      = $payload['toots'];
                 $totalCount = (int)$payload['totalCount'];
@@ -154,7 +155,7 @@ class BestOf extends Controller {
             $this->db->delete("cache", ["name" => $cacheKey]);
             $this->db->insert("cache", [
                 'name'  => $cacheKey,
-                'value' => serialize(['toots' => $toots, 'totalCount' => $totalCount]),
+                'value' => json_encode(['toots' => $toots, 'totalCount' => $totalCount]),
             ]);
         }
 
