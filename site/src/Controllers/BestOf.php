@@ -7,7 +7,7 @@ use RTF\Controller;
 
 class BestOf extends Controller {
 
-    const PAGE_SIZE = 30;
+    const PAGE_SIZE = 100;
 
     const SORTS = [
         'favs'    => 'favourites_count',
