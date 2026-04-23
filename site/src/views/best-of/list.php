@@ -60,7 +60,7 @@ $pageUrl = function($p) use ($basePath, $qs) {
         <aside class="filters" aria-label="Filters">
             <form method="get" action="<?= $basePath ?>" class="filters-form">
 
-                <fieldset class="filter-group">
+                <div class="filter-group">
                     <legend>Movie</legend>
                     <select class="scope-select" onchange="window.location.href = this.value">
                         <option value="<?= h($scopeUrl(null)) ?>" <?= $movie ? '' : 'selected' ?>>All movies</option>
@@ -70,9 +70,9 @@ $pageUrl = function($p) use ($basePath, $qs) {
                             </option>
                         <?php endforeach; ?>
                     </select>
-                </fieldset>
+                </div>
 
-                <fieldset class="filter-group">
+                <div class="filter-group">
                     <legend>Sort by</legend>
                     <?php foreach ([
                         'favs'    => 'Favorites',
@@ -85,9 +85,9 @@ $pageUrl = function($p) use ($basePath, $qs) {
                             <span><?= $label ?></span>
                         </label>
                     <?php endforeach; ?>
-                </fieldset>
+                </div>
 
-                <fieldset class="filter-group">
+                <div class="filter-group">
                     <legend>Media</legend>
                     <?php foreach ([
                         'all'   => 'All toots',
@@ -101,10 +101,10 @@ $pageUrl = function($p) use ($basePath, $qs) {
                             <span><?= $label ?></span>
                         </label>
                     <?php endforeach; ?>
-                </fieldset>
+                </div>
 
                 <?php if (!$movie): ?>
-                <fieldset class="filter-group">
+                <div class="filter-group">
                     <legend>Date range</legend>
                     <label class="date">
                         <span>From</span>
@@ -114,7 +114,7 @@ $pageUrl = function($p) use ($basePath, $qs) {
                         <span>To</span>
                         <input type="date" name="to" value="<?= h($to ?? '') ?>">
                     </label>
-                </fieldset>
+                </div>
                 <?php endif; ?>
 
                 <div class="filter-actions">
